@@ -1,7 +1,7 @@
 import { Command } from '@commander-js/extra-typings';
 import { createServer } from '../utils/server.js';
 import { readConfig } from '../utils/read-config.js';
-import { generator } from '../utils/generator.js';
+import { generatorDemo } from '../utils/generator.js';
 
 const subprogram = new Command();
 subprogram
@@ -11,12 +11,16 @@ subprogram
     const args = command.optsWithGlobals() as { config?: string };
     const config = await readConfig(args.config)
 
-    await generator(config);
+    await generatorDemo(config);
 
     const server = createServer(config.tmp);
 
-    server.listen(9091);
-  });
+    server.on('listening', () => {
+        console.log('Demo server listening:');
+        console.log(`   http://localhost:${config.port}`);
+    })
 
+    server.listen(config.port);
+  });
 
 export default subprogram;

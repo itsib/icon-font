@@ -23,5 +23,5 @@ export async function readConfig(path?: string): Promise<Required<IconFontConfig
       console.warn(`Config file not found, default config will be used.`);
     }
   }
-  return { ...defaultConfig, ...(result?.config || {}) };
+  return { ...defaultConfig, ...(result?.config?.default || result?.config || {}) };
 }

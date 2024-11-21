@@ -30,6 +30,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       host: false,
     },
     build: {
+      sourcemap: true,
       lib: {
         formats: ['es'],
         name: 'icon-font',

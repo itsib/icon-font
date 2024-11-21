@@ -1,6 +1,6 @@
 import { Command } from '@commander-js/extra-typings';
 import { readConfig } from '../utils/read-config.js';
-import { generator } from '../utils/generator.js';
+import { generatorProject } from '../utils/generator.js';
 
 
 const subprogram = new Command();
@@ -12,7 +12,7 @@ subprogram
     const args = command.optsWithGlobals() as { config?: string };
     const config = await readConfig(args.config)
 
-    await generator(config);
+    await generatorProject(config);
   });
 
 

@@ -8,4 +8,5 @@ export default {
   output: path.resolve(process.cwd(), 'dist/fonts/icon-font'),
   tmp: path.join(os.tmpdir(), __APP_NAME__),
   types: ['woff2', 'woff', 'ttf', 'eot'],
+  port: 9000,
 } as IconFontConfig;

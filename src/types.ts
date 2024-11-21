@@ -23,6 +23,10 @@ export interface IconFontConfig {
    * Tmp path
    */
   tmp?: string;
+  /**
+   * Demo server port
+   */
+  port?: number;
 }
 
 export interface IconInfo {

@@ -10,12 +10,37 @@ const dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const tmplPath = path.resolve(dirname, 'tmpl');
 const wwwPath = path.resolve(dirname, 'www');
 
-export async function generator(config: Required<IconFontConfig>) {
+export async function generatorProject(config: Required<IconFontConfig>) {
   await fs.mkdir(config.output, { recursive: true });
 
   // Generate fonts and copy static in to the tmp path.
   await generateIcons(config.name, config.input, config.tmp);
-  await copyStatic(config.tmp);
+
+  // Get new icons list
+  const icons = await readIconsList(config.tmp);
+
+  // Generate project style index html files into tmp
+  await generateStyleCss(config.name, icons, config.types, config.tmp);
+
+  const fontSlug = slugify(config.name);
+  for (const ext of config.types) {
+    const fontFileName = `${fontSlug}.${ext}`;
+    await fs.cp(path.join(config.tmp, fontFileName), path.join(config.output, fontFileName));
+
+    console.log('\x1b[0;92m✔\x1b[0m \x1b[0;37mGenerated %s\x1b[0m', fontFileName);
+  }
+
+  await fs.cp(path.join(config.tmp, 'style.css'), path.join(config.output, fontSlug + '.css'));
+
+  console.log('\x1b[0;92m✔\x1b[0m \x1b[0;37mGenerated %s\x1b[0m', fontSlug + '.css');
+}
+
+export async function generatorDemo(config: Required<IconFontConfig>) {
+  await fs.mkdir(config.output, { recursive: true });
+
+  // Generate fonts and copy static in to the tmp path.
+  await generateIcons(config.name, config.input, config.tmp);
+  await copyServerStatic(config.tmp);
 
   // Get new icons list
   const icons = await readIconsList(config.tmp);
@@ -23,14 +48,6 @@ export async function generator(config: Required<IconFontConfig>) {
   // Generate project style index html files into tmp
   await generateStyleCss(config.name, icons, config.types, config.tmp);
   await generateIndexHtml(config.name, icons, config.tmp);
-
-  const fontSlug = slugify(config.name);
-  for (const ext of config.types) {
-    const fontFileName = `${fontSlug}.${ext}`;
-    await fs.cp(path.join(config.tmp, fontFileName), path.join(config.output, fontFileName));
-  }
-
-  await fs.cp(path.join(config.tmp, 'style.css'), path.join(config.output, fontSlug + '.css'));
 }
 
 async function readIconsList(tmpPath: string): Promise<IconInfo[]> {
@@ -39,7 +56,7 @@ async function readIconsList(tmpPath: string): Promise<IconInfo[]> {
   return Object.values(iconMap);
 }
 
-async function copyStatic(dist: string) {
+async function copyServerStatic(dist: string) {
   const files = await fs.readdir(wwwPath, { encoding: 'utf8' });
 
   for (const file of files) {
@@ -56,12 +73,6 @@ async function generateIcons(fontName: string, src: string, dist: string): Promi
     src,
     dist,
     log: false,
-    logger(message: string) {
-      const [_, ...segments] = message.split('/');
-      const filename = '/' + segments.join('/');
-
-      console.log('\x1b[0;92m✔\x1b[0m \x1b[0;37mCreated %s\x1b[0m', filename);
-    },
     excludeFormat: ['symbol.svg'],
     outSVGReact: false,
     outSVGReactNative: false,
