@@ -155,7 +155,12 @@ const HEAD = `
         }
 
         const data = await res.json();
-        if (data.status === 'ok') {
+        // Reload by server command
+        if (data.status === 'reload') {
+          return window.location.reload(true);
+        } 
+        // If "ok" after failed then reload. 
+        else if (data.status === 'ok') {
           if (health === 'failed') {
             return window.location.reload(true);
           } else {

@@ -1,0 +1,118 @@
+import http from 'node:http';
+import { IconFile, IconFontConfig } from '../types.js';
+import { slugify } from '../utils/slugify.js';
+import { generateIndexHtml, generateLogoSvg } from '../generators/index.js';
+import { generateStyleCss } from '../generators/style-css/style-css.js';
+import { generateFaviconIco } from '../generators/favicon-ico/favicon-ico.js';
+import { generateFontSvg } from '../generators/font-svg/font-svg.js';
+import { generateFontTtf } from '../generators/font-ttf/font-ttf.js';
+import { generateFontWoff } from '../generators/font-woff/font-woff.js';
+import { generateFontWoff2 } from '../generators/font-woff2/font-woff2.js';
+import { generateFontEot } from '../generators/font-eot/font-eot.js';
+
+async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, fontName: string, prefix: string, files: IconFile[]) {
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.write(generateIndexHtml(fontName, prefix, files));
+  res.end();
+}
+
+async function logoHandler(_req: http.IncomingMessage, res: http.ServerResponse) {
+  res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
+  res.end(generateLogoSvg());
+}
+
+async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+  res.writeHead(200, { 'Content-Type': 'text/css' });
+  res.write(generateStyleCss(config.name, config.prefix, config.types, files, '/'));
+  res.end();
+}
+
+async function faviconHandler(_req: http.IncomingMessage, res: http.ServerResponse) {
+  res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
+  res.write(generateFaviconIco())
+  res.end();
+}
+
+async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+  res.writeHead(200, {
+    'Content-Type': 'font/svg+xml',
+    'Server': 'Dev Server',
+  });
+  res.write(await generateFontSvg(config, files));
+  res.end();
+}
+
+async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+  res.writeHead(200, {
+    'Content-Type': 'application/x-font-ttf',
+    'Server': 'Dev Server',
+  });
+  res.write(await generateFontTtf(config, files));
+  res.end();
+}
+
+async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+  res.writeHead(200, {
+    'Content-Type': 'font/woff',
+    'Server': 'Dev Server',
+  });
+  res.write(await generateFontWoff(config, files));
+  res.end();
+}
+
+async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+  res.writeHead(200, {
+    'Content-Type': 'font/woff2',
+    'Server': 'Dev Server',
+  });
+  res.write(await generateFontWoff2(config, files));
+  res.end();
+}
+
+async function eotFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+  res.writeHead(200, {
+    'Content-Type': 'application/vnd.ms-fontobject',
+    'Server': 'Dev Server',
+  });
+  res.write(await generateFontEot(config, files));
+  res.end();
+}
+
+async function error404Handler(_req: http.IncomingMessage, res: http.ServerResponse) {
+  res.writeHead(404);
+  res.end('Not Found');
+}
+
+export async function handleRoute(path: string, req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+  const slug = slugify(config.name);
+  console.log(`${req.method}: ${req.url}`);
+
+  try {
+    switch (path) {
+      case '/':
+      case '/index.html':
+        return await indexHandler(req, res, config.name, config.prefix, files);
+      case '/logo.svg':
+        return await logoHandler(req, res);
+      case '/favicon.svg':
+        return await faviconHandler(req, res);
+      case '/style.css':
+        return await stylesCssHandler(req, res, config, files);
+      case `/${slug}.svg`:
+        return await svgFontHandler(req, res, config, files);
+      case `/${slug}.ttf`:
+        return await ttfFontHandler(req, res, config, files);
+      case `/${slug}.woff`:
+        return await woffFontHandler(req, res, config, files);
+      case `/${slug}.woff2`:
+        return await woff2FontHandler(req, res, config, files);
+      case `/${slug}.eot`:
+        return await eotFontHandler(req, res, config, files);
+      default:
+        return await error404Handler(req, res);
+    }
+  } catch (error: any) {
+    res.writeHead(500);
+    res.end(error.message);
+  }
+}

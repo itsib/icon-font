@@ -19,12 +19,14 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/chokidar": "^1.7.5",
     "@types/node": "^20.17.9",
     "@types/svg2ttf": "^5.0.3",
     "@types/ttf2eot": "^2.0.2",
     "@types/ttf2woff": "^2.0.4",
     "@types/ttf2woff2": "^2.0.2",
     "@types/wawoff2": "^1.0.2",
+    "chokidar": "^3.6.0",
     "prettier": "^3.3.1",
     "sax": "^1.4.1",
     "svg-pathdata": "^7.1.0",

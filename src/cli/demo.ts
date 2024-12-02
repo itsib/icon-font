@@ -19,10 +19,8 @@ subprogram
     const args = command.optsWithGlobals() as { config?: string };
     const config = await readConfig(args.config);
 
-    const files = await readFiles(config.input);
-
     const port = _args.port || config.port;
-    const server = createServer(config, files);
+    const server = createServer(config);
 
     server.on('listening', () => {
         console.log('Demo server listening:');
