@@ -10,6 +10,7 @@ import { generateFontSvg } from '../generators/font-svg/font-svg.js';
 import { generateFontTtf } from '../generators/font-ttf/font-ttf.js';
 import { generateFontWoff2 } from '../generators/font-woff2/font-woff2.js';
 import { generateFontWoff } from '../generators/font-woff/font-woff.js';
+import { generateFontEot } from '../generators/font-eot/font-eot.js';
 
 async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, fontName: string, prefix: string, files: IconFile[]) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -77,6 +78,15 @@ async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResp
   res.end();
 }
 
+async function eotFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+  res.writeHead(200, {
+    'Content-Type': 'application/vnd.ms-fontobject',
+    'Server': 'Dev Server',
+  });
+  res.write(await generateFontEot(config, files));
+  res.end();
+}
+
 async function error404Handler(_req: http.IncomingMessage, res: http.ServerResponse) {
   res.writeHead(404);
   res.end('Not Found');
@@ -91,7 +101,6 @@ export function createServer(config: Required<IconFontConfig>, files: IconFile[]
       if (!parsedUrl) {
         throw new Error(`URL not parsable`);
       }
-
 
       if (req.url !== '/healthcheck') {
         console.log(`${req.method}: ${req.url}`);
@@ -118,6 +127,8 @@ export function createServer(config: Required<IconFontConfig>, files: IconFile[]
           return await woffFontHandler(req, res, config, files);
         case `/${slug}.woff2`:
           return await woff2FontHandler(req, res, config, files);
+        case `/${slug}.eot`:
+          return await eotFontHandler(req, res, config, files);
         default:
           return await error404Handler(req, res);
       }

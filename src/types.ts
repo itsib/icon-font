@@ -61,9 +61,3 @@ export interface IconFile {
    */
   path: string;
 }
-
-export interface IconInfo {
-  encodedCode: string;
-  prefix: string;
-  className: string;
-}

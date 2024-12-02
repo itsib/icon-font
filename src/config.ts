@@ -8,7 +8,7 @@ export default {
   input: path.resolve(process.cwd(), 'svg-icons'),
   output: path.resolve(process.cwd(), 'dist/fonts/icon-font'),
   tmp: path.join(os.tmpdir(), __APP_NAME__),
-  types: ['woff2', 'woff', 'ttf', 'eot'],
+  types: ['eot', 'woff2', 'woff', 'ttf'],
   port: 9000,
   fontUrl: './',
 } as IconFontConfig;

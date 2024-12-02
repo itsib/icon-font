@@ -305,15 +305,13 @@ export function generateStyleCss(fontName: string, prefix: string, types: string
   const fontSlug = slugify(fontName);
 
   let output = '@font-face {\n'
-  output += `font-family: "${fontName}";\n`;
-  output += 'src: ';
+  output += `  font-family: "${fontName}";\n`;
+  output += '  src: ';
 
   for (let i = 0; i < types.length; i++) {
     const type = types[i];
-    const fontUrl = join(url, `${fontSlug}.${type}`);
-
-    output += getFontFace(type, fontName, fontUrl);
-
+    const fontUrl = getFontFace(type, fontName, join(url, `${fontSlug}.${type}`));
+    output += i === 0 ? fontUrl : `     ${fontUrl}`;
     output += i === types.length - 1 ? ';\n' : ',\n'
   }
 
