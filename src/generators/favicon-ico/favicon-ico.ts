@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="32" height="32"><svg id="SvgjsSvg1023" version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <rect id="SvgjsRect1022" width="32" height="32" rx="4" ry="4" fill-rule="evenodd" stroke-width="0" style="paint-order:fill markers stroke"></rect>
+const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+<rect id="SvgjsRect1022" width="32" height="32" rx="4" ry="4" fill-rule="evenodd" stroke-width="0" style="paint-order:fill markers stroke"></rect>
   <g id="SvgjsG1021" transform="matrix(1.00242 0 0 1.00242 .0471958 -.0616379)" stroke-width="1.23732">
     <circle id="SvgjsCircle1020" cx="15.9174" cy="7.02139" r="2.31378" fill="#16d600"></circle>
     <circle id="SvgjsCircle1019" cx="6.58493" cy="16.0229" r="2.31378" fill="#fff"></circle>
@@ -11,6 +11,9 @@
     <path id="SvgjsPath1013" d="m22.6143 9.34135 2.63548-4.63993 2.63548 4.63993z" fill="#0159ea"></path>
     <path id="SvgjsPath1012" d="m3.94326 27.3443 2.63548-4.63993 2.64785 4.63993z" fill="#16d600"></path>
   </g>
-</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
-@media (prefers-color-scheme: dark) { :root { filter: invert(100%); } }
-</style></svg>
+</svg>
+`;
+
+export function generateFaviconIco() {
+  return FAVICON;
+}

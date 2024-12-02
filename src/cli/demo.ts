@@ -1,26 +1,35 @@
 import { Command } from '@commander-js/extra-typings';
-import { createServer } from '../utils/server.js';
+import { createServer } from '../server/server.js';
 import { readConfig } from '../utils/read-config.js';
-import { generatorDemo } from '../utils/generator.js';
+import { InvalidArgumentError } from 'commander';
+import { readFiles } from '../utils/read-files.js';
 
 const subprogram = new Command();
 subprogram
   .name('demo')
   .description('run web server with the icon font demo')
-  .action(async (_args: any, command) => {
+  .option('-p, --port <port>', 'Local server port', (value) => {
+      const port = parseInt(value, 10);
+      if (isNaN(port)) {
+          throw new InvalidArgumentError('Invalid port value');
+      }
+      return port;
+  })
+  .action(async (_args , command) => {
     const args = command.optsWithGlobals() as { config?: string };
-    const config = await readConfig(args.config)
+    const config = await readConfig(args.config);
 
-    await generatorDemo(config);
+    const files = await readFiles(config.input);
 
-    const server = createServer(config.tmp);
+    const port = _args.port || config.port;
+    const server = createServer(config, files);
 
     server.on('listening', () => {
         console.log('Demo server listening:');
-        console.log(`   http://localhost:${config.port}`);
+        console.log(`http://localhost:${port}`);
     })
 
-    server.listen(config.port);
+    server.listen(port);
   });
 
 export default subprogram;

@@ -4,9 +4,11 @@ import os from 'node:os';
 
 export default {
   name: 'IconFont',
+  prefix: 'icon',
   input: path.resolve(process.cwd(), 'svg-icons'),
   output: path.resolve(process.cwd(), 'dist/fonts/icon-font'),
   tmp: path.join(os.tmpdir(), __APP_NAME__),
   types: ['woff2', 'woff', 'ttf', 'eot'],
   port: 9000,
+  fontUrl: './',
 } as IconFontConfig;
