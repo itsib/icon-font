@@ -9,6 +9,7 @@ import { generateFontTtf } from '../generators/font-ttf/font-ttf.js';
 import { generateFontWoff } from '../generators/font-woff/font-woff.js';
 import { generateFontWoff2 } from '../generators/font-woff2/font-woff2.js';
 import { generateFontEot } from '../generators/font-eot/font-eot.js';
+import { Logger } from '../utils/logger.js';
 
 async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, fontName: string, prefix: string, files: IconFile[]) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -85,7 +86,7 @@ async function error404Handler(_req: http.IncomingMessage, res: http.ServerRespo
 
 export async function handleRoute(path: string, req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
   const slug = slugify(config.name);
-  console.log(`${req.method}: ${req.url}`);
+  Logger.route(req.method || 'GET', req.url || '/');
 
   try {
     switch (path) {
@@ -112,7 +113,6 @@ export async function handleRoute(path: string, req: http.IncomingMessage, res: 
         return await error404Handler(req, res);
     }
   } catch (error: any) {
-    res.writeHead(500);
-    res.end(error.message);
+    console.error(error);
   }
 }

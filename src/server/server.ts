@@ -1,7 +1,7 @@
 import http from 'node:http';
 import url from 'node:url';
 import path from 'node:path';
-import { IconFile, IconFontConfig } from '../types.js';
+import { IconFontConfig } from '../types.js';
 import { handleRoute } from './router.js';
 import { Watcher } from './watcher.js';
 import { readFiles } from '../utils/read-files.js';
@@ -10,7 +10,6 @@ export function createServer(config: Required<IconFontConfig>) {
   let shouldReload = false;
   const watcher = new Watcher(config);
   watcher.on('change', () => {
-    console.log('change');
     shouldReload = true;
   });
 

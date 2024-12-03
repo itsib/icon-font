@@ -1,5 +1,6 @@
 import { defineConfig, UserConfig } from 'vite';
 import { resolve } from 'node:path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import pkg from './package.json';
 
 function nodeNativeModules(): string[] {
@@ -20,7 +21,6 @@ function nodeNativeModules(): string[] {
 export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
   let watch: any = undefined;
   if (mode === 'development' && command === 'build' && process.argv.some(arg => arg === '--watch' || arg === '-w')) {
-    console.log('Watch')
     watch = {
       skipWrite: false,
       include: [
@@ -38,8 +38,19 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       __APP_DESCRIPTION__: JSON.stringify(pkg.description),
       __dirname: JSON.stringify('/'),
     },
+    resolve: {
+      alias: {
+        os: 'node:os',
+        path: 'node:path',
+        fs: 'node:fs',
+        util: 'node:util',
+        module: 'node:module',
+        url: 'node:url',
+      }
+    },
     publicDir: 'assets',
     esbuild: {
+      legalComments: 'none',
       platform: 'node',
       target: ['node20'],
     },
@@ -47,21 +58,34 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       host: false,
     },
     build: {
-      sourcemap: true,
+      minify: mode === 'production',
+      watch,
+      outDir: './lib',
+      sourcemap: mode !== 'production',
       lib: {
-        formats: ['es'],
+        formats: ['cjs'],
         name: 'icon-font',
         fileName: 'index',
         entry: resolve(__dirname, './src/index.ts'),
       },
-      outDir: './lib',
       rollupOptions: {
         external: [
-          ...Object.keys(pkg.dependencies),
           ...nodeNativeModules(),
+          'typescript',
         ],
+        output: {
+          entryFileNames: '[name].js',
+        }
       },
-      watch,
-    }
+    },
+    plugins: [
+      visualizer({
+        emitFile: true,
+        template: 'flamegraph',
+        include: [
+          { file: '*/**/*.js' }
+        ],
+      }) as any,
+    ]
   };
 });

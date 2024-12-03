@@ -2,7 +2,7 @@ const path = require('path');
 
 exports.default = {
   name: 'Icon Font',
-  types: ['eot', 'woff2', 'woff', 'ttf', 'svg'],
+  types: ['eot', 'woff2', 'woff', 'ttf'],
   input: path.resolve(__dirname, `svg-icons`),
   output: path.resolve(__dirname, `dist/fonts`),
   fontUrl: '/fonts',

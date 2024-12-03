@@ -9,29 +9,17 @@ program.name(__APP_NAME__)
   .version(__APP_VERSION__, '-v, --version', 'output the current version')
   .description(__APP_DESCRIPTION__)
   .allowUnknownOption()
-  .option('--root <path>', 'use specified project root directory', process.cwd())
-  .option('-c, --config <path>', 'use specified config file')
   .configureHelp({
-    showGlobalOptions: true,
+    showGlobalOptions: false,
     sortSubcommands: false,
-    sortOptions: true,
-    subcommandTerm(cmd) {
-      const name = cmd.name();
-      const parent = cmd.parent?.name();
-      if (name === 'generate') {
-        return '' + parent;
-      }
-
-      if (parent) {
-        return '' + parent + ' ' + cmd.name();
-      }
-      return '' + cmd.name();
-    }
+    sortOptions: false,
   })
-  .addCommand(generate, {
-    isDefault: true
-  })
+  .addCommand(generate)
   .addCommand(demo);
+
+program.commands.forEach(cmd => {
+  cmd.option('-c, --config <path>', 'use specified config file');
+})
 
 program.parseAsync(process.argv).catch(error => {
   console.error(error);

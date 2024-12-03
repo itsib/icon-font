@@ -3,13 +3,13 @@
     "outDir": "lib",
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "module": "NodeNext",
+    "module": "ESNext",
     "lib": ["ES2020"],
     "skipLibCheck": true,
     "typeRoots": ["./node_modules/@types"],
 
     /* Bundler mode */
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "allowImportingTsExtensions": true,

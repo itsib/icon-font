@@ -19,7 +19,7 @@ export async function readConfig(path?: string): Promise<Required<IconFontConfig
   if (!result) {
     try {
       result = await seeker.search(process.cwd());
-    } catch {
+    } catch(error: any) {
       console.warn(`Config file not found, default config will be used.`);
     }
   }

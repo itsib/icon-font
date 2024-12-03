@@ -25,10 +25,6 @@ export interface IconFontConfig {
    */
   types?: FontType[];
   /**
-   * Tmp path
-   */
-  tmp?: string;
-  /**
    * Demo server port
    */
   port?: number;
