@@ -11,7 +11,10 @@
   "main": "./icon-font",
   "files": [
     "lib/",
-    "icon-font"
+    "icon-font",
+    "README.md",
+    "LICENSE",
+    "package.json"
   ],
   "scripts": {
     "dev": "vite",

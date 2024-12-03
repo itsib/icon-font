@@ -74,7 +74,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
           'typescript',
         ],
         output: {
-          entryFileNames: '[name].js',
+          entryFileNames: '[name].cjs',
         }
       },
     },
@@ -83,7 +83,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
         emitFile: true,
         template: 'flamegraph',
         include: [
-          { file: '*/**/*.js' }
+          { file: '*/**/*.cjs' }
         ],
       }) as any,
     ]

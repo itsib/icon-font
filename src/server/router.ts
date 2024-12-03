@@ -30,7 +30,7 @@ async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResp
 
 async function faviconHandler(_req: http.IncomingMessage, res: http.ServerResponse) {
   res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
-  res.write(generateFaviconIco())
+  res.write(await generateFaviconIco())
   res.end();
 }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 function start() {
-  return import('./lib/index.js');
+  return import('./lib/index.cjs');
 }
 
 start();
