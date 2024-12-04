@@ -20,6 +20,7 @@ jobs:
       - name: Setup .npmrc file
         uses: actions/setup-node@v4
         with:
+          always-auth: true
           node-version: 20.17.0
           registry-url: ${{ vars.REGISTRY_URL }}
       - name: Install dependency
