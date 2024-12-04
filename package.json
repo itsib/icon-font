@@ -5,8 +5,12 @@
   "license": "MIT",
   "private": false,
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsib/icon-font.git"
+  },
   "bin": {
-    "icon-font": "./icon-font"
+    "icon-font": "icon-font"
   },
   "main": "./icon-font",
   "files": [
