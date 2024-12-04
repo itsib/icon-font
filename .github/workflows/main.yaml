@@ -33,7 +33,6 @@ jobs:
           NODE_ENV: production
       - name: Publish
         run: |
-          npm adduser
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
