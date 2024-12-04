@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: icon-font@${{ github.ref_name }}
-          path: dist
+          path: lib
 
 
   publish:
