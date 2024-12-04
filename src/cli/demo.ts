@@ -16,7 +16,7 @@ export function createDemoCommand(): Command {
     .action(async (args: Omit<IconFontConfig, 'output'> & { config?: string, cwd?: string }, command) => {
       const { config: configFilePath, cwd, ...configArgs } = args;
       const configFile = configFilePath ? await loadConfig(configFilePath) : await searchConfig(process.cwd());
-      const requiredFields: ConfigKeys[] = ['input', 'name', 'prefix', 'types', 'fontUrl']
+      const requiredFields: ConfigKeys[] = ['input', 'name', 'prefix', 'types', 'fontUrl', 'port']
       const config = mergeConfig(requiredFields, configArgs, configFile, DEFAULT_CONFIG);
 
       const server = createServer(config);
