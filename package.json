@@ -29,6 +29,7 @@
   "devDependencies": {
     "@commander-js/extra-typings": "^12.1.0",
     "@types/node": "^20.17.9",
+    "@types/sax": "^1.2.7",
     "@types/svg2ttf": "^5.0.3",
     "@types/ttf2eot": "^2.0.2",
     "@types/ttf2woff": "^2.0.4",

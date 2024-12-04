@@ -1,3 +1,6 @@
+import { SVGCommand } from 'svg-pathdata';
+
+export type TransformFunction = (command: SVGCommand) => SVGCommand | SVGCommand[];
 
 export type FontType = 'woff2' | 'woff' | 'ttf' | 'eot' | 'svg';
 
@@ -37,7 +40,7 @@ export interface IconFontConfig {
   fontUrl: string;
 }
 
-export interface IconFile {
+export interface IconInfo {
   /**
    * Symbol id
    */
@@ -58,4 +61,10 @@ export interface IconFile {
    * Absolute file path to svg file
    */
   path: string;
+}
+
+export interface SvgTransformation {
+  name: string;
+  attribute: string;
+  function: TransformFunction;
 }

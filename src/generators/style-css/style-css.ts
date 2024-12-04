@@ -1,4 +1,4 @@
-import { IconFile } from '../../types.js';
+import { IconInfo } from '../../types.js';
 import { slugify } from '../../utils/slugify.js';
 import { join } from 'node:path';
 
@@ -301,7 +301,7 @@ function getFontFace(type: string, _fontName: string, fontUrl: string): string {
   }
 }
 
-export function generateStyleCss(fontName: string, prefix: string, types: string[], files: IconFile[], url = '/') {
+export function generateStyleCss(fontName: string, prefix: string, types: string[], files: IconInfo[], url = '/') {
   const fontSlug = slugify(fontName);
 
   let output = '@font-face {\n'

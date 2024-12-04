@@ -1,6 +1,6 @@
 import { readdir } from 'node:fs/promises';
 import { join, extname } from 'node:path';
-import { IconFile } from '../types.js';
+import { IconInfo } from '../types.js';
 import { START_UNICODE } from './constants.js';
 
 const testExpression = /(^|\/|\\)(?:((?:u[0-9a-f]{4,6},?)+)-)(.+)\.svg$/i;
@@ -20,13 +20,13 @@ function compareFiles(fileA: string, fileB: string): -1 | 0 | 1 {
   }
 }
 
-export async function readFiles(path: string, ext = 'svg'): Promise<IconFile[]> {
+export async function readFiles(path: string, ext = 'svg'): Promise<IconInfo[]> {
   const files = await readdir(path, { encoding: 'utf8' });
   let index = 0;
 
   files.sort(compareFiles);
 
-  return files.reduce<IconFile[]>((acc, filename) => {
+  return files.reduce<IconInfo[]>((acc, filename) => {
     if (filename.endsWith(`.${ext}`)) {
       const name = filename.replace(extname(filename), '');
       const id = `${name}${(0 === index ? '' : '-' + index)}`;

@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { slugify } from '../../utils/slugify.js';
-import { IconFile, IconFontConfig } from '../../types.js';
+import { IconInfo, IconFontConfig } from '../../types.js';
 import { parseSvg } from '../../utils/parse-svg.js';
 import { SYMBOL_SIZE } from '../../utils/constants.js';
 
@@ -29,7 +29,7 @@ function renderHeader(fontName: string, metadata?: string) {
   return output;
 }
 
-function renderSymbol(file: IconFile, svgPath: string) {
+function renderSymbol(file: IconInfo, svgPath: string) {
   let output = '';
   output += `    <glyph\n`;
   output += `        glyph-name="${file.id}"\n`;
@@ -49,7 +49,7 @@ function renderFooter() {
   return output;
 }
 
-export async function generateFontSvg(config: Omit<IconFontConfig, 'output'>, files: IconFile[]): Promise<string> {
+export async function generateFontSvg(config: Omit<IconFontConfig, 'output'>, files: IconInfo[]): Promise<string> {
   let output = renderHeader(config.name);
 
   for (let i = 0; i < files.length; i++) {
