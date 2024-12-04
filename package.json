@@ -1,7 +1,7 @@
 {
   "name": "@itsib/icon-font",
   "description": "CLI utilities for icon-font generation, automation and presentation. Includes preview web server.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "private": false,
   "type": "module",
@@ -18,7 +18,9 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "preversion": "echo \"releases\"",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
     "@commander-js/extra-typings": "^12.1.0",
