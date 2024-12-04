@@ -1,6 +1,8 @@
 
 export type FontType = 'woff2' | 'woff' | 'ttf' | 'eot' | 'svg';
 
+export type ConfigKeys = keyof IconFontConfig;
+
 export interface IconFontConfig {
   /**
    * Directory containing SVG icons.
@@ -14,25 +16,25 @@ export interface IconFontConfig {
    * Font name.
    * @default 'icon-font'
    */
-  name?: string;
+  name: string;
   /**
    * Icon class prefix
    * @default "icon"
    */
-  prefix?: string;
+  prefix: string;
   /**
    * Font types to generate
    */
-  types?: FontType[];
+  types: FontType[];
   /**
    * Demo server port
    */
-  port?: number;
+  port: number;
   /**
    * Url path to icon font
    * Will be written to output css file in font face
    */
-  fontUrl?: string;
+  fontUrl: string;
 }
 
 export interface IconFile {

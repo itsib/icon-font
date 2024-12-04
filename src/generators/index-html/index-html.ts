@@ -1,10 +1,11 @@
 import { IconFile } from '../../types.js';
+import { LOGO_ICON } from '../../utils/constants.ts';
 
 const HEAD = `
 <head>
   <meta charset="UTF-8">
   <title>{{caption}}</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg" />
   <style>
     html {
       --border-radius: 8px;
@@ -21,12 +22,21 @@ const HEAD = `
       margin: 0;
       text-align: center;
     }
+    .caption {
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .caption svg {
+      width: 36px;
+      height: auto;
+    }
     .buttons-container {
       width: auto;
       max-width: 1280px;
       margin: 0 auto;
       padding: 10px 20px;
-
     }
     .preview {
       width: 110px;
@@ -182,7 +192,10 @@ export function generateIndexHtml(caption: string, prefix: string, files: IconFi
   output += '<html lang="en">\n';
   output += HEAD.replace('{{caption}}', caption);
   output += '<body>\n';
-  output += `<h1>${caption}</h1>\n`;
+  output += `<h1 class="caption">\n`;
+  output += LOGO_ICON + '\n';
+  output += `<span>${caption}</span>\n`;
+  output += `</h1>\n`;
 
   output += '<div class="buttons-container">\n';
 

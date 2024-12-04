@@ -7,7 +7,7 @@ export async function generateFontEotByTtf(fontTtf: Buffer): Promise<Buffer> {
   return ttf2eot(fontTtf);
 }
 
-export async function generateFontEot(config: Required<IconFontConfig>, files: IconFile[]): Promise<Buffer> {
+export async function generateFontEot(config: Omit<IconFontConfig, 'output'>, files: IconFile[]): Promise<Buffer> {
   const fontTtf = await generateFontTtf(config, files);
 
   return await generateFontEotByTtf(fontTtf);

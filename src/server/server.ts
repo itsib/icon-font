@@ -6,9 +6,9 @@ import { handleRoute } from './router.js';
 import { Watcher } from './watcher.js';
 import { readFiles } from '../utils/read-files.js';
 
-export function createServer(config: Required<IconFontConfig>) {
+export function createServer(config: Omit<IconFontConfig, 'output'>) {
   let shouldReload = false;
-  const watcher = new Watcher(config);
+  const watcher = new Watcher(config.input);
   watcher.on('change', () => {
     shouldReload = true;
   });

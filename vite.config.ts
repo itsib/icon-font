@@ -19,6 +19,7 @@ function nodeNativeModules(): string[] {
 }
 
 export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
+  const appName = pkg.name.split('/')[1];
   let watch: any = undefined;
   if (mode === 'development' && command === 'build' && process.argv.some(arg => arg === '--watch' || arg === '-w')) {
     watch = {
@@ -34,7 +35,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
     appType: 'custom',
     define: {
       __APP_VERSION__: JSON.stringify(pkg.version),
-      __APP_NAME__: JSON.stringify(pkg.name),
+      __APP_NAME__: JSON.stringify(appName),
       __APP_DESCRIPTION__: JSON.stringify(pkg.description),
       __dirname: JSON.stringify('/'),
     },
@@ -61,10 +62,10 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       minify: mode === 'production',
       watch,
       outDir: './lib',
-      sourcemap: mode !== 'production',
+      sourcemap: true,
       lib: {
-        formats: ['cjs'],
-        name: 'icon-font',
+        formats: ['cjs', 'es'],
+        name: appName,
         fileName: 'index',
         entry: resolve(__dirname, './src/index.ts'),
       },
@@ -74,7 +75,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
           'typescript',
         ],
         output: {
-          entryFileNames: '[name].cjs',
+          // entryFileNames: '[name].cjs',
         }
       },
     },

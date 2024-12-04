@@ -49,7 +49,7 @@ function renderFooter() {
   return output;
 }
 
-export async function generateFontSvg(config: Required<IconFontConfig>, files: IconFile[]): Promise<string> {
+export async function generateFontSvg(config: Omit<IconFontConfig, 'output'>, files: IconFile[]): Promise<string> {
   let output = renderHeader(config.name);
 
   for (let i = 0; i < files.length; i++) {

@@ -7,7 +7,7 @@ export async function generateFontWoffByTtf(fontTtf: Buffer): Promise<Buffer> {
   return ttf2woff(fontTtf);
 }
 
-export async function generateFontWoff(config: Required<IconFontConfig>, files: IconFile[]): Promise<Buffer> {
+export async function generateFontWoff(config: Omit<IconFontConfig, 'output'>, files: IconFile[]): Promise<Buffer> {
   const fontTtf = await generateFontTtf(config, files);
 
   return await generateFontWoffByTtf(fontTtf);

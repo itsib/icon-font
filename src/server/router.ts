@@ -1,15 +1,15 @@
 import http from 'node:http';
 import { IconFile, IconFontConfig } from '../types.js';
 import { slugify } from '../utils/slugify.js';
-import { generateIndexHtml, generateLogoSvg } from '../generators/index.js';
+import { generateIndexHtml, generateLogoSvg } from '../generators';
 import { generateStyleCss } from '../generators/style-css/style-css.js';
-import { generateFaviconIco } from '../generators/favicon-ico/favicon-ico.js';
 import { generateFontSvg } from '../generators/font-svg/font-svg.js';
 import { generateFontTtf } from '../generators/font-ttf/font-ttf.js';
 import { generateFontWoff } from '../generators/font-woff/font-woff.js';
 import { generateFontWoff2 } from '../generators/font-woff2/font-woff2.js';
 import { generateFontEot } from '../generators/font-eot/font-eot.js';
 import { Logger } from '../utils/logger.js';
+import { LOGO_ICON } from '../utils/constants.ts';
 
 async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, fontName: string, prefix: string, files: IconFile[]) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -22,7 +22,7 @@ async function logoHandler(_req: http.IncomingMessage, res: http.ServerResponse)
   res.end(generateLogoSvg());
 }
 
-async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<IconFontConfig, 'output'>, files: IconFile[]) {
   res.writeHead(200, { 'Content-Type': 'text/css' });
   res.write(generateStyleCss(config.name, config.prefix, config.types, files, '/'));
   res.end();
@@ -30,11 +30,11 @@ async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResp
 
 async function faviconHandler(_req: http.IncomingMessage, res: http.ServerResponse) {
   res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
-  res.write(await generateFaviconIco())
+  res.write(LOGO_ICON);
   res.end();
 }
 
-async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<IconFontConfig, 'output'>, files: IconFile[]) {
   res.writeHead(200, {
     'Content-Type': 'font/svg+xml',
     'Server': 'Dev Server',
@@ -43,7 +43,7 @@ async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerRespon
   res.end();
 }
 
-async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<IconFontConfig, 'output'>, files: IconFile[]) {
   res.writeHead(200, {
     'Content-Type': 'application/x-font-ttf',
     'Server': 'Dev Server',
@@ -52,7 +52,7 @@ async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerRespon
   res.end();
 }
 
-async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<IconFontConfig, 'output'>, files: IconFile[]) {
   res.writeHead(200, {
     'Content-Type': 'font/woff',
     'Server': 'Dev Server',
@@ -61,7 +61,7 @@ async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerRespo
   res.end();
 }
 
-async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<IconFontConfig, 'output'>, files: IconFile[]) {
   res.writeHead(200, {
     'Content-Type': 'font/woff2',
     'Server': 'Dev Server',
@@ -70,7 +70,7 @@ async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResp
   res.end();
 }
 
-async function eotFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+async function eotFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<IconFontConfig, 'output'>, files: IconFile[]) {
   res.writeHead(200, {
     'Content-Type': 'application/vnd.ms-fontobject',
     'Server': 'Dev Server',
@@ -84,7 +84,7 @@ async function error404Handler(_req: http.IncomingMessage, res: http.ServerRespo
   res.end('Not Found');
 }
 
-export async function handleRoute(path: string, req: http.IncomingMessage, res: http.ServerResponse, config: Required<IconFontConfig>, files: IconFile[]) {
+export async function handleRoute(path: string, req: http.IncomingMessage, res: http.ServerResponse, config: Omit<IconFontConfig, 'output'>, files: IconFile[]) {
   const slug = slugify(config.name);
   Logger.route(req.method || 'GET', req.url || '/');
 

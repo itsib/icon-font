@@ -9,7 +9,7 @@ export async function generateFontTtfBySvg(fontSvg: string) {
   return Buffer.from(ttf.buffer);
 }
 
-export async function generateFontTtf(config: Required<IconFontConfig>, files: IconFile[]): Promise<Buffer> {
+export async function generateFontTtf(config: Omit<IconFontConfig, 'output'>, files: IconFile[]): Promise<Buffer> {
   const fontSvg = await generateFontSvg(config, files);
 
   return generateFontTtfBySvg(fontSvg);

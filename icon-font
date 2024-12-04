@@ -1,7 +1,17 @@
 #!/usr/bin/env node
+import { nextTick } from 'node:process';
 
-function start() {
-  return import('./lib/index.cjs');
-}
+(() => {
+  process.setSourceMapsEnabled(true);
+  process.title = 'node-icon-font'
 
-start();
+  process.setUncaughtExceptionCaptureCallback(error => {
+    console.log(error);
+    process.exit(1);
+  });
+
+
+  nextTick(() => {
+    import('./lib/index.js');
+  });
+})();
