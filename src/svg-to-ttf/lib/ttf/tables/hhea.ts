@@ -1,8 +1,8 @@
-import ByteBuffer from 'microbuffer';
+import { BufferSlim } from '../../../../utils/buffer-slim.ts';
 import { Font } from '../../sfnt.ts';
 
-export default function createHHeadTable(font: Font): ByteBuffer {
-  const buf = new ByteBuffer(36); // fixed table length
+export default function createHHeadTable(font: Font): BufferSlim {
+  const buf = new BufferSlim(36); // fixed table length
 
   buf.writeInt32(0x10000); // version
   buf.writeInt16(font.ascent); // ascent

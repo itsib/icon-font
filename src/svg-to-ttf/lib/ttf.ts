@@ -1,5 +1,4 @@
-import ByteBuffer from 'microbuffer';
-
+import { BufferSlim } from '../../utils/buffer-slim.ts';
 import createGSUBTable from './ttf/tables/gsub.ts';
 import createOS2Table from './ttf/tables/os2.ts';
 import createCMapTable from './ttf/tables/cmap.ts';
@@ -18,8 +17,8 @@ import { Font } from './sfnt.ts';
 interface Table {
   innerName: string;
   order: number;
-  create: (font: Font) => ByteBuffer;
-  buffer?: ByteBuffer;
+  create: (font: Font) => BufferSlim;
+  buffer?: BufferSlim;
   length?: number;
   corLength?: number;
   checkSum?: number;
@@ -55,7 +54,7 @@ function ulong(t: number): number {
   return t;
 }
 
-function calc_checksum(buf: ByteBuffer): number {
+function calc_checksum(buf: BufferSlim): number {
   let sum = 0;
   const nlongs = Math.floor(buf.length / 4);
 
@@ -77,18 +76,14 @@ function calc_checksum(buf: ByteBuffer): number {
   return sum;
 }
 
-export function generateTTF(font: Font): ByteBuffer {
+export function generateTTF(font: Font): BufferSlim {
   font.glyphs.forEach(glyph => {
-    glyph.ttfContours = glyph.contours.map(contour => contour.points);
-  });
-
-  font.glyphs.forEach(glyph => {
-    glyph.ttfContours = utils.simplify(glyph.ttfContours, 0.3);
-    glyph.ttfContours = utils.simplify(glyph.ttfContours, 0.3);
-    glyph.ttfContours = utils.interpolate(glyph.ttfContours, 1.1);
-    glyph.ttfContours = utils.roundPoints(glyph.ttfContours);
-    glyph.ttfContours = utils.removeClosingReturnPoints(glyph.ttfContours);
-    glyph.ttfContours = utils.toRelative(glyph.ttfContours);
+    glyph.contours = utils.simplify(glyph.contours, 0.3);
+    glyph.contours = utils.simplify(glyph.contours, 0.3);
+    glyph.contours = utils.interpolate(glyph.contours, 1.1);
+    glyph.contours = utils.roundPoints(glyph.contours);
+    glyph.contours = utils.removeClosingReturnPoints(glyph.contours);
+    glyph.contours = utils.toRelative(glyph.contours);
   });
 
   const headerSize = 12 + 16 * TABLES.length;
@@ -109,7 +104,7 @@ export function generateTTF(font: Font): ByteBuffer {
     offset += table.corLength!;
   });
 
-  const buf = new ByteBuffer(bufSize);
+  const buf = new BufferSlim(bufSize);
 
   const entrySelector = Math.floor(Math.log(TABLES.length) / Math.LN2);
   const searchRange = Math.pow(2, entrySelector) * 16;

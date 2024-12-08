@@ -1,8 +1,8 @@
 import { Transform, TransformCallback } from 'node:stream';
-import { BufferWithMeta, SymbolMeta } from '../types/types.ts';
+import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
 
 
-export class StreamTtfFontTransformer extends Transform {
+export class TransformToTtfFont extends Transform {
 
   private readonly _fontName: string;
 
@@ -17,8 +17,15 @@ export class StreamTtfFontTransformer extends Transform {
     this._metadata = metadata;
   }
 
-  _transform(chunk: BufferWithMeta<SymbolMeta>, _encoding: BufferEncoding, callback: TransformCallback) {
+  private _header(symbolSize: number) {
 
+  }
+
+  _transform(chunk: BufferWithMeta<SymbolMeta>, _encoding: BufferEncoding, callback: TransformCallback) {
+    if (!this._isHeaderRendered) {
+      this._header(1);
+      this._isHeaderRendered = true;
+    }
   }
 
   _flush(callback: TransformCallback) {

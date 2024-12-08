@@ -1,9 +1,9 @@
 import { Transform, TransformCallback } from 'node:stream';
-import { BufferWithMeta, SymbolMeta } from '../types/types.ts';
-import { FontType } from '../types';
-import { slugify } from '../utils/slugify.ts';
+import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
+import { FontType } from '../../types';
+import { slugify } from '../../utils/slugify.ts';
 import { join } from 'node:path';
-import { encodeHtml } from '../utils/coders.ts';
+import { encodeHtml } from '../../utils/coders.ts';
 
 const STYLES = `
 .icon {
@@ -287,7 +287,7 @@ const STYLES = `
 }
 `
 
-export class StreamCssTransformer extends Transform {
+export class TransformToCss extends Transform {
 
   private readonly _fontId: string;
 

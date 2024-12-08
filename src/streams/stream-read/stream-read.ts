@@ -1,12 +1,12 @@
 import { readdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
-import { FileMetadata } from '../types/types.ts';
+import { FileMetadata } from '../../types/types.ts';
 import { Readable } from 'node:stream';
 import fs from 'node:fs';
-import { populateMetadata } from '../utils/populate-metadata.ts';
-import { compareFiles } from '../utils/read-files.ts';
+import { populateMetadata } from '../../utils/populate-metadata.ts';
+import { compareFiles } from '../../utils/read-files.ts';
 
-export class StreamDirectoryReader extends Readable {
+export class StreamRead extends Readable {
 
   private readonly _input: string;
 

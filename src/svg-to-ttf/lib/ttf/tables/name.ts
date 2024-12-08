@@ -1,4 +1,4 @@
-import ByteBuffer from 'microbuffer';
+import { BufferSlim } from '../../../../utils/buffer-slim.ts';
 import Str from '../../str.ts';
 import { Font } from '../../sfnt.ts';
 
@@ -73,10 +73,10 @@ function getNames(font: Font): Name[] {
   return result;
 }
 
-export default function createNameTable(font: Font): ByteBuffer {
+export default function createNameTable(font: Font): BufferSlim {
   const names = getNames(font);
 
-  const buf = new ByteBuffer(tableSize(names));
+  const buf = new BufferSlim(tableSize(names));
 
   buf.writeUint16(0); // formatSelector
   buf.writeUint16(names.length); // nameRecordsCount

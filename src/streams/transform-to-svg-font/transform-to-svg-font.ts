@@ -1,10 +1,10 @@
 import { Transform, TransformCallback } from 'node:stream';
 import { SVGPathData } from 'svg-pathdata';
-import { slugify } from '../utils/slugify.ts';
-import { BufferWithMeta, SymbolMeta } from '../types/types.ts';
-import { encodeHtml } from '../utils/coders.ts';
+import { slugify } from '../../utils/slugify.ts';
+import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
+import { encodeHtml } from '../../utils/coders.ts';
 
-export class StreamSvgFontTransformer extends Transform {
+export class TransformToSvgFont extends Transform {
 
   private readonly _fontName: string;
 

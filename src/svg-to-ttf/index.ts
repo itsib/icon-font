@@ -1,10 +1,10 @@
 import { SVGPathData } from 'svg-pathdata';
-import * as sfnt from './lib/sfnt.ts';
 import { ucs2encode } from './lib/ucs2.ts';
 import { generateTTF } from './lib/ttf.ts';
-import ByteBuffer from 'microbuffer';
+import { BufferSlim } from '../utils/buffer-slim.ts';
 import { load } from './lib/svg.ts';
 import { svgPathToContour } from '../svg-helpers/svg-path-to-contour.ts';
+import { Font, Glyph } from './lib/sfnt.ts';
 
 const VERSION_RE = /^(Version )?(\d+[.]\d+)$/i;
 
@@ -20,8 +20,8 @@ interface Options {
   ts?: string;
 }
 
-export function svg2ttf(svgString: string, options?: Options): ByteBuffer {
-  const font = new sfnt.Font();
+export function svg2ttf(svgString: string, options?: Options): BufferSlim {
+  const font = new Font();
   const svgFont = load(svgString);
 
   options = options || {};
@@ -82,11 +82,11 @@ export function svg2ttf(svgString: string, options?: Options): ByteBuffer {
     font.underlineThickness = svgFont.underlineThickness;
   }
 
-  const glyphs: sfnt.Glyph[] = font.glyphs;
-  const codePoints: { [key: number]: sfnt.Glyph } = font.codePoints;
-  const ligatures: { ligature: string; unicode: number[]; glyph: sfnt.Glyph }[] = font.ligatures;
+  const glyphs: Glyph[] = font.glyphs;
+  const codePoints: { [key: number]: Glyph } = font.codePoints;
+  const ligatures: { ligature: string; unicode: number[]; glyph: Glyph }[] = font.ligatures;
 
-  function addCodePoint(codePoint: number, glyph: sfnt.Glyph): boolean {
+  function addCodePoint(codePoint: number, glyph: Glyph): boolean {
     if (codePoints[codePoint]) {
       return false;
     }
@@ -95,7 +95,7 @@ export function svg2ttf(svgString: string, options?: Options): ByteBuffer {
   }
 
   svgFont.glyphs.forEach(svgGlyph => {
-    const glyph = new sfnt.Glyph();
+    const glyph = new Glyph();
 
     glyph.name = svgGlyph.name;
     glyph.codes = svgGlyph.ligatureCodes || svgGlyph.unicode;
@@ -111,10 +111,10 @@ export function svg2ttf(svgString: string, options?: Options): ByteBuffer {
     });
   });
 
-  let missingGlyph: sfnt.Glyph;
+  let missingGlyph: Glyph;
 
   if (svgFont.missingGlyph) {
-    missingGlyph = new sfnt.Glyph();
+    missingGlyph = new Glyph();
     missingGlyph.d = svgFont.missingGlyph.d!;
     missingGlyph.height = (!isNaN(svgFont.missingGlyph.height!) ? svgFont.missingGlyph.height : font.height)!;
     missingGlyph.width = (!isNaN(svgFont.missingGlyph.width!) ? svgFont.missingGlyph.width : font.width)!;
@@ -122,7 +122,7 @@ export function svg2ttf(svgString: string, options?: Options): ByteBuffer {
     missingGlyph = glyphs.find(glyph => glyph.name === '.notdef')!;
   }
   if (!missingGlyph) {
-    missingGlyph = new sfnt.Glyph();
+    missingGlyph = new Glyph();
   }
 
   svgFont.ligatures.forEach(svgLigature => {
@@ -133,7 +133,7 @@ export function svg2ttf(svgString: string, options?: Options): ByteBuffer {
     };
 
     ligature.unicode.forEach(charPoint => {
-      const glyph = new sfnt.Glyph();
+      const glyph = new Glyph();
       const added = addCodePoint(charPoint, glyph);
 
       if (added) {
@@ -161,23 +161,12 @@ export function svg2ttf(svgString: string, options?: Options): ByteBuffer {
     const accuracy = (glyphSize > 500) ? 0.3 : glyphSize * 0.0006;
 
     const svgPath = new SVGPathData(glyph.d);
-    const sfntContours = svgPathToContour(svgPath, accuracy);
-
-    glyph.contours = sfntContours.map(sfntContour => {
-      const contour = new sfnt.Contour();
-
-      contour.points = sfntContour.map(sfntPoint => {
-        const point = new sfnt.Point();
-
-        point.x = sfntPoint.x;
-        point.y = sfntPoint.y;
-        point.onCurve = sfntPoint.onCurve;
-        return point;
-      });
-
-      return contour;
-    });
+    glyph.contours = svgPathToContour(svgPath, accuracy);
   });
 
   return generateTTF(font);
 }
+
+// export function createTtf(fontName: string, metadata?: string) {
+//   const font = new FontTTF({ fontName, metadata });
+// }

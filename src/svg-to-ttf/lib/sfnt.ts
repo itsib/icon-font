@@ -1,3 +1,6 @@
+import { slugify } from '../../utils/slugify.ts';
+import { Contour, ContourPoint } from '../../types';
+
 export interface Ligature {
   ligature: string;
   unicode: number[];
@@ -21,6 +24,11 @@ export interface LigatureGroup {
   codePoint: number;
   ligatures: Ligature[];
   startGlyph: Glyph;
+}
+
+export interface SfntName {
+  id: number;
+  value: string;
 }
 
 export class Font {
@@ -258,6 +266,36 @@ export class Font {
   }
 }
 
+export interface FontTTFConfig {
+  fontName: string;
+  metadata?: string;
+}
+
+export class FontTTF {
+  id: string;
+  familyName: string;
+  copyright: string;
+  description = 'The best icon font in the world';
+  url = 'https://github.com/itsib';
+  sfntNames: SfntName[];
+  createdDate: Date
+  modifiedDate: Date
+
+  constructor(config: FontTTFConfig) {
+    this.id = slugify(config.fontName);
+    this.familyName = config.fontName;
+    this.copyright = config.metadata || '';
+    this.sfntNames = [
+      { id: 2, value: 'Regular' },
+      { id: 4, value: this.id },
+      { id: 5, value: 'Version 1.0' },
+      { id: 6, value: this.familyName },
+    ];
+    this.createdDate = new Date();
+    this.modifiedDate = new Date();
+  }
+}
+
 export class Glyph {
   contours: Contour[] = [];
   d: string = '';
@@ -270,7 +308,6 @@ export class Glyph {
   height: number = 0;
   name: string = '';
   width: number = 0;
-  ttfContours: Point[][] = [];
   canonical?: Glyph;
   ttf_x: number[] = [];
   ttf_y: number[] = [];
@@ -362,19 +399,8 @@ export class Glyph {
   }
 }
 
-export class Contour {
-  points: Point[] = [];
-}
 
-export class Point {
-  onCurve: boolean = true;
-  x: number = 0;
-  y: number = 0;
-}
 
-export class SfntName {
-  id: number = 0;
-  value: string = '';
-}
+
 
 

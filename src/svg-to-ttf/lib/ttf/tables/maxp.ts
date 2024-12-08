@@ -1,4 +1,4 @@
-import ByteBuffer from 'microbuffer';
+import { BufferSlim } from '../../../../utils/buffer-slim.ts';
 import { Font } from '../../sfnt.ts';
 
 /**
@@ -7,16 +7,16 @@ import { Font } from '../../sfnt.ts';
  */
 function getMaxPoints(font: Font): number {
   return Math.max(...font.glyphs.map(glyph => {
-    return glyph.ttfContours.reduce((acc, ctr) => acc + ctr.length, 0);
+    return glyph.contours.reduce((acc, ctr) => acc + ctr.points.length, 0);
   })) || 0;
 }
 
 function getMaxContours(font: Font): number {
-  return Math.max(...font.glyphs.map(glyph => glyph.ttfContours.length)) || 0;
+  return Math.max(...font.glyphs.map(glyph => glyph.contours.length)) || 0;
 }
 
-export default function createMaxpTable(font: Font): ByteBuffer {
-  const buf = new ByteBuffer(32);
+export default function createMaxpTable(font: Font): BufferSlim {
+  const buf = new BufferSlim(32);
 
   buf.writeInt32(0x10000); // version
   buf.writeUint16(font.glyphs.length); // numGlyphs

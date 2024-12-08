@@ -1,14 +1,14 @@
-import ByteBuffer from 'microbuffer';
+import { BufferSlim } from '../../../../utils/buffer-slim.ts';
 import { Font, Glyph } from '../../sfnt.ts';
 
 function getFlags(glyph: Glyph): number[] {
   const result: number[] = [];
 
-  for (let i = 0; i < glyph.ttfContours.length; i++) {
-    const contour = glyph.ttfContours[i];
+  for (let i = 0; i < glyph.contours.length; i++) {
+    const contour = glyph.contours[i];
 
-    for (let j = 0; j < contour.length; j++) {
-      const point = contour[j];
+    for (let j = 0; j < contour.points.length; j++) {
+      const point = contour.points[j];
 
       let flag = point.onCurve ? 1 : 0;
 
@@ -71,10 +71,10 @@ function compactFlags(flags: number[]): number[] {
 function getCoords(glyph: Glyph, coordName: 'x' | 'y'): number[] {
   const result: number[] = [];
 
-  for (let i = 0; i < glyph.ttfContours.length; i++) {
-    const contour = glyph.ttfContours[i];
+  for (let i = 0; i < glyph.contours.length; i++) {
+    const contour = glyph.contours[i];
 
-    result.push(...contour.map(point => point[coordName]));
+    result.push(...contour.points.map(point => point[coordName]));
   }
 
   return result;
@@ -132,7 +132,7 @@ function tableSize(font: Font): number {
   return result;
 }
 
-export default function createGlyfTable(font: Font): ByteBuffer {
+export default function createGlyfTable(font: Font): BufferSlim {
   for (let i = 0; i < font.glyphs.length; i++) {
     const glyph = font.glyphs[i];
     glyph.ttf_flags = getFlags(glyph);
@@ -143,7 +143,7 @@ export default function createGlyfTable(font: Font): ByteBuffer {
     glyph.ttf_y = compactCoords(glyph.ttf_y);
   }
 
-  const buf = new ByteBuffer(tableSize(font));
+  const buf = new BufferSlim(tableSize(font));
 
   for (let i = 0; i < font.glyphs.length; i++) {
     const glyph = font.glyphs[i];
@@ -164,12 +164,12 @@ export default function createGlyfTable(font: Font): ByteBuffer {
     // Array of end points
     let endPtsOfContours = -1;
 
-    const ttfContours = glyph.ttfContours;
+    const contours = glyph.contours;
 
-    for (let j = 0; j < ttfContours.length; j++) {
-      const contour = ttfContours[j];
+    for (let j = 0; j < contours.length; j++) {
+      const contour = contours[j];
 
-      endPtsOfContours += contour.length;
+      endPtsOfContours += contour.points.length;
       buf.writeInt16(endPtsOfContours);
     }
 
