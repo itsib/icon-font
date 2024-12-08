@@ -1,68 +1,35 @@
-import { readFile } from 'node:fs/promises';
-import { slugify } from '../../utils/slugify.js';
-import { IconInfo, IconFontConfig } from '../../types.js';
-import { parseSvg } from '../../utils/parse-svg.js';
-import { SYMBOL_SIZE } from '../../utils/constants.js';
+import { Writable } from 'node:stream';
+import { SymbolMetadata } from '../../types/types.ts';
+import { StreamDirectoryReader } from '../../streams/stream-directory-reader.ts';
+import { StreamPrepareTransformer } from '../../streams/stream-prepare-transformer.ts';
+import { StreamSvgFontTransformer } from '../../streams/stream-svg-font-transformer.ts';
+import { AppConfig } from '../../types/app-config.ts';
 
-function renderHeader(fontName: string, metadata?: string) {
-  const slug = slugify(fontName);
-  let output = '<?xml version="1.0" standalone="no"?>\n';
-  output += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >\n';
-  output += '<svg xmlns="http://www.w3.org/2000/svg">\n';
+export async function generateFontSvg(config: Omit<AppConfig, 'output'>, _iconsInfo: SymbolMetadata[]): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const filesReadStream = new StreamDirectoryReader(config.input);
+    const prepareStream = new StreamPrepareTransformer();
+    const svgFontStream = new StreamSvgFontTransformer(config.name);
 
-  if (metadata) {
-    output += `<metadata>${metadata}</metadata>\n`;
-  }
+    let result = '';
+    const writeStream = new Writable({
+      write(chunk: any, _encoding: BufferEncoding, callback: (error?: (Error | null)) => void) {
+        result += chunk.toString();
+        callback();
+      },
+      final(callback: (error?: (Error | null)) => void) {
+        resolve(result);
+        callback();
+      },
+      destroy(error: Error | null, callback: (error?: (Error | null)) => void) {
+        if (error) {
+          reject(error);
+        }
+        callback(error);
+      }
+    });
 
-  output += '<defs>\n';
-  output += `  <font id="${slug}" horiz-adv-x="${SYMBOL_SIZE}">\n`;
-  output += `    <font-face\n`;
-  output += `        font-family="${fontName}"\n`;
-  output += `        units-per-em="${SYMBOL_SIZE}"\n`;
-  output += `        ascent="-${SYMBOL_SIZE}"\n`;
-  output += `        descent="0"\n`;
-  output += `        font-weight="400"\n`;
-  output += `        font-style="Regular"\n`;
-  output += `    />\n`;
-  output += `    <missing-glyph horiz-adv-x="0" />\n`;
-
-  return output;
+    filesReadStream.pipe(prepareStream).pipe(svgFontStream).pipe(writeStream);
+  })
 }
 
-function renderSymbol(file: IconInfo, svgPath: string) {
-  let output = '';
-  output += `    <glyph\n`;
-  output += `        glyph-name="${file.id}"\n`;
-  output += `        unicode="${file.unicode}"\n`;
-  output += `        horiz-adv-x="${SYMBOL_SIZE}"\n`;
-  output += `        d="${svgPath}"\n`;
-  output += `    />\n`;
-
-  return output;
-}
-
-function renderFooter() {
-  let output = '';
-  output += `  </font>\n`;
-  output += `</defs>\n`;
-  output += `</svg>\n`;
-  return output;
-}
-
-export async function generateFontSvg(config: Omit<IconFontConfig, 'output'>, files: IconInfo[]): Promise<string> {
-  let output = renderHeader(config.name);
-
-  for (let i = 0; i < files.length; i++) {
-    const svgIcon = await readFile(files[i].path, 'utf8');
-    const svgPath = parseSvg(svgIcon);
-
-    if (!svgPath) {
-      continue;
-    }
-    output += renderSymbol(files[i], svgPath);
-  }
-
-  output += renderFooter();
-
-  return output;
-}

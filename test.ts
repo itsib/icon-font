@@ -1,41 +1,43 @@
-import fs from 'node:fs';
 import path from 'node:path';
-import { SvgIconConfig, SvgIconTransformStream } from './src/utils/svg-icon-transform-stream';
-import { START_UNICODE } from './src/utils/constants';
-
+import { StreamDirectoryReader } from './src/streams/stream-directory-reader';
+import { StreamPrepareTransformer } from './src/streams/stream-prepare-transformer';
+import { StreamSvgFontTransformer } from './src/streams/stream-svg-font-transformer';
+import { Writable } from 'node:stream';
+import { SYMBOL_SIZE } from './src/utils/constants';
+import { StreamCssTransformer } from './src/streams/stream-css-transformer';
+import fs from 'node:fs';
 
 async function test() {
-  const id = 'settings-outline';
-  const tmpDir = path.join(process.cwd(), 'tmp');
-  const inputFile = path.join(process.cwd(), `svg-icons/${id}.svg`);
-  const outputFile = path.join(tmpDir, `${id}.svg`);
+  const input = path.join(process.cwd(), 'svg-icons');
+  const output = path.join(process.cwd(), 'tmp');
 
-  const code = START_UNICODE;
-  const iconInfo: SvgIconConfig = {
-    id: id,
-    name: id,
-    code: code,
-    unicode: `&#x${(code).toString(16).toUpperCase()};`,
-    canvasSize: 512,
-    shapeMaxSize: 480,
-    path: inputFile
-  }
+  const filesReadStream = new StreamDirectoryReader(input);
+  const prepareStream = new StreamPrepareTransformer();
+  const fileTransformerStream = new StreamCssTransformer('Icon Font', ['woff2', 'woff2', 'ttf', 'eot']);
 
-  fs.mkdirSync(tmpDir, { recursive: true });
+  const writeStream = fs.createWriteStream(path.join(output, 'icon-font.css'))
 
-  const writeStream = fs.createWriteStream(outputFile);
-  const readStream = fs.createReadStream(inputFile);
+  let result = '';
+  // const writeStream = new Writable({
+  //   write(chunk: any, _encoding: BufferEncoding, callback: (error?: (Error | null)) => void) {
+  //     result += chunk.toString();
+  //     callback();
+  //   },
+  //   final(callback: (error?: (Error | null)) => void) {
+  //     console.log(result);
+  //     callback();
+  //   },
+  //   destroy(error: Error | null, callback: (error?: (Error | null)) => void) {
+  //     if (error) {
+  //       console.log(error);
+  //     }
+  //     callback(error);
+  //   },
+  // });
 
-  const transformStream = new SvgIconTransformStream(iconInfo);
-
-  transformStream.on('error', err => {
-    console.error(err);
-  });
-
-  transformStream.destination(writeStream);
-
-  readStream.pipe(transformStream);
-
+  filesReadStream.pipe(prepareStream).pipe(fileTransformerStream).pipe(writeStream);
 }
 
 test();
+
+// console.log(ucs2decode('&#xEA13;'))

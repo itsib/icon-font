@@ -1,14 +1,14 @@
 import { cosmiconfig } from 'cosmiconfig';
-import { ConfigKeys, IconFontConfig } from '../types.js';
 import { Logger } from './logger.ts';
+import { AppConfig, AppConfigKeys } from '../types/app-config.ts';
 
-const FIELDS: ConfigKeys[] = ['input', 'output', 'name', 'fontUrl', 'prefix', 'types', 'port'];
+const FIELDS: AppConfigKeys[] = ['input', 'output', 'name', 'fontUrl', 'prefix', 'types', 'port'];
 
 const Seeker = cosmiconfig(__APP_NAME__, {
   searchStrategy: 'project',
 });
 
-export async function searchConfig(cwd: string): Promise<Partial<IconFontConfig | undefined>> {
+export async function searchConfig(cwd: string): Promise<Partial<AppConfig | undefined>> {
   try {
     const result = await Seeker.search(cwd);
     return !result?.isEmpty && result?.config ? result?.config?.default : undefined;
@@ -18,7 +18,7 @@ export async function searchConfig(cwd: string): Promise<Partial<IconFontConfig 
   }
 }
 
-export async function loadConfig(path: string): Promise<Partial<IconFontConfig | undefined>> {
+export async function loadConfig(path: string): Promise<Partial<AppConfig | undefined>> {
   try {
     const result = await Seeker.load(path);
     return !result?.isEmpty && result?.config ? result?.config?.default : undefined;
@@ -28,9 +28,9 @@ export async function loadConfig(path: string): Promise<Partial<IconFontConfig |
   }
 }
 
-export function mergeConfig(required: ConfigKeys[], ..._configs: Partial<IconFontConfig | undefined>[]): Required<IconFontConfig> {
+export function mergeConfig(required: AppConfigKeys[], ..._configs: Partial<AppConfig | undefined>[]): Required<AppConfig> {
   const configs = [..._configs].reverse();
-  const result: Partial<IconFontConfig> = {};
+  const result: Partial<AppConfig> = {};
 
   for (const key of required) {
     for (let i = 0; i < configs.length; i++) {
@@ -46,5 +46,5 @@ export function mergeConfig(required: ConfigKeys[], ..._configs: Partial<IconFon
     }
   }
 
-  return result as Required<IconFontConfig>;
+  return result as Required<AppConfig>;
 }

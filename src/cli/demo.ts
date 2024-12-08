@@ -1,10 +1,10 @@
 import { Command } from 'commander';
-import { ConfigKeys, IconFontConfig } from '../types.ts';
 import { loadConfig, mergeConfig, searchConfig } from '../utils/read-config.ts';
 import { DEFAULT_CONFIG } from '../default-config.ts';
 import { createServer } from '../server/server.ts';
 import { Logger } from '../utils/logger.ts';
 import { scanAvailablePort } from '../server/scan-available-port.ts';
+import { AppConfig, AppConfigKeys } from '../types/app-config.ts';
 
 export function createDemoCommand(): Command {
   const subprogram = new Command();
@@ -13,10 +13,10 @@ export function createDemoCommand(): Command {
     .alias('serve')
     .alias('d')
     .description('run web server with the icon font demo')
-    .action(async (args: Omit<IconFontConfig, 'output'> & { config?: string, cwd?: string }) => {
+    .action(async (args: Omit<AppConfig, 'output'> & { config?: string, cwd?: string }) => {
       const { config: configFilePath, cwd, ...configArgs } = args;
       const configFile = configFilePath ? await loadConfig(configFilePath) : await searchConfig(process.cwd());
-      const requiredFields: ConfigKeys[] = ['input', 'name', 'prefix', 'types', 'fontUrl', 'port']
+      const requiredFields: AppConfigKeys[] = ['input', 'name', 'prefix', 'types', 'fontUrl', 'port']
       const config = mergeConfig(requiredFields, configArgs, configFile, DEFAULT_CONFIG);
 
       const server = createServer(config);

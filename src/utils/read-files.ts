@@ -1,11 +1,11 @@
+import { SymbolMetadata } from '../types/types.ts';
 import { readdir } from 'node:fs/promises';
-import { join, extname } from 'node:path';
-import { IconInfo } from '../types.js';
-import { START_UNICODE } from './constants.js';
+import { extname, join } from 'node:path';
+import { SHAPE_SIZE, START_UNICODE, SYMBOL_SIZE } from './constants.ts';
 
 const testExpression = /(^|\/|\\)(?:((?:u[0-9a-f]{4,6},?)+)-)(.+)\.svg$/i;
 
-function compareFiles(fileA: string, fileB: string): -1 | 0 | 1 {
+export function compareFiles(fileA: string, fileB: string): -1 | 0 | 1 {
   const hasUnicodeA = testExpression.test(fileA);
   const hasUnicodeB = testExpression.test(fileB);
 
@@ -20,13 +20,13 @@ function compareFiles(fileA: string, fileB: string): -1 | 0 | 1 {
   }
 }
 
-export async function readFiles(path: string, ext = 'svg'): Promise<IconInfo[]> {
+export async function readFiles(path: string, ext = 'svg'): Promise<SymbolMetadata[]> {
   const files = await readdir(path, { encoding: 'utf8' });
   let index = 0;
 
   files.sort(compareFiles);
 
-  return files.reduce<IconInfo[]>((acc, filename) => {
+  return files.reduce<SymbolMetadata[]>((acc, filename) => {
     if (filename.endsWith(`.${ext}`)) {
       const name = filename.replace(extname(filename), '');
       const id = `${name}${(0 === index ? '' : '-' + index)}`;
@@ -38,7 +38,9 @@ export async function readFiles(path: string, ext = 'svg'): Promise<IconInfo[]> 
         name: name,
         code: code,
         unicode: unicode,
-        path: join(path, filename),
+        file: join(path, filename),
+        size: SYMBOL_SIZE,
+        padding: (SYMBOL_SIZE - SHAPE_SIZE) / 2
       });
 
       index++;

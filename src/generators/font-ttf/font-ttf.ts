@@ -1,15 +1,16 @@
-import svg2ttf from 'svg2ttf';
 import { Buffer } from 'node:buffer';
-import { IconInfo, IconFontConfig } from '../../types.js';
-import { generateFontSvg } from '../font-svg/font-svg.js';
+import { SymbolMetadata } from '../../types/types.ts';
+import { generateFontSvg } from '../font-svg/font-svg.ts';
+import { AppConfig } from '../../types';
+import { svg2ttf } from '../../svg-to-ttf'
 
 export async function generateFontTtfBySvg(fontSvg: string) {
-  const ttf = svg2ttf(fontSvg, {});
+  const ttfFont = svg2ttf(fontSvg);
 
-  return Buffer.from(ttf.buffer);
+  return Buffer.from(ttfFont.buffer);
 }
 
-export async function generateFontTtf(config: Omit<IconFontConfig, 'output'>, files: IconInfo[]): Promise<Buffer> {
+export async function generateFontTtf(config: Omit<AppConfig, 'output'>, files: SymbolMetadata[]): Promise<Buffer> {
   const fontSvg = await generateFontSvg(config, files);
 
   return generateFontTtfBySvg(fontSvg);

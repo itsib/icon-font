@@ -1,4 +1,4 @@
-import { IconInfo } from '../../types.js';
+import { SymbolMetadata } from '../../types/types.ts';
 import { LOGO_ICON } from '../../utils/constants.ts';
 
 const HEAD = `
@@ -187,7 +187,7 @@ const HEAD = `
 </head>
 `;
 
-export function generateIndexHtml(caption: string, prefix: string, files: IconInfo[]): string {
+export function generateIndexHtml(caption: string, prefix: string, files: SymbolMetadata[]): string {
   let output = '<!DOCTYPE html>\n';
   output += '<html lang="en">\n';
   output += HEAD.replace('{{caption}}', caption);

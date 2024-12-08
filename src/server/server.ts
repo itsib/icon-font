@@ -1,12 +1,13 @@
 import http from 'node:http';
 import url from 'node:url';
 import path from 'node:path';
-import { IconFontConfig } from '../types.js';
 import { handleRoute } from './router.js';
 import { Watcher } from './watcher.js';
-import { readFiles } from '../utils/read-files.js';
 
-export function createServer(config: Omit<IconFontConfig, 'output'>): http.Server {
+import { readFiles } from '../utils/read-files.ts';
+import { AppConfig } from '../types/app-config.ts';
+
+export function createServer(config: Omit<AppConfig, 'output'>): http.Server {
   let shouldReload = false;
   const watcher = new Watcher(config.input);
 
