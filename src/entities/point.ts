@@ -1,4 +1,4 @@
-import { PointLike } from '../../types';
+import { PointLike } from '../types';
 
 export class Point implements PointLike {
   x: number;

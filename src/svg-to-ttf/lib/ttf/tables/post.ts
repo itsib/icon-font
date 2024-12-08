@@ -1,4 +1,4 @@
-import { BufferSlim } from '../../../../utils/buffer-slim.ts';
+import { BufferByte } from '../../../../entities/buffer-byte.ts';
 import { Font } from '../../sfnt.ts';
 
 function tableSize(font: Font, names: Uint8Array[]): number {
@@ -24,7 +24,7 @@ function pascalString(str: string): Uint8Array {
   return Uint8Array.from(bytes);
 }
 
-export default function createPostTable(font: Font): BufferSlim {
+export default function createPostTable(font: Font): BufferByte {
   const names: Uint8Array[] = [];
 
   font.glyphs.forEach(glyph => {
@@ -33,7 +33,7 @@ export default function createPostTable(font: Font): BufferSlim {
     }
   });
 
-  const buf = new BufferSlim(tableSize(font, names));
+  const buf = new BufferByte(tableSize(font, names));
 
   buf.writeInt32(0x20000); // formatType,  version 2.0
   buf.writeInt32(font.italicAngle); // italicAngle

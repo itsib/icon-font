@@ -1,4 +1,4 @@
-import { BufferSlim } from '../../../../utils/buffer-slim.ts';
+import { BufferByte } from '../../../../entities/buffer-byte.ts';
 import { Font } from '../../sfnt.ts';
 
 function dateToUInt64(date: Date): number {
@@ -6,8 +6,8 @@ function dateToUInt64(date: Date): number {
   return Math.floor((date.getTime() - startDate.getTime()) / 1000);
 }
 
-export default function createHeadTable(font: Font): BufferSlim {
-  const buf = new BufferSlim(54); // fixed table length
+export default function createHeadTable(font: Font): BufferByte {
+  const buf = new BufferByte(54); // fixed table length
 
   buf.writeInt32(0x10000); // version
   buf.writeInt32(font.revision * 0x10000); // fontRevision

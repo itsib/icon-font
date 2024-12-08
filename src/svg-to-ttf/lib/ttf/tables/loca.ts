@@ -1,14 +1,14 @@
-import { BufferSlim } from '../../../../utils/buffer-slim.ts';
+import { BufferByte } from '../../../../entities/buffer-byte.ts';
 import { Font, Glyph } from '../../sfnt.ts';
 
 function tableSize(font: Font, isShortFormat: boolean): number {
   return (font.glyphs.length + 1) * (isShortFormat ? 2 : 4); // by glyph count + tail
 }
 
-export default function createLocaTable(font: Font): BufferSlim {
+export default function createLocaTable(font: Font): BufferByte {
   const isShortFormat = font.ttf_glyph_size < 0x20000;
 
-  const buf = new BufferSlim(tableSize(font, isShortFormat));
+  const buf = new BufferByte(tableSize(font, isShortFormat));
 
   let location = 0;
 

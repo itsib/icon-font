@@ -1,7 +1,7 @@
 // Precision used to check determinant in quad and cubic solvers,
 // any number lower than this is considered to be zero.
 // `8.67e-19` is an example of real error occurring in tests.
-import { Point } from '../svg-to-ttf/lib/point.ts';
+import { Point } from '../entities/point.ts';
 
 const epsilon = 1e-16;
 

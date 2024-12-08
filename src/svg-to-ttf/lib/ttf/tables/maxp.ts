@@ -1,4 +1,4 @@
-import { BufferSlim } from '../../../../utils/buffer-slim.ts';
+import { BufferByte } from '../../../../entities/buffer-byte.ts';
 import { Font } from '../../sfnt.ts';
 
 /**
@@ -15,8 +15,8 @@ function getMaxContours(font: Font): number {
   return Math.max(...font.glyphs.map(glyph => glyph.contours.length)) || 0;
 }
 
-export default function createMaxpTable(font: Font): BufferSlim {
-  const buf = new BufferSlim(32);
+export default function createMaxpTable(font: Font): BufferByte {
+  const buf = new BufferByte(32);
 
   buf.writeInt32(0x10000); // version
   buf.writeUint16(font.glyphs.length); // numGlyphs

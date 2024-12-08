@@ -1,4 +1,4 @@
-import { BufferSlim } from '../../../../utils/buffer-slim.ts';
+import { BufferByte } from '../../../../entities/buffer-byte.ts';
 import { Font, Glyph } from '../../sfnt.ts';
 
 interface Segment {
@@ -15,7 +15,7 @@ interface CodePoint {
 interface TableHeader {
   platformID: number;
   encodingID: number;
-  table: BufferSlim;
+  table: BufferByte;
 }
 
 function getIDByUnicode(font: Font, unicode: number): number {
@@ -75,7 +75,7 @@ function getCodePoints(codePoints: Font['codePoints'], bounds?: number): CodePoi
   return result;
 }
 
-function bufferForTable(format: number, length: number): BufferSlim {
+function bufferForTable(format: number, length: number): BufferByte {
   const fieldWidth = format === 8 || format === 10 || format === 12 || format === 13 ? 4 : 2;
 
   length += (0
@@ -85,7 +85,7 @@ function bufferForTable(format: number, length: number): BufferSlim {
   );
 
   const LANGUAGE = 0;
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   const writer = fieldWidth === 4 ? buffer.writeUint32 : buffer.writeUint16;
 
@@ -99,7 +99,7 @@ function bufferForTable(format: number, length: number): BufferSlim {
   return buffer;
 }
 
-function createFormat0Table(font: Font): BufferSlim {
+function createFormat0Table(font: Font): BufferByte {
   const FORMAT = 0;
   const length = 0xff + 1;
 
@@ -111,7 +111,7 @@ function createFormat0Table(font: Font): BufferSlim {
   return buffer;
 }
 
-function createFormat4Table(font: Font): BufferSlim {
+function createFormat4Table(font: Font): BufferByte {
   const FORMAT = 4;
 
   const segments = getSegments(font, 0xFFFF);
@@ -190,7 +190,7 @@ function createFormat4Table(font: Font): BufferSlim {
   return buffer;
 }
 
-function createFormat12Table(font: Font): BufferSlim {
+function createFormat12Table(font: Font): BufferByte {
   const FORMAT = 12;
 
   const codePoints = getCodePoints(font.codePoints);
@@ -214,7 +214,7 @@ function createFormat12Table(font: Font): BufferSlim {
   return buffer;
 }
 
-export default function createCMapTable(font: Font): BufferSlim {
+export default function createCMapTable(font: Font): BufferByte {
   /**
    * +2 platform
    * +2 encoding
@@ -273,7 +273,7 @@ export default function createCMapTable(font: Font): BufferSlim {
 
   const length = tableOffset;
 
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   buffer.writeUint16(0);
   buffer.writeUint16(tableHeaders.length);

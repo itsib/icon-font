@@ -1,5 +1,5 @@
 import { slugify } from '../../utils/slugify.ts';
-import { Contour, ContourPoint } from '../../types';
+import { Contour } from '../../types';
 
 export interface Ligature {
   ligature: string;

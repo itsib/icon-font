@@ -1,8 +1,8 @@
 import { identifier } from '../utils.ts';
-import { BufferSlim } from '../../../../utils/buffer-slim.ts';
+import { BufferByte } from '../../../../entities/buffer-byte.ts';
 import { Font, Ligature, LigatureGroup } from '../../sfnt.ts';
 
-function createScript(): BufferSlim {
+function createScript(): BufferByte {
   /**
    * +2 Script DefaultLangSys Offset
    * +2 Script[0] LangSysCount (0)
@@ -18,7 +18,7 @@ function createScript(): BufferSlim {
 
   const length = scriptRecord + langSys;
 
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   // Script Record
   // Offset to the start of langSys from the start of scriptRecord
@@ -40,7 +40,7 @@ function createScript(): BufferSlim {
   return buffer;
 }
 
-function createScriptList(): BufferSlim {
+function createScriptList(): BufferByte {
   /**
    * +4 Tag
    * +2 Offset
@@ -48,7 +48,7 @@ function createScriptList(): BufferSlim {
   const scriptSize = 6;
 
   // tags should be arranged alphabetically
-  const scripts: [string, BufferSlim][] = [
+  const scripts: [string, BufferByte][] = [
     ['DFLT', createScript()],
     ['latn', createScript()]
   ];
@@ -63,7 +63,7 @@ function createScriptList(): BufferSlim {
 
   const length = header + tableLengths;
 
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   // Script count
   buffer.writeUint16(scripts.length);
@@ -93,7 +93,7 @@ function createScriptList(): BufferSlim {
 }
 
 // Write one feature containing all ligatures
-function createFeatureList(): BufferSlim {
+function createFeatureList(): BufferByte {
   /**
    * +2 FeatureCount
    * +4 FeatureTag[0]
@@ -107,7 +107,7 @@ function createFeatureList(): BufferSlim {
    */
   const length = header + 6;
 
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   // FeatureCount
   buffer.writeUint16(1);
@@ -125,7 +125,7 @@ function createFeatureList(): BufferSlim {
   return buffer;
 }
 
-function createLigatureCoverage(font: Font, ligatureGroups: LigatureGroup[]): BufferSlim {
+function createLigatureCoverage(font: Font, ligatureGroups: LigatureGroup[]): BufferByte {
   const glyphCount = ligatureGroups.length;
 
   /**
@@ -134,7 +134,7 @@ function createLigatureCoverage(font: Font, ligatureGroups: LigatureGroup[]): Bu
    */
   const length = 4 + (2 * glyphCount);
 
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   // CoverageFormat
   buffer.writeUint16(1);
@@ -149,7 +149,7 @@ function createLigatureCoverage(font: Font, ligatureGroups: LigatureGroup[]): Bu
   return buffer;
 }
 
-function createLigatureTable(font: any, ligature: any): BufferSlim {
+function createLigatureTable(font: any, ligature: any): BufferByte {
   const allCodePoints = font.codePoints;
 
   const unicode = ligature.unicode;
@@ -159,7 +159,7 @@ function createLigatureTable(font: any, ligature: any): BufferSlim {
    */
   const length = 4 + 2 * (unicode.length - 1);
 
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   // LigGlyph
   let glyph = ligature.glyph;
@@ -178,8 +178,8 @@ function createLigatureTable(font: any, ligature: any): BufferSlim {
   return buffer;
 }
 
-function createLigatureSet(font: Font, codePoint: number, ligatures: Ligature[]): BufferSlim {
-  const ligatureTables: BufferSlim[] = [];
+function createLigatureSet(font: Font, codePoint: number, ligatures: Ligature[]): BufferByte {
+  const ligatureTables: BufferByte[] = [];
 
   ligatures.forEach(ligature => {
     ligatureTables.push(createLigatureTable(font, ligature));
@@ -194,7 +194,7 @@ function createLigatureSet(font: Font, codePoint: number, ligatures: Ligature[])
 
   const length = offset + tableLengths;
 
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   // LigatureCount
   buffer.writeUint16(ligatures.length);
@@ -214,8 +214,8 @@ function createLigatureSet(font: Font, codePoint: number, ligatures: Ligature[])
   return buffer;
 }
 
-function createLigatureList(font: Font, ligatureGroups: LigatureGroup[]): BufferSlim {
-  const sets: BufferSlim[] = [];
+function createLigatureList(font: Font, ligatureGroups: LigatureGroup[]): BufferByte {
+  const sets: BufferByte[] = [];
 
   ligatureGroups.forEach(group => {
     const set = createLigatureSet(font, group.codePoint, group.ligatures);
@@ -245,7 +245,7 @@ function createLigatureList(font: Font, ligatureGroups: LigatureGroup[]): Buffer
 
   const length = tableOffset + coverageOffset + coverage.length;
 
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   // Lookup type 4 – ligatures
   buffer.writeUint16(4);
@@ -284,7 +284,7 @@ function createLigatureList(font: Font, ligatureGroups: LigatureGroup[]): Buffer
 }
 
 // Add a lookup for each ligature
-function createLookupList(font: Font): BufferSlim {
+function createLookupList(font: Font): BufferByte {
   const ligatures = font.ligatures;
 
   const groupedLigatures: { [key: number]: Ligature[] } = {};
@@ -323,7 +323,7 @@ function createLookupList(font: Font): BufferSlim {
 
   const length = offset + set.length;
 
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   // Lookup count
   buffer.writeUint16(1);
@@ -337,12 +337,12 @@ function createLookupList(font: Font): BufferSlim {
   return buffer;
 }
 
-export default function createGSUB(font: Font): BufferSlim {
+export default function createGSUB(font: Font): BufferByte {
   const scriptList = createScriptList();
   const featureList = createFeatureList();
   const lookupList = createLookupList(font);
 
-  const lists: BufferSlim[] = [scriptList, featureList, lookupList];
+  const lists: BufferByte[] = [scriptList, featureList, lookupList];
 
   /**
    * +4 Version
@@ -356,7 +356,7 @@ export default function createGSUB(font: Font): BufferSlim {
   });
 
   const length = offset;
-  const buffer = new BufferSlim(length);
+  const buffer = new BufferByte(length);
 
   // Version
   buffer.writeUint32(0x00010000);

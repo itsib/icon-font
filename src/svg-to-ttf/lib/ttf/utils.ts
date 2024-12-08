@@ -1,4 +1,4 @@
-import { Point } from '../point.ts';
+import { Point } from '../../../entities/point.ts';
 import { Contour, ContourPoint } from '../../../types';
 
 export function simplify(contours: Contour[], accuracy: number): Contour[] {

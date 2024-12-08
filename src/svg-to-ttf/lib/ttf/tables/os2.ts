@@ -1,5 +1,5 @@
 import { identifier } from '../utils.ts';
-import { BufferSlim } from '../../../../utils/buffer-slim.ts';
+import { BufferByte } from '../../../../entities/buffer-byte.ts';
 import { Font } from '../../sfnt.ts';
 
 /**
@@ -23,11 +23,11 @@ function getLastCharIndex(font: Font): number {
 }
 
 // OpenType spec: https://docs.microsoft.com/en-us/typography/opentype/spec/os2
-export default function createOS2Table(font: Font): BufferSlim {
+export default function createOS2Table(font: Font): BufferByte {
   // use at least 2 for ligatures and kerning
   const maxContext = font.ligatures.reduce((a, l) => Math.max(a, l.unicode.length), 2);
 
-  const buf = new BufferSlim(96);
+  const buf = new BufferByte(96);
 
   // Version 5 is not supported in the Android 5 browser.
   buf.writeUint16(4); // version

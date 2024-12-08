@@ -1,4 +1,4 @@
-export class BufferSlim {
+export class BufferByte {
 
   buffer: Uint8Array;
 
@@ -8,8 +8,8 @@ export class BufferSlim {
 
   offset: number;
 
-  constructor(buffer: number | BufferSlim, start?: number, length?: number) {
-    if (buffer instanceof BufferSlim) {
+  constructor(buffer: number | BufferByte, start?: number, length?: number) {
+    if (buffer instanceof BufferByte) {
       this.buffer = buffer.buffer;
       this.start = (start || 0) + buffer.start;
     } else {

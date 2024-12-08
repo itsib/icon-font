@@ -1,4 +1,4 @@
-import { BufferSlim } from '../../utils/buffer-slim.ts';
+import { BufferByte } from '../../entities/buffer-byte.ts';
 import createGSUBTable from './ttf/tables/gsub.ts';
 import createOS2Table from './ttf/tables/os2.ts';
 import createCMapTable from './ttf/tables/cmap.ts';
@@ -17,8 +17,8 @@ import { Font } from './sfnt.ts';
 interface Table {
   innerName: string;
   order: number;
-  create: (font: Font) => BufferSlim;
-  buffer?: BufferSlim;
+  create: (font: Font) => BufferByte;
+  buffer?: BufferByte;
   length?: number;
   corLength?: number;
   checkSum?: number;
@@ -54,7 +54,7 @@ function ulong(t: number): number {
   return t;
 }
 
-function calc_checksum(buf: BufferSlim): number {
+function calc_checksum(buf: BufferByte): number {
   let sum = 0;
   const nlongs = Math.floor(buf.length / 4);
 
@@ -76,7 +76,7 @@ function calc_checksum(buf: BufferSlim): number {
   return sum;
 }
 
-export function generateTTF(font: Font): BufferSlim {
+export function generateTTF(font: Font): BufferByte {
   font.glyphs.forEach(glyph => {
     glyph.contours = utils.simplify(glyph.contours, 0.3);
     glyph.contours = utils.simplify(glyph.contours, 0.3);
@@ -104,7 +104,7 @@ export function generateTTF(font: Font): BufferSlim {
     offset += table.corLength!;
   });
 
-  const buf = new BufferSlim(bufSize);
+  const buf = new BufferByte(bufSize);
 
   const entrySelector = Math.floor(Math.log(TABLES.length) / Math.LN2);
   const searchRange = Math.pow(2, entrySelector) * 16;

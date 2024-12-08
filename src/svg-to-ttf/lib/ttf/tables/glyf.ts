@@ -1,4 +1,4 @@
-import { BufferSlim } from '../../../../utils/buffer-slim.ts';
+import { BufferByte } from '../../../../entities/buffer-byte.ts';
 import { Font, Glyph } from '../../sfnt.ts';
 
 function getFlags(glyph: Glyph): number[] {
@@ -132,7 +132,7 @@ function tableSize(font: Font): number {
   return result;
 }
 
-export default function createGlyfTable(font: Font): BufferSlim {
+export default function createGlyfTable(font: Font): BufferByte {
   for (let i = 0; i < font.glyphs.length; i++) {
     const glyph = font.glyphs[i];
     glyph.ttf_flags = getFlags(glyph);
@@ -143,7 +143,7 @@ export default function createGlyfTable(font: Font): BufferSlim {
     glyph.ttf_y = compactCoords(glyph.ttf_y);
   }
 
-  const buf = new BufferSlim(tableSize(font));
+  const buf = new BufferByte(tableSize(font));
 
   for (let i = 0; i < font.glyphs.length; i++) {
     const glyph = font.glyphs[i];

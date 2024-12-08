@@ -1,7 +1,7 @@
 import { SVGPathData } from 'svg-pathdata';
 import { ucs2encode } from './lib/ucs2.ts';
 import { generateTTF } from './lib/ttf.ts';
-import { BufferSlim } from '../utils/buffer-slim.ts';
+import { BufferByte } from '../entities/buffer-byte.ts';
 import { load } from './lib/svg.ts';
 import { svgPathToContour } from '../svg-helpers/svg-path-to-contour.ts';
 import { Font, Glyph } from './lib/sfnt.ts';
@@ -20,7 +20,7 @@ interface Options {
   ts?: string;
 }
 
-export function svg2ttf(svgString: string, options?: Options): BufferSlim {
+export function svg2ttf(svgString: string, options?: Options): BufferByte {
   const font = new Font();
   const svgFont = load(svgString);
 
