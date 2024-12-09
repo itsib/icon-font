@@ -160,13 +160,12 @@ export function svg2ttf(svgString: string, options?: Options): BufferByte {
     const glyphSize = Math.max(glyph.width, glyph.height);
     const accuracy = (glyphSize > 500) ? 0.3 : glyphSize * 0.0006;
 
-    const svgPath = new SVGPathData(glyph.d);
+    const svgPath = new SVGPathData(glyph.d)
+      .toAbs()
+      .aToC()
+      .normalizeST();
     glyph.contours = svgPathToContour(svgPath, accuracy);
   });
 
   return generateTTF(font);
 }
-
-// export function createTtf(fontName: string, metadata?: string) {
-//   const font = new FontTTF({ fontName, metadata });
-// }

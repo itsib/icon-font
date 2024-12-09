@@ -54,8 +54,7 @@ export class TransformToSvgFont extends Transform {
       this._isHeaderRendered = true;
     }
 
-    const path = new SVGPathData(chunk.toString('utf8'))
-      .scale(1, -1)
+    const path = new SVGPathData(chunk.toString())
       .encode();
 
     output += `    <glyph\n`;

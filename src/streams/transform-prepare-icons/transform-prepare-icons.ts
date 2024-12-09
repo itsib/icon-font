@@ -9,6 +9,7 @@ import { svgRectToPath } from '../../svg-helpers/svg-rect-to-path.ts';
 import { svgLineToPath } from '../../svg-helpers/svg-line-to-path.ts';
 import { svgCircleToPath } from '../../svg-helpers/svg-circle-to-path.ts';
 import type { SvgTransformation } from '../../types';
+import { round } from '../../utils/round.ts';
 
 export class TransformPrepareIcons extends Transform {
 
@@ -226,18 +227,16 @@ export class TransformPrepareIcons extends Transform {
       svgPathData = this._adjustSize(svgPathData);
       svgPathData = this._adjustAlign(svgPathData);
 
-      const { x, y, width, height } = this._sizeAndPos(svgPathData);
-
-      const path = svgPathData.round(100).encode();
+      const path = svgPathData.round(100).scale(1, -1).encode();
 
       const meta: SymbolMeta = {
         index: chunk.metadata.index,
         name: chunk.metadata.name,
         codepoint: this._startUnicode + chunk.metadata.index,
-        x: x,
-        y: y,
-        width: width,
-        height: height,
+        x: 0,
+        y: 0,
+        width: this._size,
+        height: this._size,
       }
 
       callback(null, populateMetadata(Buffer.from(path), meta));

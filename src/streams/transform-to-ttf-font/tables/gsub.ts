@@ -1,6 +1,6 @@
-import { tableIdentifier } from '../../../../utils/string-to-bytes.ts';
-import { BufferByte } from '../../../../entities/buffer-byte.ts';
-import { Font, Ligature, LigatureGroup } from '../../sfnt.ts';
+import { tableIdentifier } from '../../../utils/string-to-bytes.ts';
+import { BufferByte } from '../../../entities/buffer-byte.ts';
+import { Font, Ligature, LigatureGroup } from '../../../entities/font.ts';
 
 function createScript(): BufferByte {
   /**
@@ -337,7 +337,7 @@ function createLookupList(font: Font): BufferByte {
   return buffer;
 }
 
-export default function createGSUB(font: Font): BufferByte {
+export function createGSUBTable(font: Font): BufferByte {
   const scriptList = createScriptList();
   const featureList = createFeatureList();
   const lookupList = createLookupList(font);

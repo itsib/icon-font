@@ -4,7 +4,6 @@ import { round } from '../utils/round.ts';
 import { Contour } from '../types';
 
 export function svgPathToContour(pathData: SVGPathData, accuracy = 0.3): Contour[] {
-  pathData = pathData.toAbs().aToC().normalizeST();
   let lastX = 0;
   let lastY = 0;
   let contourStartX = 0;

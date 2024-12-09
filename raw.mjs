@@ -9,8 +9,6 @@ import path from 'node:path';
  */
 function renderBytes(bytes) {
   return bytes.reduce((acc, byte, index) => {
-
-
     if (byte <= 0x1F || (byte >= 0x7F && byte <= 0xA0) || byte === 0xFF || byte === 0xA8) {
       return acc + '.';
     }

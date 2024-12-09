@@ -30,6 +30,6 @@ export async function generateFontSvg(config: Omit<AppConfig, 'output'>, _iconsI
     });
 
     filesReadStream.pipe(prepareStream).pipe(svgFontStream).pipe(writeStream);
-  })
+  });
 }
 

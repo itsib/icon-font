@@ -103,16 +103,3 @@ export function toRelative(contours: Contour[]): Contour[] {
   return resContours;
 }
 
-export function identifier(string: string, littleEndian?: boolean): number {
-  let result = 0;
-
-  for (let i = 0; i < string.length; i++) {
-    result = result << 8;
-    const index = littleEndian ? string.length - i - 1 : i;
-
-    result += string.charCodeAt(index);
-  }
-
-  return result;
-}
-

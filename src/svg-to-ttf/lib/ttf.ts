@@ -11,8 +11,9 @@ import createMaxpTable from './ttf/tables/maxp.ts';
 import createNameTable from './ttf/tables/name.ts';
 import createPostTable from './ttf/tables/post.ts';
 
-import * as utils from './ttf/utils.ts';
+import { interpolate, removeClosingReturnPoints, roundPoints, simplify, toRelative } from './ttf/utils.ts';
 import { Font } from './sfnt.ts';
+import { tableIdentifier } from '../../utils/string-to-bytes.ts';
 
 interface Table {
   innerName: string;
@@ -78,12 +79,12 @@ function calc_checksum(buf: BufferByte): number {
 
 export function generateTTF(font: Font): BufferByte {
   font.glyphs.forEach(glyph => {
-    glyph.contours = utils.simplify(glyph.contours, 0.3);
-    glyph.contours = utils.simplify(glyph.contours, 0.3);
-    glyph.contours = utils.interpolate(glyph.contours, 1.1);
-    glyph.contours = utils.roundPoints(glyph.contours);
-    glyph.contours = utils.removeClosingReturnPoints(glyph.contours);
-    glyph.contours = utils.toRelative(glyph.contours);
+    glyph.contours = simplify(glyph.contours, 0.3);
+    glyph.contours = simplify(glyph.contours, 0.3);
+    glyph.contours = interpolate(glyph.contours, 1.1);
+    glyph.contours = roundPoints(glyph.contours);
+    glyph.contours = removeClosingReturnPoints(glyph.contours);
+    glyph.contours = toRelative(glyph.contours);
   });
 
   const headerSize = 12 + 16 * TABLES.length;
@@ -117,7 +118,7 @@ export function generateTTF(font: Font): BufferByte {
   buf.writeUint16(rangeShift);
 
   TABLES.forEach(table => {
-    buf.writeUint32(utils.identifier(table.innerName));
+    buf.writeUint32(tableIdentifier(table.innerName));
     buf.writeUint32(table.checkSum!);
     buf.writeUint32(table.offset!);
     buf.writeUint32(table.length!);

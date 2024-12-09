@@ -1,6 +1,6 @@
-import { BufferByte } from '../../../../entities/buffer-byte.ts';
-import { Font } from '../../sfnt.ts';
-import { tableIdentifier } from '../../../../utils/string-to-bytes.ts';
+import { BufferByte } from '../../../entities/buffer-byte.ts';
+import { Font } from '../../../entities/font.ts';
+import { tableIdentifier } from '../../../utils/string-to-bytes.ts';
 
 /**
  * Get first glyph unicode
@@ -23,7 +23,7 @@ function getLastCharIndex(font: Font): number {
 }
 
 // OpenType spec: https://docs.microsoft.com/en-us/typography/opentype/spec/os2
-export default function createOS2Table(font: Font): BufferByte {
+export function createOS2Table(font: Font): BufferByte {
   // use at least 2 for ligatures and kerning
   const maxContext = font.ligatures.reduce((a, l) => Math.max(a, l.unicode.length), 2);
 

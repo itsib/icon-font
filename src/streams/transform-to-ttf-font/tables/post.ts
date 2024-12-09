@@ -1,6 +1,6 @@
-import { BufferByte } from '../../../../entities/buffer-byte.ts';
-import { Font } from '../../sfnt.ts';
-import { stringToAscII } from '../../../../utils/string-to-bytes.ts';
+import { BufferByte } from '../../../entities/buffer-byte.ts';
+import { Font } from '../../../entities/font.ts';
+import { stringToAscII } from '../../../utils/string-to-bytes.ts';
 
 function tableSize(font: Font, names: Uint8Array[]): number {
   let result = 36; // table header
@@ -12,7 +12,7 @@ function tableSize(font: Font, names: Uint8Array[]): number {
   return result;
 }
 
-export default function createPostTable(font: Font): BufferByte {
+export function createPostTable(font: Font): BufferByte {
   const names: Uint8Array[] = [];
 
   font.glyphs.forEach(glyph => {

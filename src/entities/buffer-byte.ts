@@ -8,6 +8,8 @@ export class BufferByte {
 
   offset: number;
 
+  private _logPosition?: number;
+
   constructor(buffer: number | BufferByte, start?: number, length?: number) {
     if (buffer instanceof BufferByte) {
       this.buffer = buffer.buffer;
@@ -121,6 +123,19 @@ export class BufferByte {
     this.offset += data.length;
   }
 
+  slice(offset = 0, length?: number): Uint8Array {
+    length = length || (this.length - offset);
+    const start = offset + this.start;
+    const end = start + length;
+
+    let index = 0
+    const buffer = new Uint8Array(length);
+    for (let i = start; i < end; i++) {
+      buffer[index++] = this.buffer[i];
+    }
+    return buffer;
+  }
+
   toString(offset = 0, length?: number): string {
     length = length || (this.length - offset);
 
@@ -132,6 +147,81 @@ export class BufferByte {
       string += String.fromCharCode(this.buffer[i]);
     }
     return string;
+  }
+
+  startLog() {
+    if ((this.offset % 32) === 0) {
+      this._logPosition = this.offset;
+    } else {
+      this._logPosition = Math.floor(this.offset / 32) * 32;
+    }
+  }
+
+  endLog() {
+    if (this._logPosition == null) {
+      throw new Error('You need call from method before');
+    }
+
+    const length = Math.ceil((this.offset - this._logPosition) / 32) * 32;
+
+    this.log(this._logPosition, length);
+    this._logPosition = undefined;
+  }
+
+  log(offset?: number, length?: number) {
+    const renderBytes = (bytes: number[]) => {
+      return bytes.reduce((acc, byte) => {
+        if (byte <= 0x1F || (byte >= 0x7F && byte <= 0xA0) || byte === 0xFF || byte === 0xA8) {
+          return acc + '.';
+        }
+
+        const char = String.fromCodePoint(byte);
+        if (/^\s+$/.test(char)) {
+          return acc + ' ';
+        }
+        return acc + char;
+      }, '');
+    }
+
+    const buffer = offset == null ? this.buffer : this.slice(offset, length);
+    const addressLength = buffer.length.toString(16).length;
+    const line = `─`.repeat(49 + addressLength + 4);
+
+    const ascii = [];
+
+    process.stdout.write(`\x1b[2;37m${line}\x1b[0m\n`);
+    for (let i = 0; i < buffer.length; i++) {
+      /** @type {number} */
+      const byte = buffer[i];
+
+      // Render address column
+      if (i % 16 === 0) {
+        const address = (i + (offset || 0)).toString(16).toUpperCase().padStart(addressLength, '0');
+        process.stdout.write(`\x1b[0;30;107m ${address} \x1b[0m  `);
+      }
+
+      if (byte === 0) {
+        process.stdout.write('\x1b[2;37m00\x1b[0m ');
+      } else if (byte === 255) {
+        process.stdout.write('\x1b[2;33mFF\x1b[0m ');
+      } else {
+        const byteHex = byte.toString(16).padStart(2, '0').toUpperCase();
+        process.stdout.write(byteHex + ' ');
+      }
+      ascii.push(byte);
+
+      if (i > 0 && (i + 1) % 8 === 0) {
+        process.stdout.write('  ');
+      }
+
+      if (i > 0 && (i + 1) % 16 === 0) {
+        process.stdout.write(` \x1b[2;37m${renderBytes(ascii)}\x1b[0m\n`);
+        ascii.length = 0;
+      }
+    }
+    process.stdout.write(`\n\x1b[2;37m${line}\x1b[0m\n`);
+
+    console.log('\x1b[0;97mTotal:\x1b[0m \x1b[0;94m%i\x1b[0m \x1b[0;93m0x%s\x1b[0m Bytes', buffer.length, buffer.length.toString(16).toUpperCase());
   }
 
   toArray() {
