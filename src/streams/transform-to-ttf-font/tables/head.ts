@@ -1,10 +1,6 @@
 import { BufferByte } from '../../../entities/buffer-byte.ts';
 import { Font } from '../../../entities/font.ts';
-
-function dateToUInt64(date: Date): number {
-  const startDate = new Date('1904-01-01T00:00:00.000Z');
-  return Math.floor((date.getTime() - startDate.getTime()) / 1000);
-}
+import { dateToUInt64 } from '../../../utils/string-to-bytes.ts';
 
 export function createHeadTable(font: Font): BufferByte {
   const buf = new BufferByte(54); // fixed table length

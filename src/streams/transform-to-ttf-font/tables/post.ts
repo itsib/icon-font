@@ -1,6 +1,5 @@
 import { BufferByte } from '../../../entities/buffer-byte.ts';
 import { Font } from '../../../entities/font.ts';
-import { stringToAscII } from '../../../utils/string-to-bytes.ts';
 
 function tableSize(font: Font, names: Uint8Array[]): number {
   let result = 36; // table header
@@ -14,13 +13,6 @@ function tableSize(font: Font, names: Uint8Array[]): number {
 
 export function createPostTable(font: Font): BufferByte {
   const names: Uint8Array[] = [];
-
-  font.glyphs.forEach(glyph => {
-    if (glyph.unicode?.length !== 0) {
-      names.push(stringToAscII(glyph.name));
-    }
-  });
-
   const buf = new BufferByte(tableSize(font, names));
 
   buf.writeInt32(0x20000); // formatType,  version 2.0
@@ -36,14 +28,6 @@ export function createPostTable(font: Font): BufferByte {
 
   // Array of glyph name indexes
   let index = 258; // first index of custom glyph name, it is calculated as glyph name index + 258
-
-  font.glyphs.forEach(glyph => {
-    if (glyph.unicode?.length === 0) {
-      buf.writeUint16(0); // missed element should have .notDef name in the Macintosh standard order.
-    } else {
-      buf.writeUint16(index++);
-    }
-  });
 
   // Array of glyph name indexes
   names.forEach(name => {

@@ -27,13 +27,11 @@
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {
-    "@commander-js/extra-typings": "^12.1.0",
     "@types/node": "^20.17.9",
     "@types/sax": "^1.2.7",
     "@types/ttf2eot": "^2.0.2",
     "@types/ttf2woff": "^2.0.4",
     "@types/wawoff2": "^1.0.2",
-    "@xmldom/xmldom": "^0.9.6",
     "commander": "^12.1.0",
     "cosmiconfig": "^9.0.0",
     "prettier": "^3.3.1",

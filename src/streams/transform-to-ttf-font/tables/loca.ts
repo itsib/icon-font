@@ -17,10 +17,10 @@ export function createLocaTable(font: Font): BufferByte {
   font.glyphs.forEach((glyph: Glyph) => {
     if (isShortFormat) {
       buf.writeUint16(location);
-      location += glyph.ttf_size / 2; // actual location must be divided to 2 in short format
+      location += glyph.sizeBytes / 2; // actual location must be divided to 2 in short format
     } else {
       buf.writeUint32(location);
-      location += glyph.ttf_size; // actual location is stored as is in long format
+      location += glyph.sizeBytes; // actual location is stored as is in long format
     }
   });
 

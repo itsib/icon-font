@@ -55,3 +55,8 @@ export function toUCS2Bytes(str: string): Uint8Array {
   return Uint8Array.from(byteArray);
 }
 
+export function dateToUInt64(date: Date): number {
+  const startDate = new Date('1904-01-01T00:00:00.000Z');
+  return Math.floor((date.getTime() - startDate.getTime()) / 1000);
+}
+

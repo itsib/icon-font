@@ -264,3 +264,7 @@ export class Font {
     this.int_underlinePosition = value;
   }
 }
+
+export class FontTTF {
+
+}

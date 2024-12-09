@@ -1,8 +1,8 @@
 import { Buffer } from 'node:buffer';
+import { Writable } from 'node:stream';
 import { AppConfig } from '../../types';
 import { StreamRead } from '../../streams/stream-read/stream-read.ts';
 import { TransformPrepareIcons } from '../../streams/transform-prepare-icons/transform-prepare-icons.ts';
-import { Writable } from 'node:stream';
 import { TransformToTTFFont } from '../../streams/transform-to-ttf-font/transform-to-ttf-font.ts';
 
 export async function generateFontTtf(config: Omit<AppConfig, 'output'>): Promise<Buffer> {
