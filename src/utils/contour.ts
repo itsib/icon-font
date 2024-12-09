@@ -1,5 +1,5 @@
-import { Point } from '../../../entities/point.ts';
-import { Contour, ContourPoint } from '../../../types';
+import { Contour, ContourPoint } from '../types';
+import { Point } from '../entities/point.ts';
 
 export function simplify(contours: Contour[], accuracy: number): Contour[] {
   return contours.map((contour: Contour) => {
@@ -102,4 +102,3 @@ export function toRelative(contours: Contour[]): Contour[] {
 
   return resContours;
 }
-

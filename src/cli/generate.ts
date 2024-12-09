@@ -3,7 +3,7 @@ import { loadConfig, mergeConfig, searchConfig } from '../utils/read-config.js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { generateFontSvg } from '../generators/font-svg/font-svg.js';
-import { generateFontTtfBySvg } from '../generators/font-ttf/font-ttf.js';
+import { generateFontTtf } from '../generators/font-ttf/font-ttf.js';
 import { slugify } from '../utils/slugify.js';
 import { generateFontEotByTtf } from '../generators/font-eot/font-eot.js';
 import { generateFontWoffByTtf } from '../generators/font-woff/font-woff.js';
@@ -12,7 +12,7 @@ import { generateStyleCss } from '../generators/style-css/style-css.js';
 import { Logger } from '../utils/logger.js';
 import { DEFAULT_CONFIG } from '../default-config.ts';
 import { readFiles } from '../utils/read-files.ts';
-import { AppConfigKeys } from '../types/app-config.ts';
+import { AppConfigKeys } from '../types';
 
 export function createGenerateCommand(): Command {
   const subprogram = new Command();
@@ -35,8 +35,8 @@ export function createGenerateCommand(): Command {
 
       const slug = slugify(config.name);
       const files = await readFiles(config.input);
-      const fontSvg = await generateFontSvg(config, files);
-      const fontTtf = await generateFontTtfBySvg(fontSvg);
+      const fontSvg = await generateFontSvg(config);
+      const fontTtf = await generateFontTtf(config);
 
       for (const type of config.types) {
         const filename = path.join(config.output, `${slug}.${type}`);

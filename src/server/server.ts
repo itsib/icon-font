@@ -3,9 +3,8 @@ import url from 'node:url';
 import path from 'node:path';
 import { handleRoute } from './router.js';
 import { Watcher } from './watcher.js';
-
 import { readFiles } from '../utils/read-files.ts';
-import { AppConfig } from '../types/app-config.ts';
+import { AppConfig } from '../types';
 
 export function createServer(config: Omit<AppConfig, 'output'>): http.Server {
   let shouldReload = false;

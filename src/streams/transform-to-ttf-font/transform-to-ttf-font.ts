@@ -1,5 +1,6 @@
 import { Transform, TransformCallback } from 'node:stream';
 import { SVGPathData } from 'svg-pathdata';
+import { Buffer } from 'node:buffer';
 import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
 import { Glyph } from '../../entities/glyph.ts';
 import { Font } from '../../entities/font.ts';
@@ -16,13 +17,10 @@ import { createMaxpTable } from './tables/maxp.ts';
 import { createHeadTable } from './tables/head.ts';
 import { createHHeadTable } from './tables/hhea.ts';
 import { slugify } from '../../utils/slugify.ts';
-import { encodeHtml } from '../../utils/coders.ts';
-import * as utils from '../../svg-to-ttf/lib/ttf/utils.ts';
 import { BufferByte } from '../../entities/buffer-byte.ts';
 import { tableIdentifier } from '../../utils/string-to-bytes.ts';
 import { TTFTable } from '../../types';
-import { Buffer } from 'node:buffer';
-
+import { interpolate, removeClosingReturnPoints, roundPoints, simplify, toRelative } from '../../utils/contour.ts';
 
 export class TransformToTTFFont extends Transform {
 
@@ -93,7 +91,13 @@ export class TransformToTTFFont extends Transform {
 
     const glyphSize = Math.max(chunk.metadata.width, chunk.metadata.height);
     const accuracy = (glyphSize > 500) ? 0.3 : glyphSize * 0.0006;
-    const contours = svgPathToContour(pathData, accuracy);
+    let contours = svgPathToContour(pathData, accuracy);
+    contours = simplify(contours, 0.3);
+    contours = simplify(contours, 0.3);
+    contours = interpolate(contours, 1.1);
+    contours = roundPoints(contours);
+    contours = removeClosingReturnPoints(contours);
+    contours = toRelative(contours);
 
     const glyph = new Glyph();
     glyph.id = this._glyphs.length;
@@ -105,7 +109,6 @@ export class TransformToTTFFont extends Transform {
     glyph.width = chunk.metadata.width;
     glyph.height = chunk.metadata.height;
     glyph.contours = contours;
-    glyph.d = pathData.encode();
 
     this._glyphs.push(glyph);
     this._glyphsByCode[chunk.metadata.codepoint] = glyph;
@@ -147,16 +150,6 @@ export class TransformToTTFFont extends Transform {
     font.glyphs = this._glyphs;
     font.codePoints = this._glyphsByCode;
     font.ligatures = [];
-
-
-    font.glyphs.forEach(glyph => {
-      glyph.contours = utils.simplify(glyph.contours, 0.3);
-      glyph.contours = utils.simplify(glyph.contours, 0.3);
-      glyph.contours = utils.interpolate(glyph.contours, 1.1);
-      glyph.contours = utils.roundPoints(glyph.contours);
-      glyph.contours = utils.removeClosingReturnPoints(glyph.contours);
-      glyph.contours = utils.toRelative(glyph.contours);
-    });
 
     const headerSize = 12 + (16 * TransformToTTFFont._TABLES.length);
     let bufSize = headerSize;

@@ -10,7 +10,7 @@ import { generateFontWoff2 } from '../generators/font-woff2/font-woff2.js';
 import { generateFontEot } from '../generators/font-eot/font-eot.js';
 import { Logger } from '../utils/logger.js';
 import { LOGO_ICON } from '../utils/constants.ts';
-import { AppConfig } from '../types/app-config.ts';
+import { AppConfig } from '../types';
 
 async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, fontName: string, prefix: string, files: SymbolMetadata[]) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -35,48 +35,48 @@ async function faviconHandler(_req: http.IncomingMessage, res: http.ServerRespon
   res.end();
 }
 
-async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>, files: SymbolMetadata[]) {
+async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   res.writeHead(200, {
     'Content-Type': 'font/svg+xml',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontSvg(config, files));
+  res.write(await generateFontSvg(config));
   res.end();
 }
 
-async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>, files: SymbolMetadata[]) {
+async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   res.writeHead(200, {
     'Content-Type': 'application/x-font-ttf',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontTtf(config, files));
+  res.write(await generateFontTtf(config));
   res.end();
 }
 
-async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>, files: SymbolMetadata[]) {
+async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   res.writeHead(200, {
     'Content-Type': 'font/woff',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontWoff(config, files));
+  res.write(await generateFontWoff(config));
   res.end();
 }
 
-async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>, files: SymbolMetadata[]) {
+async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   res.writeHead(200, {
     'Content-Type': 'font/woff2',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontWoff2(config, files));
+  res.write(await generateFontWoff2(config));
   res.end();
 }
 
-async function eotFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>, files: SymbolMetadata[]) {
+async function eotFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   res.writeHead(200, {
     'Content-Type': 'application/vnd.ms-fontobject',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontEot(config, files));
+  res.write(await generateFontEot(config));
   res.end();
 }
 
@@ -101,15 +101,15 @@ export async function handleRoute(path: string, req: http.IncomingMessage, res: 
       case '/style.css':
         return await stylesCssHandler(req, res, config, files);
       case `/${slug}.svg`:
-        return await svgFontHandler(req, res, config, files);
+        return await svgFontHandler(req, res, config);
       case `/${slug}.ttf`:
-        return await ttfFontHandler(req, res, config, files);
+        return await ttfFontHandler(req, res, config);
       case `/${slug}.woff`:
-        return await woffFontHandler(req, res, config, files);
+        return await woffFontHandler(req, res, config);
       case `/${slug}.woff2`:
-        return await woff2FontHandler(req, res, config, files);
+        return await woff2FontHandler(req, res, config);
       case `/${slug}.eot`:
-        return await eotFontHandler(req, res, config, files);
+        return await eotFontHandler(req, res, config);
       default:
         return await error404Handler(req, res);
     }

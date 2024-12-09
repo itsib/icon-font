@@ -1,11 +1,10 @@
 import { Writable } from 'node:stream';
-import { SymbolMetadata } from '../../types/types.ts';
 import { StreamRead } from '../../streams/stream-read/stream-read.ts';
 import { TransformPrepareIcons } from '../../streams/transform-prepare-icons/transform-prepare-icons.ts';
 import { TransformToSvgFont } from '../../streams/transform-to-svg-font/transform-to-svg-font.ts';
-import { AppConfig } from '../../types/app-config.ts';
+import { AppConfig } from '../../types';
 
-export async function generateFontSvg(config: Omit<AppConfig, 'output'>, _iconsInfo: SymbolMetadata[]): Promise<string> {
+export async function generateFontSvg(config: Omit<AppConfig, 'output'>): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const filesReadStream = new StreamRead(config.input);
     const prepareStream = new TransformPrepareIcons();
