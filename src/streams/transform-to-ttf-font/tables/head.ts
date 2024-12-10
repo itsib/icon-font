@@ -6,6 +6,8 @@ export function createHeadTable(font: Font): BufferByte {
   const buffer = new BufferByte(54); // fixed table length
   const created = new Date();
 
+  const { xMin, xMax, yMax, yMin } = font.getBounds();
+
   buffer.writeInt32(0x10000); // version
   buffer.writeInt32(0x10000); // fontRevision - 1
   buffer.writeUint32(0); // checkSumAdjustment
@@ -18,10 +20,10 @@ export function createHeadTable(font: Font): BufferByte {
   buffer.writeUint16(font.unitsPerEm); // unitsPerEm
   buffer.writeUint64(dateToUInt64(created)); // created
   buffer.writeUint64(dateToUInt64(created)); // modified
-  buffer.writeInt16(font.xMin); // xMin
-  buffer.writeInt16(font.yMin); // yMin
-  buffer.writeInt16(font.xMax); // xMax
-  buffer.writeInt16(font.yMax); // yMax
+  buffer.writeInt16(xMin); // xMin
+  buffer.writeInt16(yMin); // yMin
+  buffer.writeInt16(xMax); // xMax
+  buffer.writeInt16(yMax); // yMax
   buffer.writeUint16(0); //macStyle
   buffer.writeUint16(8); // lowestRecPPEM
   buffer.writeInt16(2); // fontDirectionHint

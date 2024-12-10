@@ -17,7 +17,7 @@ export function createPostTable(font: Font): BufferByte {
 
   buf.writeInt32(0x20000); // formatType,  version 2.0
   buf.writeInt32(0); // italicAngle
-  buf.writeInt16(font.underlinePosition); // underlinePosition
+  buf.writeInt16(font.underlinePosition()); // underlinePosition
   buf.writeInt16(0); // underlineThickness
   buf.writeUint32(0); // isFixedPitch
   buf.writeUint32(0); // minMemType42

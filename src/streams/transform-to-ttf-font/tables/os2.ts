@@ -26,22 +26,24 @@ function getLastCharIndex(font: Font): number {
 export function createOS2Table(font: Font): BufferByte {
   const buf = new BufferByte(96);
 
+  const { yMax, yMin, avgWidth } = font.getBounds();
+
   // Version 5 is not supported in the Android 5 browser.
   buf.writeUint16(4); // version
-  buf.writeInt16(font.avgWidth); // xAvgCharWidth
+  buf.writeInt16(avgWidth); // xAvgCharWidth
   buf.writeUint16(font.weight); // usWeightClass
   buf.writeUint16(font.widthClass); // usWidthClass
   buf.writeInt16(0); // fsType
-  buf.writeInt16(font.ySubscriptXSize); // ySubscriptXSize
-  buf.writeInt16(font.ySubscriptYSize); //ySubscriptYSize
+  buf.writeInt16(font.ySubscriptXSize()); // ySubscriptXSize
+  buf.writeInt16(font.ySubscriptYSize()); //ySubscriptYSize
   buf.writeInt16(0); // ySubscriptXOffset
-  buf.writeInt16(font.ySubscriptYOffset); // ySubscriptYOffset
-  buf.writeInt16(font.ySuperscriptXSize); // ySuperscriptXSize
-  buf.writeInt16(font.ySuperscriptYSize); // ySuperscriptYSize
+  buf.writeInt16(font.ySubscriptYOffset()); // ySubscriptYOffset
+  buf.writeInt16(font.ySuperscriptXSize()); // ySuperscriptXSize
+  buf.writeInt16(font.ySuperscriptYSize()); // ySuperscriptYSize
   buf.writeInt16(0); // ySuperscriptXOffset
-  buf.writeInt16(font.ySuperscriptYOffset); // ySuperscriptYOffset
-  buf.writeInt16(font.yStrikeoutSize); // yStrikeoutSize
-  buf.writeInt16(font.yStrikeoutPosition); // yStrikeoutPosition
+  buf.writeInt16(font.ySuperscriptYOffset()); // ySuperscriptYOffset
+  buf.writeInt16(font.yStrikeoutSize()); // yStrikeoutSize
+  buf.writeInt16(font.yStrikeoutPosition()); // yStrikeoutPosition
   buf.writeInt16(0); // sFamilyClass
   buf.writeUint8(2); // panose.familyType
   buf.writeUint8(0); // panose.serifStyle
@@ -64,12 +66,12 @@ export function createOS2Table(font: Font): BufferByte {
   buf.writeUint16(getLastCharIndex(font)); // usLastCharIndex
   buf.writeInt16(font.ascent); // sTypoAscender
   buf.writeInt16(font.descent); // sTypoDescender
-  buf.writeInt16(font.lineGap); // lineGap
+  buf.writeInt16(font.lineGap()); // lineGap
   // Enlarge win acscent/descent to avoid clipping
   // WinAscent - WinDecent should at least be equal to TypoAscender - TypoDescender + TypoLineGap:
   // https://www.high-logic.com/font-editor/fontcreator/tutorials/font-metrics-vertical-line-spacing
-  buf.writeInt16(Math.max(font.yMax, font.ascent + font.lineGap)); // usWinAscent
-  buf.writeInt16(-Math.min(font.yMin, font.descent)); // usWinDescent
+  buf.writeInt16(Math.max(yMax, font.ascent + font.lineGap())); // usWinAscent
+  buf.writeInt16(-Math.min(yMin, font.descent)); // usWinDescent
   buf.writeInt32(1); // ulCodePageRange1, Latin 1
   buf.writeInt32(0); // ulCodePageRange2
   buf.writeInt16(0); // sxHeight

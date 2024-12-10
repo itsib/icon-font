@@ -22,6 +22,10 @@ export class Glyph {
   allX: number[];
   allY: number[];
   sizeBytes: number;
+  xMin: number;
+  xMax: number;
+  yMin: number;
+  yMax: number;
 
   constructor(args: GlyphConstructorArgs) {
     this.id = args.id;
@@ -34,6 +38,10 @@ export class Glyph {
     this.flags = [];
     this.allX = [];
     this.allY = [];
+    this.xMin = 0;
+    this.xMax = this.width;
+    this.yMin = 0;
+    this.yMax = this.height;
 
     if (!args.path) {
       this.contours = [];
@@ -45,6 +53,10 @@ export class Glyph {
     this.contours = svgPathToContour(pathData, 0.3);
     this.sizeBytes = 12 + (this.contours.length * 2); // glyph fixed properties
 
+    this._prepareFields();
+  }
+
+  private _prepareFields() {
     for (let i = 0; i < this.contours.length; i++) {
       const contour = this.contours[i];
 
@@ -67,7 +79,17 @@ export class Glyph {
           // add 1 or 2 bytes for each coordinate depends on its size
           this.sizeBytes += (-0xFF <= point.y && point.y <= 0xFF) ? 1 : 2;
         }
+
+        this.xMin = Math.min(this.xMin, Math.floor(point.x));
+        this.xMax = Math.max(this.xMax, -Math.floor(-point.x));
+        this.yMin = Math.min(this.yMin, Math.floor(point.y));
+        this.yMax = Math.max(this.yMax, -Math.floor(-point.y));
       }
+    }
+
+    if (this.xMin < -32768 || this.xMax > 32767 || this.yMin < -32768 || this.yMax > 32767) {
+      const value = this.xMin < -32768 ? 'xMin' : this.xMax > 32767 ? 'xMax' : this.yMin < -32768 ? 'yMin' : 'yMax';
+      throw new Error(`${value} value for glyph "${this.name}" is out of bounds (actual ${this[value]}, expected -32768..32767)`);
     }
 
     this._simplifyFlags();
@@ -129,89 +151,5 @@ export class Glyph {
       }
     }
     return flag;
-  }
-
-  get xMin(): number {
-    let xMin = 0;
-    let hasPoints = false;
-
-    for (let i = 0; i < this.contours.length; i++) {
-      const contour = this.contours[i];
-
-      for (let j = 0; j < contour.points.length; j++) {
-        const point = contour.points[j];
-        xMin = Math.min(xMin, Math.floor(point.x));
-        hasPoints = true;
-      }
-    }
-
-    if (xMin < -32768) {
-      throw new Error('xMin value for glyph ' + (this.name ? ('"' + this.name + '"') : JSON.stringify(this.codepoint)) +
-        ' is out of bounds (actual ' + xMin + ', expected -32768..32767)');
-    }
-    return hasPoints ? xMin : 0;
-  }
-
-  get xMax(): number {
-    let xMax = 0;
-    let hasPoints = false;
-
-    for (let i = 0; i < this.contours.length; i++) {
-      const contour = this.contours[i];
-
-      for (let j = 0; j < contour.points.length; j++) {
-        const point = contour.points[j];
-        xMax = Math.max(xMax, -Math.floor(-point.x));
-        hasPoints = true;
-      }
-    }
-
-    if (xMax > 32767) {
-      throw new Error('xMax value for glyph ' + (this.name ? ('"' + this.name + '"') : JSON.stringify(this.codepoint)) +
-        ' is out of bounds (actual ' + xMax + ', expected -32768..32767)');
-    }
-    return hasPoints ? xMax : this.width;
-  }
-
-  get yMin(): number {
-    let yMin = 0;
-    let hasPoints = false;
-
-    for (let i = 0; i < this.contours.length; i++) {
-      const contour = this.contours[i];
-
-      for (let j = 0; j < contour.points.length; j++) {
-        const point = contour.points[j];
-        yMin = Math.min(yMin, Math.floor(point.y));
-        hasPoints = true;
-      }
-    }
-
-    if (yMin < -32768) {
-      throw new Error('yMin value for glyph ' + (this.name ? ('"' + this.name + '"') : JSON.stringify(this.codepoint)) +
-        ' is out of bounds (actual ' + yMin + ', expected -32768..32767)');
-    }
-    return hasPoints ? yMin : 0;
-  }
-
-  get yMax(): number {
-    let yMax = 0;
-    let hasPoints = false;
-
-    for (let i = 0; i < this.contours.length; i++) {
-      const contour = this.contours[i];
-
-      for (let j = 0; j < contour.points.length; j++) {
-        const point = contour.points[j];
-        yMax = Math.max(yMax, -Math.floor(-point.y));
-        hasPoints = true;
-      }
-    }
-
-    if (yMax > 32767) {
-      throw new Error('yMax value for glyph ' + (this.name ? ('"' + this.name + '"') : JSON.stringify(this.codepoint)) +
-        ' is out of bounds (actual ' + yMax + ', expected -32768..32767)');
-    }
-    return hasPoints ? yMax : 0;
   }
 }

@@ -102,6 +102,7 @@ export class TransformToTTFFont extends Transform {
     const font = new Font({
       fontFamily: this._fontName,
       fontSubFamily: 'Regular',
+      metadata: this._metadata,
       description: 'The best icon font in the world',
       url: 'https://github.com/itsib/icon-font',
       size: this._size,
@@ -109,10 +110,6 @@ export class TransformToTTFFont extends Transform {
       glyphs: this._glyphs,
       codePoints: this._glyphsByCode,
     });
-
-    font.sfntNames = [
-      { id: 6, value: slug }
-    ];
 
     const headerSize = 12 + (16 * TransformToTTFFont._TABLES.length);
     let bufSize = headerSize;
