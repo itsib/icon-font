@@ -1,92 +1,72 @@
 import { Glyph } from './glyph.ts';
-
-export interface Ligature {
-  ligature: string;
-  unicode: number[];
-  glyph: Glyph;
-}
-
-export interface LigatureGroup {
-  codePoint: number;
-  ligatures: Ligature[];
-  startGlyph: Glyph;
-}
-
-export interface Panose {
-  familyType: number;
-  serifStyle: number;
-  weight: number;
-  proportion: number;
-  contrast: number;
-  strokeVariation: number;
-  armStyle: number;
-  letterform: number;
-  midline: number;
-  xHeight: number;
-}
+import { slugify } from '../utils/slugify.ts';
+import { toUCS2Bytes, toUTF8Bytes } from '../utils/string-to-bytes.ts';
 
 export interface SfntName {
   id: number;
   value: string;
 }
 
-export class Font {
-  id: string = '';
-  description: string = '';
-  url: string = '';
-  ascent: number = 0;
-  copyright: string = '';
-  createdDate: Date = new Date();
-  glyphs: Glyph[] = [];
-  missingGlyph?: {
-    d?: string;
-    width?: number;
-    height?: number;
-  }
-  ligatures: Ligature[] = [];
-  codePoints: { [key: number]: Glyph } = {};
-  isFixedPitch: number = 0;
-  italicAngle: number = 0;
-  familyClass: number = 0; // No Classification
-  familyName: string = '';
-  subfamilyName: string = '';
-  fsSelection: number = 0x40 | 0x80;
-  fsType: number = 0;
-  lowestRecPPEM: number = 8;
-  macStyle: number = 0;
-  modifiedDate: Date = new Date();
-  panose: Panose = {
-    familyType: 2,
-    serifStyle: 0,
-    weight: 5,
-    proportion: 3,
-    contrast: 0,
-    strokeVariation: 0,
-    armStyle: 0,
-    letterform: 0,
-    midline: 0,
-    xHeight: 0,
-  };
-  revision: number = 1;
-  sfntNames: SfntName[] = [];
-  stretch: string = 'normal';
+export enum NameTableId {
+  Copyright = 0,
+  FontFamily = 1,
+  FontSubFamily = 2,
+  ID = 3,
+  Slug = 4,
+  Version = 5,
+  ShortName = 6,
+  Description = 10,
+  URLVendor = 11
+}
+
+export interface NameTableItem {
+  /**
+   * Data id
+   */
+  id: NameTableId;
+  /**
+   * Data in bytes
+   */
+  data: Uint8Array;
+  /**
+   * platformID, encodingID, languageID
+   */
+  flags: [number, number, number];
+}
+
+export interface FontConstructorArgs {
+  fontFamily: string;
+  fontSubFamily: string;
   metadata?: string;
-  underlineThickness: number = 0;
-  unitsPerEm: number = 1000;
-  weightClass: number | string = 400; // normal
-  width: number = 1000;
-  widthClass: number = 5; // Medium (normal)
-  ySubscriptXOffset: number = 0;
-  ySuperscriptXOffset: number = 0;
-  horizOriginX: number = 0;
-  horizOriginY: number = 0;
-  vertOriginX: number = 0;
-  vertOriginY: number = 0;
-  xHeight: number = 0;
-  height: number = 0;
-  capHeight: number = 0;
-  ttf_glyph_size: number = 0;
-  int_descent: number = -150;
+  description?: string;
+  url?: string;
+  size: number;
+  glyphTotalSize: number;
+  glyphs: Glyph[];
+  codePoints: { [key: number]: Glyph };
+}
+
+export class Font {
+  id: string;
+  fontFamily: string;
+  fontSubFamily: string;
+  copyright: string;
+  description: string;
+  url: string;
+
+  width: number;
+  height: number;
+  unitsPerEm: number;
+  ascent: number;
+  descent: number;
+  weight: number;
+  widthClass: number;
+
+  glyphs: Glyph[];
+  codePoints: { [key: number]: Glyph };
+  glyphTotalSize: number;
+
+  sfntNames: SfntName[] = [];
 
   private int_ySubscriptXSize?: number;
   private int_ySubscriptYSize?: number;
@@ -99,12 +79,57 @@ export class Font {
   private int_lineGap?: number;
   private int_underlinePosition?: number;
 
-  get descent(): number {
-    return this.int_descent;
+  constructor(args: FontConstructorArgs) {
+    this.id = slugify(args.fontFamily);
+    this.fontFamily = args.fontFamily;
+    this.fontSubFamily = args.fontSubFamily;
+    this.copyright = args.metadata ?? '';
+    this.description = args.description ?? '';
+    this.url = args.url ?? '';
+
+    this.width = args.size;
+    this.height = args.size;
+    this.unitsPerEm = args.size;
+    this.ascent = -args.size;
+    this.descent = 0;
+    this.weight = 400;
+    this.widthClass = 5; // Medium (normal)
+
+    this.glyphs = args.glyphs;
+    this.codePoints = args.codePoints;
+    this.glyphTotalSize = args.glyphTotalSize;
   }
 
-  set descent(value: number) {
-    this.int_descent = parseInt(Math.round(-Math.abs(value)).toString(), 10);
+  getNames(): { size: number, names: NameTableItem[] } {
+    const names: NameTableItem[] = [];
+    let size = 0;
+
+    const add = (id: NameTableId, value: string) => {
+      names.push(
+        { id: id, data: toUTF8Bytes(value), flags: [1, 0, 0] },
+        { id: id, data: toUCS2Bytes(value), flags: [3, 1, 0x409] },
+      );
+      size += names[names.length - 2].data.length + 12;
+      size += names[names.length - 1].data.length + 12;
+    }
+
+    if (this.copyright) {
+      add(NameTableId.Copyright, this.copyright);
+    }
+    if (this.description) {
+      add(NameTableId.Description, this.description);
+    }
+    if (this.url) {
+      add(NameTableId.URLVendor, this.url);
+    }
+    add(NameTableId.ID, this.id);
+    add(NameTableId.FontFamily, this.fontFamily);
+    add(NameTableId.FontSubFamily, this.fontSubFamily);
+    add(NameTableId.Slug, this.id);
+    add(NameTableId.Version, 'Version 1.0');
+    add(NameTableId.ShortName, this.id);
+
+    return { size, names };
   }
 
   get avgCharWidth(): number {
@@ -263,8 +288,4 @@ export class Font {
   set underlinePosition(value: number) {
     this.int_underlinePosition = value;
   }
-}
-
-export class FontTTF {
-
 }

@@ -34,6 +34,8 @@ export class TransformToTTFFont extends Transform {
 
   private _glyphsByCode: { [codePoint: number]: Glyph } = {};
 
+  private _glyphsTotalSize = 0;
+
   private static _TABLES: TTFTable[] = [
     { innerName: 'GSUB', order: 4, create: createGSUBTable },
     { innerName: 'OS/2', order: 4, create: createOS2Table },
@@ -87,47 +89,30 @@ export class TransformToTTFFont extends Transform {
       width: chunk.metadata.width,
     });
 
-
     this._glyphs.push(glyph);
     this._glyphsByCode[chunk.metadata.codepoint] = glyph;
+    this._glyphsTotalSize += glyph.sizeBytes;
 
     callback(null, null);
   }
 
   _flush(callback: TransformCallback): void {
-    const creation = new Date();
     const slug = slugify(this._fontName);
 
-    const font = new Font();
-    font.id = slug;
-    font.familyName = this._fontName;
-    font.copyright = this._metadata || '';
-    font.description = 'The best icon font in the world';
-    font.url = 'https://github.com/itsib/icon-font';
-    font.subfamilyName = 'Regular';
-    font.stretch = 'normal';
+    const font = new Font({
+      fontFamily: this._fontName,
+      fontSubFamily: 'Regular',
+      description: 'The best icon font in the world',
+      url: 'https://github.com/itsib/icon-font',
+      size: this._size,
+      glyphTotalSize: this._glyphsTotalSize,
+      glyphs: this._glyphs,
+      codePoints: this._glyphsByCode,
+    });
+
     font.sfntNames = [
-      { id: 2, value: 'Regular' },
-      { id: 4, value: slug },
-      { id: 5, value: 'Version 1.0' },
       { id: 6, value: slug }
     ];
-    font.createdDate = creation;
-    font.modifiedDate = creation;
-    font.unitsPerEm = this._size;
-    font.horizOriginX = 0;
-    font.horizOriginY = 0;
-    font.vertOriginX = 0;
-    font.vertOriginY = 0;
-    font.width = this._size;
-    font.height = this._size;
-    font.ascent = -this._size;
-    font.weightClass = 400;
-    font.capHeight = 0;
-    font.xHeight = 0;
-    font.glyphs = this._glyphs;
-    font.codePoints = this._glyphsByCode;
-    font.ligatures = [];
 
     const headerSize = 12 + (16 * TransformToTTFFont._TABLES.length);
     let bufSize = headerSize;

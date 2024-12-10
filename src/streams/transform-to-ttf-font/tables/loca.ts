@@ -7,7 +7,7 @@ function tableSize(font: Font, isShortFormat: boolean): number {
 }
 
 export function createLocaTable(font: Font): BufferByte {
-  const isShortFormat = font.ttf_glyph_size < 0x20000;
+  const isShortFormat = font.glyphTotalSize < 0x20000;
 
   const buf = new BufferByte(tableSize(font, isShortFormat));
 

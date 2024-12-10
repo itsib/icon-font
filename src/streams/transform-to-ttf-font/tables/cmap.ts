@@ -100,14 +100,12 @@ function bufferForTable(format: number, length: number): BufferByte {
   return buffer;
 }
 
-function createFormat0Table(font: Font): BufferByte {
-  const FORMAT = 0;
+function createFormat0Table(codePoints: { [key: number]: Glyph }): BufferByte {
   const length = 0xff + 1;
-
-  const buffer = bufferForTable(FORMAT, length);
+  const buffer = bufferForTable(0, length);
 
   for (let i = 0; i < length; i++) {
-    buffer.writeUint8(getIDByUnicode(font, i));
+    buffer.writeUint8(codePoints[i]?.id || 0);
   }
   return buffer;
 }
@@ -223,7 +221,7 @@ export function createCMapTable(font: Font): BufferByte {
    */
   const TABLE_HEAD = 8;
 
-  const singleByteTable = createFormat0Table(font);
+  const singleByteTable = createFormat0Table(font.codePoints);
   const twoByteTable = createFormat4Table(font);
   const fourByteTable = createFormat12Table(font);
 

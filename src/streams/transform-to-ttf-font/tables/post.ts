@@ -16,10 +16,10 @@ export function createPostTable(font: Font): BufferByte {
   const buf = new BufferByte(tableSize(font, names));
 
   buf.writeInt32(0x20000); // formatType,  version 2.0
-  buf.writeInt32(font.italicAngle); // italicAngle
+  buf.writeInt32(0); // italicAngle
   buf.writeInt16(font.underlinePosition); // underlinePosition
-  buf.writeInt16(font.underlineThickness); // underlineThickness
-  buf.writeUint32(font.isFixedPitch); // isFixedPitch
+  buf.writeInt16(0); // underlineThickness
+  buf.writeUint32(0); // isFixedPitch
   buf.writeUint32(0); // minMemType42
   buf.writeUint32(0); // maxMemType42
   buf.writeUint32(0); // minMemType1

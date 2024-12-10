@@ -2,13 +2,7 @@ import { BufferByte } from '../../../entities/buffer-byte.ts';
 import { Font } from '../../../entities/font.ts';
 
 export function createGlyfTable(font: Font): BufferByte {
-  let tableSize = 0;
-  for (let i = 0; i < font.glyphs.length; i++) {
-    tableSize += font.glyphs[i].sizeBytes;
-  }
-  font.ttf_glyph_size = tableSize;
-
-  const buf = new BufferByte(tableSize);
+  const buf = new BufferByte(font.glyphTotalSize);
 
   for (let i = 0; i < font.glyphs.length; i++) {
     const glyph = font.glyphs[i];
@@ -28,9 +22,8 @@ export function createGlyfTable(font: Font): BufferByte {
 
     // Array of end points
     let endPtsOfContours = -1;
-    const contours = glyph.contours;
-    for (let j = 0; j < contours.length; j++) {
-      const contour = contours[j];
+    for (let j = 0; j < glyph.contours.length; j++) {
+      const contour = glyph.contours[j];
 
       endPtsOfContours += contour.points.length;
       buf.writeInt16(endPtsOfContours);

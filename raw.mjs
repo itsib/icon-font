@@ -31,7 +31,18 @@ function renderBytesTable(data) {
 
   const ascii = [];
 
-  process.stdout.write(`\x1b[2;37m${line}\x1b[0m\n`);
+  process.stdout.write(`\x1b[0;97;44m${' '.repeat(addressLength + 4)}`);
+  for (let i = 0; i < 16; i++) {
+    const coll = i.toString(16).toUpperCase().padStart(2, '0');
+    if (i && i % 8 === 0) {
+      process.stdout.write(`  `);
+    }
+
+    process.stdout.write(`${coll} `);
+  }
+  process.stdout.write(`\x1b[0m\n`)
+
+
   for (let offset = 0; offset < data.length; offset++) {
     /** @type {number} */
     const byte = data[offset];
@@ -39,13 +50,13 @@ function renderBytesTable(data) {
     // Render address column
     if (offset % 16 === 0) {
       const address = offset.toString(16).toUpperCase().padStart(addressLength, '0');
-      process.stdout.write(`\x1b[0;30;107m ${address} \x1b[0m  `);
+      process.stdout.write(`\x1b[0;97;44m ${address} \x1b[0m  `);
     }
 
     if (byte === 0) {
       process.stdout.write('\x1b[2;37m00\x1b[0m ');
     } else if (byte === 255) {
-      process.stdout.write('\x1b[2;33mFF\x1b[0m ');
+      process.stdout.write('\x1b[0;33mFF\x1b[0m ');
     } else {
       const byteHex = byte.toString(16).padStart(2, '0').toUpperCase();
       process.stdout.write(byteHex + ' ');
