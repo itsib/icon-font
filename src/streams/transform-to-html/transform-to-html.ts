@@ -25,12 +25,12 @@ const HEAD = `
     }
     .caption {
       display: flex;
-      align-content: center;
+      align-items: center;
       justify-content: center;
       gap: 16px;
     }
     .caption svg {
-      width: 36px;
+      width: 48px;
       height: auto;
     }
     .buttons-container {
