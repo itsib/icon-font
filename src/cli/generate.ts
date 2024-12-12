@@ -1,18 +1,21 @@
 import { Command } from 'commander';
+import { pipeline } from 'node:stream';
 import { loadConfig, mergeConfig, searchConfig } from '../utils/read-config.js';
 import fs from 'node:fs/promises';
+import { createWriteStream } from 'node:fs';
 import path from 'node:path';
-import { generateFontSvg } from '../generators/font-svg/font-svg.js';
-import { generateFontTtf } from '../generators/font-ttf/font-ttf.js';
 import { slugify } from '../utils/slugify.js';
-import { generateFontEotByTtf } from '../generators/font-eot/font-eot.js';
-import { generateFontWoffByTtf } from '../generators/font-woff/font-woff.js';
-import { generateFontWoff2ByTtf } from '../generators/font-woff2/font-woff2.js';
-import { generateStyleCss } from '../generators/style-css/style-css.js';
 import { Logger } from '../utils/logger.js';
-import { DEFAULT_CONFIG } from '../default-config.ts';
-import { readFiles } from '../utils/read-files.ts';
+import { DEFAULT_CONFIG } from '../default-opts.ts';
 import { AppConfigKeys } from '../types';
+import { StreamRead } from '../streams/stream-read/stream-read.ts';
+import { TransformPrepareIcons } from '../streams/transform-prepare-icons/transform-prepare-icons.ts';
+import { TransformToSvg } from '../streams/transform-to-svg/transform-to-svg.ts';
+import { TransformToTtf } from '../streams/transform-to-ttf/transform-to-ttf.ts';
+import { TransformTtfToEot } from '../streams/transform-ttf-to-eot/transform-ttf-to-eot.ts';
+import { TransformToCss } from '../streams/transform-to-css/transform-to-css.ts';
+import { TransformTtfToWoff } from '../streams/transform-ttf-to-woff/transform-ttf-to-woff.ts';
+import { TransformTtfToWoff2 } from '../streams/transform-ttf-to-woff2/transform-ttf-to-woff2.ts';
 
 export function createGenerateCommand(): Command {
   const subprogram = new Command();
@@ -28,48 +31,124 @@ export function createGenerateCommand(): Command {
       const { config: configFilePath, cwd, ...configArgs } = args;
       const configFile = configFilePath ? await loadConfig(configFilePath) : await searchConfig(process.cwd());
       const requiredFields: AppConfigKeys[] = ['input', 'output', 'name', 'prefix', 'types', 'port']
-      const config = mergeConfig(requiredFields, configArgs, configFile, DEFAULT_CONFIG);
+      const config = mergeConfig(requiredFields, DEFAULT_CONFIG, configFile, configArgs);
 
       await fs.rm(config.output, { recursive: true, force: true });
       await fs.mkdir(config.output, { recursive: true });
-
       const slug = slugify(config.name);
-      const files = await readFiles(config.input);
-      const fontSvg = await generateFontSvg(config);
-      const fontTtf = await generateFontTtf(config);
 
-      for (const type of config.types) {
-        const filename = path.join(config.output, `${slug}.${type}`);
-
+      for await (const type of config.types) {
         switch (type) {
-          case 'svg':
-            await fs.writeFile(filename, fontSvg, 'utf8');
+          case 'svg': {
+            await new Promise<void>((resolve, reject) => {
+              const filename = path.join(config.output, `${slug}.svg`);
+              pipeline(
+                new StreamRead(config.input),
+                new TransformPrepareIcons(),
+                new TransformToSvg(config.name),
+                createWriteStream(filename),
+                error => {
+                  if (error) {
+                    return reject(error);
+                  }
+                  Logger.created(filename);
+                  resolve();
+                },
+              );
+            });
             break;
-          case 'ttf':
-            await fs.writeFile(filename, fontTtf);
+          }
+          case 'ttf': {
+            await new Promise<void>((resolve, reject) => {
+              const filename = path.join(config.output, `${slug}.ttf`);
+              pipeline(
+                new StreamRead(config.input),
+                new TransformPrepareIcons(),
+                new TransformToTtf(config.name),
+                createWriteStream(filename),
+                error => {
+                  if (error) {
+                    return reject(error);
+                  }
+                  Logger.created(filename);
+                  resolve();
+                },
+              );
+            });
             break;
-          case 'eot':
-            const fontEot = await generateFontEotByTtf(fontTtf);
-            await fs.writeFile(filename, fontEot);
+          }
+          case 'eot': {
+            await new Promise<void>((resolve, reject) => {
+              const filename = path.join(config.output, `${slug}.eot`);
+              pipeline(
+                new StreamRead(config.input),
+                new TransformPrepareIcons(),
+                new TransformToTtf(config.name),
+                new TransformTtfToEot(),
+                createWriteStream(filename),
+                error => {
+                  if (error) {
+                    return reject(error);
+                  }
+                  Logger.created(filename);
+                  resolve();
+                },
+              );
+            });
             break;
-          case 'woff':
-            const fontWoff = await generateFontWoffByTtf(fontTtf);
-            await fs.writeFile(filename, fontWoff);
+          }
+          case 'woff': {
+            await new Promise<void>((resolve, reject) => {
+              const filename = path.join(config.output, `${slug}.woff`);
+              pipeline(
+                new StreamRead(config.input),
+                new TransformPrepareIcons(),
+                new TransformToTtf(config.name),
+                new TransformTtfToWoff(),
+                createWriteStream(filename),
+                error => {
+                  if (error) {
+                    return reject(error);
+                  }
+                  Logger.created(filename);
+                  resolve();
+                },
+              );
+            });
             break;
-          case 'woff2':
-            const fontWoff2 = await generateFontWoff2ByTtf(fontTtf);
-            await fs.writeFile(filename, fontWoff2);
+          }
+          case 'woff2': {
+            await new Promise<void>((resolve, reject) => {
+              const filename = path.join(config.output, `${slug}.woff2`);
+              pipeline(
+                new StreamRead(config.input),
+                new TransformPrepareIcons(),
+                new TransformToTtf(config.name),
+                new TransformTtfToWoff2(),
+                createWriteStream(filename),
+                error => {
+                  if (error) {
+                    return reject(error);
+                  }
+                  Logger.created(filename);
+                  resolve();
+                },
+              );
+            });
             break;
+          }
         }
-        Logger.created(filename);
       }
 
-      const styleCss = generateStyleCss(config.name, config.prefix, config.types, files, config.fontUrl);
       const filenameCss = path.join(config.output, `${slug}.css`);
-      await fs.writeFile(filenameCss, styleCss, 'utf8');
+      new StreamRead(config.input)
+        .pipe(new TransformPrepareIcons())
+        .pipe(new TransformToCss(config.name, config.types, config.prefix, config.fontUrl))
+        .pipe(createWriteStream(filenameCss, 'utf8'));
+
       Logger.created(filenameCss);
 
-      Logger.done(Date.now() - start, files.length);
+      Logger.done(Date.now() - start);
     });
 
   return subprogram;

@@ -31,9 +31,8 @@ export const Logger = {
 
     console.log(`\x1b[0;37m${dirname}${path.sep}\x1b[0m${color}${basename}\x1b[0m`);
   },
-  done(duration: number, count: number) {
+  done(duration: number) {
     console.log(`\x1b[0;32m✓ built in ${duration}ms\x1b[0m`);
-    console.log(`\x1b[0;32m✓ generated ${count} icons\x1b[0m`);
   },
   warn(message: string): void {
     console.log(`\x1b[0;93m🛆 ${message}\x1b[0m`);

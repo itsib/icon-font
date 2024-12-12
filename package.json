@@ -10,7 +10,8 @@
     "url": "git+https://github.com/itsib/icon-font.git"
   },
   "bin": {
-    "icon-font": "icon-font"
+    "icon-font": "icon-font",
+    "dump": "dump"
   },
   "main": "./icon-font",
   "files": [

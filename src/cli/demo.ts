@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { loadConfig, mergeConfig, searchConfig } from '../utils/read-config.ts';
-import { DEFAULT_CONFIG } from '../default-config.ts';
+import { DEFAULT_CONFIG } from '../default-opts.ts';
 import { createServer } from '../server/server.ts';
 import { Logger } from '../utils/logger.ts';
 import { scanAvailablePort } from '../server/scan-available-port.ts';
@@ -17,7 +17,7 @@ export function createDemoCommand(): Command {
       const { config: configFilePath, cwd, ...configArgs } = args;
       const configFile = configFilePath ? await loadConfig(configFilePath) : await searchConfig(process.cwd());
       const requiredFields: AppConfigKeys[] = ['input', 'name', 'prefix', 'types', 'fontUrl', 'port']
-      const config = mergeConfig(requiredFields, configArgs, configFile, DEFAULT_CONFIG);
+      const config = mergeConfig(requiredFields, DEFAULT_CONFIG, configFile, configArgs);
 
       const server = createServer(config);
 

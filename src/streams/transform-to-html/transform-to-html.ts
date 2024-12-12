@@ -1,4 +1,5 @@
-import { SymbolMetadata } from '../../types/types.ts';
+import { Transform, TransformCallback } from 'node:stream';
+import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
 import { LOGO_ICON } from '../../utils/constants.ts';
 
 const HEAD = `
@@ -187,30 +188,57 @@ const HEAD = `
 </head>
 `;
 
-export function generateIndexHtml(caption: string, prefix: string, files: SymbolMetadata[]): string {
-  let output = '<!DOCTYPE html>\n';
-  output += '<html lang="en">\n';
-  output += HEAD.replace('{{caption}}', caption);
-  output += '<body>\n';
-  output += `<h1 class="caption">\n`;
-  output += LOGO_ICON + '\n';
-  output += `<span>${caption}</span>\n`;
-  output += `</h1>\n`;
+export class TransformToHtml extends Transform {
 
-  output += '<div class="buttons-container">\n';
+  private readonly _fontName: string;
 
-  for (const file of files) {
-    output += `
-      <button type="button" class="preview" data-text="${prefix} ${prefix}-${file.name}" aria-label="Copy to clipboard" onclick="onClickCallback(this)">
-        <span class="inner">
-          <i class="${prefix} ${prefix}-${file.name}"></i>
-        </span>
-        <br>
-        <span class="label">${file.name}</span>
-      </button>
-    `;
+  private readonly _prefix: string;
+
+  private _isHeaderRendered = false;
+
+  constructor(fontName: string, prefix = 'icon') {
+    super({ objectMode: true });
+
+    this._fontName = fontName;
+    this._prefix = prefix;
   }
 
-  output += '</div>\n</body>\n</html>';
-  return output;
+  private _header(): string {
+    let output = '<!DOCTYPE html>\n';
+    output += '<html lang="en">\n';
+    output += HEAD.replace('{{caption}}', this._fontName);
+    output += '<body>\n';
+    output += `<h1 class="caption">\n`;
+    output += LOGO_ICON + '\n';
+    output += `<span>${this._fontName}</span>\n`;
+    output += `</h1>\n`;
+
+    output += '<div class="buttons-container">\n';
+
+    return output;
+  }
+
+  _transform(chunk: BufferWithMeta<SymbolMeta>, _encoding: BufferEncoding, callback: TransformCallback) {
+    const size = Math.max(chunk.metadata.width, chunk.metadata.height);
+    let output = '';
+    if (!this._isHeaderRendered) {
+      output += this._header();
+      this._isHeaderRendered = true;
+    }
+
+    output += `
+<button type="button" class="preview" data-text="${this._prefix} ${this._prefix}-${chunk.metadata.name}" aria-label="Copy to clipboard" onclick="onClickCallback(this)">
+  <span class="inner">
+    <i class="${this._prefix} ${this._prefix}-${chunk.metadata.name}"></i>
+  </span>
+  <br>
+  <span class="label">${chunk.metadata.name}</span>
+</button>`
+
+    callback(null, output);
+  }
+
+  _flush(callback: TransformCallback) {
+    callback(null, '</div>\n</body>\n</html>');
+  }
 }

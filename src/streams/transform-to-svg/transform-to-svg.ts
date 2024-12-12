@@ -4,7 +4,7 @@ import { slugify } from '../../utils/slugify.ts';
 import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
 import { encodeHtml } from '../../utils/coders.ts';
 
-export class TransformToSvgFont extends Transform {
+export class TransformToSvg extends Transform {
 
   private readonly _fontName: string;
 
@@ -64,7 +64,7 @@ export class TransformToSvgFont extends Transform {
     output += `        d="${path}"\n`;
     output += `    />\n`;
 
-    callback(null, output);
+    callback(null, Buffer.from(output, 'utf8'));
   }
 
   _flush(callback: TransformCallback) {
@@ -73,6 +73,6 @@ export class TransformToSvgFont extends Transform {
     output += `</defs>\n`;
     output += `</svg>\n`;
 
-    callback(null, output);
+    callback(null, Buffer.from(output, 'utf8'));
   }
 }

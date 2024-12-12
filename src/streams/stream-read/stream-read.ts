@@ -4,7 +4,7 @@ import { FileMetadata } from '../../types/types.ts';
 import { Readable } from 'node:stream';
 import fs from 'node:fs';
 import { populateMetadata } from '../../utils/populate-metadata.ts';
-import { compareFiles } from '../../utils/read-files.ts';
+import { compareFiles } from '../../utils/compare-files.ts';
 
 export class StreamRead extends Readable {
 

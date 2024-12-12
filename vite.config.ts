@@ -73,6 +73,8 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
         external: [
           ...nodeNativeModules(),
           'typescript',
+          'string_decoder',
+          'stream',
         ],
         output: {
           // entryFileNames: '[name].cjs',

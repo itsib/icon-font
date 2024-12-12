@@ -1,32 +1,38 @@
 import http from 'node:http';
-import { SymbolMetadata } from '../types/types.ts';
 import { slugify } from '../utils/slugify.js';
-import { generateIndexHtml, generateLogoSvg } from '../generators';
-import { generateStyleCss } from '../generators/style-css/style-css.js';
-import { generateFontSvg } from '../generators/font-svg/font-svg.js';
-import { generateFontTtf } from '../generators/font-ttf/font-ttf.js';
-import { generateFontWoff } from '../generators/font-woff/font-woff.js';
-import { generateFontWoff2 } from '../generators/font-woff2/font-woff2.js';
-import { generateFontEot } from '../generators/font-eot/font-eot.js';
 import { Logger } from '../utils/logger.js';
 import { LOGO_ICON } from '../utils/constants.ts';
 import { AppConfig } from '../types';
+import { StreamRead } from '../streams/stream-read/stream-read.ts';
+import { TransformPrepareIcons } from '../streams/transform-prepare-icons/transform-prepare-icons.ts';
+import { TransformToTtf } from '../streams/transform-to-ttf/transform-to-ttf.ts';
+import { TransformToSvg } from '../streams/transform-to-svg/transform-to-svg.ts';
+import { TransformToCss } from '../streams/transform-to-css/transform-to-css.ts';
+import { TransformToHtml } from '../streams/transform-to-html/transform-to-html.ts';
+import { TransformTtfToEot } from '../streams/transform-ttf-to-eot/transform-ttf-to-eot.ts';
+import { TransformTtfToWoff2 } from '../streams/transform-ttf-to-woff2/transform-ttf-to-woff2.ts';
+import { TransformTtfToWoff } from '../streams/transform-ttf-to-woff/transform-ttf-to-woff.ts';
 
-async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, fontName: string, prefix: string, files: SymbolMetadata[]) {
+async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
+  const filesReadStream = new StreamRead(config.input);
+  const prepareStream = new TransformPrepareIcons();
+  const htmlStyleStream = new TransformToHtml(config.name, config.prefix);
+
   res.writeHead(200, { 'Content-Type': 'text/html' });
-  res.write(generateIndexHtml(fontName, prefix, files));
-  res.end();
+
+  filesReadStream.pipe(prepareStream).pipe(htmlStyleStream).pipe(res);
 }
 
-async function logoHandler(_req: http.IncomingMessage, res: http.ServerResponse) {
-  res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
-  res.end(generateLogoSvg());
-}
+async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
+  const filesReadStream = new StreamRead(config.input);
+  const prepareStream = new TransformPrepareIcons();
+  const cssStyleStream = new TransformToCss(config.name, config.types, config.prefix);
 
-async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>, files: SymbolMetadata[]) {
-  res.writeHead(200, { 'Content-Type': 'text/css' });
-  res.write(generateStyleCss(config.name, config.prefix, config.types, files, '/'));
-  res.end();
+  res.writeHead(200, {
+    'Content-Type': 'text/css',
+    'Server': 'Dev Server',
+  });
+  filesReadStream.pipe(prepareStream).pipe(cssStyleStream).pipe(res);
 }
 
 async function faviconHandler(_req: http.IncomingMessage, res: http.ServerResponse) {
@@ -36,48 +42,69 @@ async function faviconHandler(_req: http.IncomingMessage, res: http.ServerRespon
 }
 
 async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
+  const filesReadStream = new StreamRead(config.input);
+  const prepareStream = new TransformPrepareIcons();
+  const svgFontStream = new TransformToSvg(config.name);
+
   res.writeHead(200, {
     'Content-Type': 'font/svg+xml',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontSvg(config));
-  res.end();
+
+  filesReadStream.pipe(prepareStream).pipe(svgFontStream).pipe(res);
 }
 
 async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
+  const filesReadStream = new StreamRead(config.input);
+  const prepareStream = new TransformPrepareIcons();
+  const ttfFontStream = new TransformToTtf(config.name);
+
   res.writeHead(200, {
     'Content-Type': 'application/x-font-ttf',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontTtf(config));
-  res.end();
+
+  filesReadStream.pipe(prepareStream).pipe(ttfFontStream).pipe(res);
 }
 
 async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
+  const filesReadStream = new StreamRead(config.input);
+  const prepareStream = new TransformPrepareIcons();
+  const ttfFontStream = new TransformToTtf(config.name);
+  const woffFontStream = new TransformTtfToWoff();
+
   res.writeHead(200, {
     'Content-Type': 'font/woff',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontWoff(config));
-  res.end();
+  filesReadStream.pipe(prepareStream).pipe(ttfFontStream).pipe(woffFontStream).pipe(res);
 }
 
 async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
+  const filesReadStream = new StreamRead(config.input);
+  const prepareStream = new TransformPrepareIcons();
+  const ttfFontStream = new TransformToTtf(config.name);
+  const woff2FontStream = new TransformTtfToWoff2();
+
   res.writeHead(200, {
     'Content-Type': 'font/woff2',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontWoff2(config));
-  res.end();
+  filesReadStream.pipe(prepareStream).pipe(ttfFontStream).pipe(woff2FontStream).pipe(res);
 }
 
 async function eotFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
+  const filesReadStream = new StreamRead(config.input);
+  const prepareStream = new TransformPrepareIcons();
+  const ttfFontStream = new TransformToTtf(config.name);
+  const eotFontStream = new TransformTtfToEot();
+
   res.writeHead(200, {
     'Content-Type': 'application/vnd.ms-fontobject',
     'Server': 'Dev Server',
   });
-  res.write(await generateFontEot(config));
-  res.end();
+
+  filesReadStream.pipe(prepareStream).pipe(ttfFontStream).pipe(eotFontStream).pipe(res);
 }
 
 async function error404Handler(_req: http.IncomingMessage, res: http.ServerResponse) {
@@ -85,7 +112,7 @@ async function error404Handler(_req: http.IncomingMessage, res: http.ServerRespo
   res.end('Not Found');
 }
 
-export async function handleRoute(path: string, req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>, files: SymbolMetadata[]) {
+export async function handleRoute(path: string, req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const slug = slugify(config.name);
   Logger.route(req.method || 'GET', req.url || '/');
 
@@ -93,13 +120,11 @@ export async function handleRoute(path: string, req: http.IncomingMessage, res: 
     switch (path) {
       case '/':
       case '/index.html':
-        return await indexHandler(req, res, config.name, config.prefix, files);
-      case '/logo.svg':
-        return await logoHandler(req, res);
+        return await indexHandler(req, res, config);
       case '/favicon.svg':
         return await faviconHandler(req, res);
       case '/style.css':
-        return await stylesCssHandler(req, res, config, files);
+        return await stylesCssHandler(req, res, config);
       case `/${slug}.svg`:
         return await svgFontHandler(req, res, config);
       case `/${slug}.ttf`:

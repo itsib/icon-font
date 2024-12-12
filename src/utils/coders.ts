@@ -48,6 +48,10 @@ export function encodeHtml(codePoints: number[]): string {
   return codePoints.map(code => `&#x${(code).toString(16).toUpperCase()};`).join('');
 }
 
+export function encodeCss(codePoints: number[]): string {
+  return codePoints.map(code => `\\${(code).toString(16)}`).join('');
+}
+
 /**
  * Decode HTML to codepoints
  * @param htmlCharacter

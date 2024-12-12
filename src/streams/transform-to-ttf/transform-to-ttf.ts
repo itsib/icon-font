@@ -14,13 +14,12 @@ import { createOS2Table } from './tables/os2.ts';
 import { createMaxpTable } from './tables/maxp.ts';
 import { createHeadTable } from './tables/head.ts';
 import { createHHeadTable } from './tables/hhea.ts';
-import { slugify } from '../../utils/slugify.ts';
 import { tableIdentifier } from '../../utils/string-to-bytes.ts';
 import { TTFTable } from '../../types';
 import { BufferByte } from '../../entities/buffer-byte.ts';
 import { computeChecksum, unsignedLong } from '../../utils/compute-checksum.ts';
 
-export class TransformToTTFFont extends Transform {
+export class TransformToTtf extends Transform {
 
   private readonly _fontName: string;
 
@@ -97,8 +96,6 @@ export class TransformToTTFFont extends Transform {
   }
 
   _flush(callback: TransformCallback): void {
-    const slug = slugify(this._fontName);
-
     const font = new Font({
       fontFamily: this._fontName,
       fontSubFamily: 'Regular',
@@ -111,10 +108,10 @@ export class TransformToTTFFont extends Transform {
       codePoints: this._glyphsByCode,
     });
 
-    const headerSize = 12 + (16 * TransformToTTFFont._TABLES.length);
+    const headerSize = 12 + (16 * TransformToTtf._TABLES.length);
     let bufSize = headerSize;
 
-    TransformToTTFFont._TABLES.forEach(table => {
+    TransformToTtf._TABLES.forEach(table => {
       table.buffer = table.create(font);
       table.length = table.buffer.length;
       table.corLength = table.length + (4 - table.length % 4) % 4;
@@ -124,46 +121,46 @@ export class TransformToTTFFont extends Transform {
 
     let offset = headerSize;
 
-    TransformToTTFFont._TABLES.forEach(table => {
+    TransformToTtf._TABLES.forEach(table => {
       table.offset = offset;
       offset += table.corLength!;
     });
 
-    const buf = new BufferByte(bufSize);
+    const buffer = new BufferByte(bufSize);
 
-    const entrySelector = Math.floor(Math.log(TransformToTTFFont._TABLES.length) / Math.LN2);
+    const entrySelector = Math.floor(Math.log(TransformToTtf._TABLES.length) / Math.LN2);
     const searchRange = Math.pow(2, entrySelector) * 16;
-    const rangeShift = TransformToTTFFont._TABLES.length * 16 - searchRange;
+    const rangeShift = TransformToTtf._TABLES.length * 16 - searchRange;
 
-    buf.writeUint32(TransformToTTFFont._VERSION);
-    buf.writeUint16(TransformToTTFFont._TABLES.length);
-    buf.writeUint16(searchRange);
-    buf.writeUint16(entrySelector);
-    buf.writeUint16(rangeShift);
+    buffer.writeUint32(TransformToTtf._VERSION);
+    buffer.writeUint16(TransformToTtf._TABLES.length);
+    buffer.writeUint16(searchRange);
+    buffer.writeUint16(entrySelector);
+    buffer.writeUint16(rangeShift);
 
-    TransformToTTFFont._TABLES.forEach((table, index) => {
-      buf.writeUint32(tableIdentifier(table.innerName));
-      buf.writeUint32(table.checkSum!);
-      buf.writeUint32(table.offset!);
-      buf.writeUint32(table.length!);
+    TransformToTtf._TABLES.forEach((table, index) => {
+      buffer.writeUint32(tableIdentifier(table.innerName));
+      buffer.writeUint32(table.checkSum!);
+      buffer.writeUint32(table.offset!);
+      buffer.writeUint32(table.length!);
     });
 
     let headOffset = 0;
 
     // const tables2 = TABLES.sort((a, b) => b.order - a.order);
-    TransformToTTFFont._TABLES.forEach(table => {
+    TransformToTtf._TABLES.forEach(table => {
       if (table.innerName === 'head') {
-        headOffset = buf.tell();
+        headOffset = buffer.tell();
       }
-      buf.writeBytes(table.buffer!.buffer);
+      buffer.writeBytes(table.buffer!.buffer);
       for (let i = table.length!; i < table.corLength!; i++) {
-        buf.writeUint8(0);
+        buffer.writeUint8(0);
       }
     });
 
 
-    buf.setUint32(headOffset + 8, unsignedLong(TransformToTTFFont._CHECKSUM_ADJUSTMENT - computeChecksum(buf)))
+    buffer.setUint32(headOffset + 8, unsignedLong(TransformToTtf._CHECKSUM_ADJUSTMENT - computeChecksum(buffer)))
 
-    callback(null, Buffer.from(buf.buffer));
+    callback(null, Buffer.from(buffer.buffer));
   }
 }

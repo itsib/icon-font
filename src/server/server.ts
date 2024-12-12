@@ -3,7 +3,6 @@ import url from 'node:url';
 import path from 'node:path';
 import { handleRoute } from './router.js';
 import { Watcher } from './watcher.js';
-import { readFiles } from '../utils/read-files.ts';
 import { AppConfig } from '../types';
 
 export function createServer(config: Omit<AppConfig, 'output'>): http.Server {
@@ -15,7 +14,6 @@ export function createServer(config: Omit<AppConfig, 'output'>): http.Server {
   });
 
   return http.createServer(async function server(this: http.Server, req, res) {
-    const files = await readFiles(config.input);
     const parsedUrl = req.url && new url.URL(`http://localhost:${req.socket.localPort}${req.url}`) || null;
     if (!parsedUrl) {
       throw new Error(`URL not parsable`);
@@ -33,7 +31,7 @@ export function createServer(config: Omit<AppConfig, 'output'>): http.Server {
         shouldReload = false;
       }
 
-      await handleRoute(routePath, req, res, config, files);
+      await handleRoute(routePath, req, res, config);
     }
   });
 }

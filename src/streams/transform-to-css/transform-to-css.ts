@@ -3,13 +3,13 @@ import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
 import { FontType } from '../../types';
 import { slugify } from '../../utils/slugify.ts';
 import { join } from 'node:path';
-import { encodeHtml } from '../../utils/coders.ts';
+import { encodeCss, encodeHtml } from '../../utils/coders.ts';
 
 const STYLES = `
 .icon {
   font-family: "{{fontName}}", sans-serif;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 1em;
   font-style: normal;
   font-variant: normal;
   text-rendering: auto;
@@ -355,7 +355,7 @@ export class TransformToCss extends Transform {
     }
 
     output += `i.${this._prefix}-${chunk.metadata.name}:before {\n`;
-    output += `  content: "\\${encodeHtml([chunk.metadata.codepoint])}";\n`;
+    output += `  content: "${encodeCss([chunk.metadata.codepoint])}";\n`;
     output += '}\n\n';
 
     callback(null, output);
