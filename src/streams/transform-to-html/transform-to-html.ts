@@ -196,7 +196,7 @@ export class TransformToHtml extends Transform {
 
   private _isHeaderRendered = false;
 
-  constructor(fontName: string, prefix = 'icon') {
+  constructor(fontName: string, prefix: string) {
     super({ objectMode: true });
 
     this._fontName = fontName;

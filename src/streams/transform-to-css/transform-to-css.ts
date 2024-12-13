@@ -301,7 +301,7 @@ export class TransformToCss extends Transform {
 
   private _isHeaderRendered = false;
 
-  constructor(fontName: string, types: FontType[], prefix = 'icon', url = '/') {
+  constructor(fontName: string, types: FontType[], prefix: string, url: string) {
     super({ objectMode: true });
 
     this._fontId = slugify(fontName);

@@ -26,7 +26,7 @@ async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse
 async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const filesReadStream = new StreamRead(config.input);
   const prepareStream = new TransformPrepareIcons();
-  const cssStyleStream = new TransformToCss(config.name, config.types, config.prefix);
+  const cssStyleStream = new TransformToCss(config.name, config.types, config.prefix, '/');
 
   res.writeHead(200, {
     'Content-Type': 'text/css',

@@ -28,17 +28,15 @@ export async function loadConfig(path: string): Promise<Partial<AppConfig | unde
   }
 }
 
-export function mergeConfig(required: AppConfigKeys[], ..._configs: Partial<AppConfig | undefined>[]): Required<AppConfig> {
-  const configs = [..._configs].reverse();
+export function mergeConfig(required: AppConfigKeys[], ...configs: Partial<AppConfig | undefined>[]): Required<AppConfig> {
   const result: Partial<AppConfig> = {};
 
   for (const key of required) {
     for (let i = 0; i < configs.length; i++) {
       const config = configs[i];
 
-      if (config && config?.[key] != null) {
+      if (config && config[key] != null) {
         result[key] = config![key] as any;
-        break;
       }
     }
     if (result[key] == null && required.indexOf(key) >= 0) {
