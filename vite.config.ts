@@ -20,6 +20,7 @@ function nodeNativeModules(): string[] {
 
 export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
   const appName = pkg.name.split('/')[1];
+  console.log(appName)
   let watch: any = undefined;
   if (mode === 'development' && command === 'build' && process.argv.some(arg => arg === '--watch' || arg === '-w')) {
     watch = {

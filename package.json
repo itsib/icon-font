@@ -5,6 +5,7 @@
   "license": "MIT",
   "type": "module",
   "private": false,
+  "keywords": ["font", "ttf", "eot", "woff", "woff2", "iconfont", "icon-font"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/itsib/icon-font.git"

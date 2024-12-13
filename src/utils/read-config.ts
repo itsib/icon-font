@@ -11,7 +11,7 @@ const Seeker = cosmiconfig(__APP_NAME__, {
 export async function searchConfig(cwd: string): Promise<Partial<AppConfig | undefined>> {
   try {
     const result = await Seeker.search(cwd);
-    return !result?.isEmpty && result?.config ? result?.config?.default : undefined;
+    return result?.config || result?.config?.default;
   } catch(error: any) {
     Logger.warn(`Config file not found, default config will be used.`);
     return undefined;

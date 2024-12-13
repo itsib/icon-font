@@ -1,0 +1,9 @@
+{
+  "input": "svg-icons",
+  "output": "dist/fonts",
+  "name": "IconFont",
+  "prefix": "icon",
+  "types": [ "woff2", "woff", "ttf", "eot"],
+  "port": 9000,
+  "fontUrl": "/fonts"
+}
