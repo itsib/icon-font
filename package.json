@@ -1,11 +1,19 @@
 {
   "name": "@itsib/icon-font",
   "description": "CLI utilities for icon-font generation, automation and presentation. Includes preview web server.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "type": "module",
   "private": false,
-  "keywords": ["font", "ttf", "eot", "woff", "woff2", "iconfont", "icon-font"],
+  "keywords": [
+    "font",
+    "ttf",
+    "eot",
+    "woff",
+    "woff2",
+    "iconfont",
+    "icon-font"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/itsib/icon-font.git"
