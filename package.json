@@ -34,6 +34,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preversion": "echo \"releases\"",
+    "version": "node ./scripts/version.mjs && git add .",
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {
