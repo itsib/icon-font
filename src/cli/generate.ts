@@ -30,7 +30,7 @@ export function createGenerateCommand(): Command {
 
       const { config: configFilePath, cwd, ...configArgs } = args;
       const configFile = configFilePath ? await loadConfig(configFilePath) : await searchConfig(process.cwd());
-      const requiredFields: AppConfigKeys[] = ['input', 'output', 'name', 'prefix', 'types', 'port']
+      const requiredFields: AppConfigKeys[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl']
       const config = mergeConfig(requiredFields, DEFAULT_CONFIG, configFile, configArgs);
 
       await fs.rm(config.output, { recursive: true, force: true });
