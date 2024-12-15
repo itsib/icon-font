@@ -1,8 +1,13 @@
-<img alt="IconFont logo" height="60" style="margin: 20px 0;" src="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand-black.svg" />
+<a href="https://github.com/itsib/icon-font">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand.svg">
+      <img alt="IconFont logo" height="60" style="margin: 20px 0;" src="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand-black.svg" />
+    </picture>
+</a>
 
 Simple utilities for icon-font generation, automation and presentation. Includes preview web server.
 
-![Version](https://img.shields.io/badge/version-0.2.10-blue.svg?cacheSeconds=2592000&label=Version)
+![Version](https://img.shields.io/badge/version-0.2.9-blue.svg?cacheSeconds=2592000&label=Version)
 [![Release](https://github.com/itsib/icon-font/actions/workflows/main.yaml/badge.svg)](https://github.com/itsib/icon-font/actions/workflows/main.yaml)
 
 ---
