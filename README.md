@@ -57,7 +57,7 @@ icon-font generate --input icons/dir --output fonts/dir
 
 ## Configuration
 
-You need to create an `.icon-fontrc` file with json format in the root of your project. 
+You need to create an `icon-font.json` file with json format in the root of your project. Or add field `icon-font` in package.json file.
 
 ```json
 {
@@ -73,8 +73,16 @@ You need to create an `.icon-fontrc` file with json format in the root of your p
 
 ### Options description
 
-|  Option  |   Type   | Required | Description                                                                                       |
-|:--------:|:--------:|:--------:|---------------------------------------------------------------------------------------------------|
-| `input`  | `string` |    ✔     | The directory containing the SVG icon files that will be included in the font being created       |
-| `output` | `string` |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created. |
-|  `name`  | `string` |          | The name of the new font, by default `IconFont`                                                   |
+> Configuration parameters passed through the CLI have a higher priority than the configuration file.
+
+| Option    |    Type    | Required | Description                                                                                       |
+|:----------|:----------:|:--------:|---------------------------------------------------------------------------------------------------|
+| `input`   |  `string`  |    ✔     | The directory containing the SVG icon files that will be included in the font being created       |
+| `output`  |  `string`  |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created. |
+| `name`    |  `string`  |          | The name of the new font, by default `IconFont`                                                   |
+| `prefix`  |  `string`  |          | Class name prefix. Default `icon`                                                                 |
+| `types`   | `string[]` |          | Output font types, to be generated. Default: `[ "woff2", "woff", "ttf", "eot"]`                   |
+| `port`    |  `number`  |          | Demo server port. Default `9000` (http://localhost:9000).                                         |
+| `fontUrl` |  `string`  |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`      |
+
+
