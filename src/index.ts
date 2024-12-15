@@ -1,5 +1,4 @@
 import { Command } from 'commander';
-import { cosmiconfig } from 'cosmiconfig';
 import { createGenerateCommand } from './cli/generate.js';
 import { createDemoCommand } from './cli/demo.js';
 

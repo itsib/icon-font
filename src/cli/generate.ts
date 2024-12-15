@@ -1,13 +1,11 @@
 import { Command } from 'commander';
 import { pipeline } from 'node:stream';
-import { loadConfig, mergeConfig, searchConfig } from '../utils/read-config.js';
+import { loadConfig } from '../utils/load-config.ts';
 import fs from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
 import path from 'node:path';
 import { slugify } from '../utils/slugify.js';
 import { Logger } from '../utils/logger.js';
-import { DEFAULT_CONFIG } from '../default-opts.ts';
-import { AppConfigKeys } from '../types';
 import { StreamRead } from '../streams/stream-read/stream-read.ts';
 import { TransformPrepareIcons } from '../streams/transform-prepare-icons/transform-prepare-icons.ts';
 import { TransformToSvg } from '../streams/transform-to-svg/transform-to-svg.ts';
@@ -28,10 +26,8 @@ export function createGenerateCommand(): Command {
     .action(async (args: any, command: Command) => {
       const start = Date.now();
 
-      const { config: configFilePath, cwd, ...configArgs } = args;
-      const configFile = configFilePath ? await loadConfig(configFilePath) : await searchConfig(process.cwd());
-      const requiredFields: AppConfigKeys[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl']
-      const config = mergeConfig(requiredFields, DEFAULT_CONFIG, configFile, configArgs);
+      const { config: configFile, cwd, ...configArgs } = args;
+      const config = await loadConfig(cwd, configFile, configArgs);
 
       await fs.rm(config.output, { recursive: true, force: true });
       await fs.mkdir(config.output, { recursive: true });

@@ -1,7 +1,7 @@
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand-black.svg">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand.svg">
-  <img alt="IconFont logo" height="60" style="margin-top: 20px;" src="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand.svg" />
+  <img alt="IconFont logo" height="60" style="margin: 20px 0;" src="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand.svg" />
 </picture>
 
 Simple utilities for icon-font generation, automation and presentation. Includes preview web server.

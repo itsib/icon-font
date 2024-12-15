@@ -33,5 +33,3 @@ export interface AppConfig {
    */
   fontUrl: string;
 }
-
-export type AppConfigKeys = keyof AppConfig;
