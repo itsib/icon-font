@@ -32,6 +32,10 @@ const HEAD = `
     .caption svg {
       width: auto;
       height: 56px;
+      
+    }
+    .caption svg .text-paths {
+      color: white !important;
     }
     .buttons-container {
       width: auto;
@@ -210,7 +214,6 @@ export class TransformToHtml extends Transform {
     output += '<body>\n';
     output += `<h1 class="caption">\n`;
     output += BRAND + '\n';
-    // output += `<span>${this._fontName}</span>\n`;
     output += `</h1>\n`;
 
     output += '<div class="buttons-container">\n';

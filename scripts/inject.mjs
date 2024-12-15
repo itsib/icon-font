@@ -11,8 +11,8 @@ const ROOT_PROJECT = resolve(dirname(new URL(import.meta.url).pathname), '..');
 
   const faviconSnipped = `export const FAVICON =\n\`${favicon.trim()}\`;`;
   const brandSnipped = `export const BRAND =\n\`${brand.trim()}\`;`;
-  content = content.replace(/export\sconst\sFAVICON\s=\s?`\s?<svg[\w\s.=":\/><\-#,()]+<\/svg>\s?`;`;/, faviconSnipped);
-  content = content.replace(/export\sconst\sBRAND\s=\s?`\s?<svg[\w\s.=":\/><\-#,()]+<\/svg>\s?`;/, brandSnipped);
+  content = content.replace(/export\sconst\sFAVICON\s=\s?`\s?<svg[\w\s.=":\/><\-#@,(){}]+<\/svg>\s?`;/, faviconSnipped);
+  content = content.replace(/export\sconst\sBRAND\s=\s?`\s?<svg[\w\s.=":\/><\-#@,(){}]+<\/svg>\s?`;/, brandSnipped);
 
   await writeFile(join(ROOT_PROJECT, 'src/constants.ts'), content, 'utf8');
 })();
