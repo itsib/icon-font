@@ -1,7 +1,8 @@
-<p align="left" style="position: relative">
-    <img alt="Logo" style="position: relative; top: 10px; margin-right: 10px" src="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/favicon.svg" width="40" />
-    <span style="color: #eee; font-size: 28px; font-weight: 600; line-height: 48px;">Icon Font Generator</span>
-</p>
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand-black.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand.svg">
+  <img alt="IconFont logo" height="60" style="margin-top: 20px;" src="https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/brand.svg" />
+</picture>
 
 Simple utilities for icon-font generation, automation and presentation. Includes preview web server.
 
