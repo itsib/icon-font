@@ -1,7 +1,7 @@
 import http from 'node:http';
 import { slugify } from '../utils/slugify.js';
 import { Logger } from '../utils/logger.js';
-import { LOGO_ICON } from '../utils/constants.ts';
+import { FAVICON } from '../constants.ts';
 import { AppConfig } from '../types';
 import { StreamRead } from '../streams/stream-read/stream-read.ts';
 import { TransformPrepareIcons } from '../streams/transform-prepare-icons/transform-prepare-icons.ts';
@@ -37,7 +37,7 @@ async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResp
 
 async function faviconHandler(_req: http.IncomingMessage, res: http.ServerResponse) {
   res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
-  res.write(LOGO_ICON);
+  res.write(FAVICON);
   res.end();
 }
 

@@ -2,7 +2,7 @@ import { Transform, TransformCallback } from 'node:stream';
 import sax from 'sax';
 import { BufferWithMeta, FileMetadata, SymbolMeta } from '../../types/types.ts';
 import { SVGCommand, SVGPathData, SVGPathDataParser, SVGPathDataTransformer } from 'svg-pathdata';
-import { START_UNICODE, SYMBOL_SIZE } from '../../utils/constants.ts';
+import { START_UNICODE, SYMBOL_SIZE } from '../../constants.ts';
 import { Buffer } from 'node:buffer';
 import { populateMetadata } from '../../utils/populate-metadata.ts';
 import { svgRectToPath } from '../../svg-helpers/svg-rect-to-path.ts';

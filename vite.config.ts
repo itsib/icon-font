@@ -1,6 +1,5 @@
 import { defineConfig, UserConfig } from 'vite';
 import { resolve } from 'node:path';
-import { visualizer } from 'rollup-plugin-visualizer';
 import pkg from './package.json';
 
 function nodeNativeModules(): string[] {
@@ -20,7 +19,6 @@ function nodeNativeModules(): string[] {
 
 export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
   const appName = pkg.name.split('/')[1];
-  console.log(appName)
   let watch: any = undefined;
   if (mode === 'development' && command === 'build' && process.argv.some(arg => arg === '--watch' || arg === '-w')) {
     watch = {
@@ -48,6 +46,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
         util: 'node:util',
         module: 'node:module',
         url: 'node:url',
+        stream: 'node:stream',
       }
     },
     publicDir: 'assets',
@@ -77,19 +76,8 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
           'string_decoder',
           'stream',
         ],
-        output: {
-          // entryFileNames: '[name].cjs',
-        }
       },
     },
-    plugins: [
-      visualizer({
-        emitFile: true,
-        template: 'flamegraph',
-        include: [
-          { file: '*/**/*.cjs' }
-        ],
-      }) as any,
-    ]
+    plugins: []
   };
 });

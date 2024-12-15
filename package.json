@@ -31,8 +31,9 @@
     "package.json"
   ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "npm run inject && vite",
+    "inject": "node scripts/inject.mjs",
+    "build": "npm run inject && tsc && vite build",
     "preversion": "echo \"releases\"",
     "version": "node ./scripts/version.mjs && git add .",
     "postversion": "git push && git push --tags"
@@ -46,7 +47,6 @@
     "commander": "^12.1.0",
     "cosmiconfig": "^9.0.0",
     "prettier": "^3.3.1",
-    "rollup-plugin-visualizer": "^5.12.0",
     "sax": "^1.4.1",
     "svg-pathdata": "^7.1.0",
     "ttf2eot": "^3.1.0",

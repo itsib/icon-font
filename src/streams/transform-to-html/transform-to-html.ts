@@ -1,6 +1,6 @@
 import { Transform, TransformCallback } from 'node:stream';
 import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
-import { LOGO_ICON } from '../../utils/constants.ts';
+import { BRAND, FAVICON } from '../../constants.ts';
 
 const HEAD = `
 <head>
@@ -30,8 +30,8 @@ const HEAD = `
       gap: 16px;
     }
     .caption svg {
-      width: 48px;
-      height: auto;
+      width: auto;
+      height: 56px;
     }
     .buttons-container {
       width: auto;
@@ -209,8 +209,8 @@ export class TransformToHtml extends Transform {
     output += HEAD.replace('{{caption}}', this._fontName);
     output += '<body>\n';
     output += `<h1 class="caption">\n`;
-    output += LOGO_ICON + '\n';
-    output += `<span>${this._fontName}</span>\n`;
+    output += BRAND + '\n';
+    // output += `<span>${this._fontName}</span>\n`;
     output += `</h1>\n`;
 
     output += '<div class="buttons-container">\n';
