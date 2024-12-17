@@ -7,7 +7,7 @@
 
 Simple utilities for icon-font generation, automation and presentation. Includes preview web server.
 
-![Version](https://img.shields.io/badge/version-0.2.13-blue.svg?cacheSeconds=2592000&label=Version)
+![Version](https://img.shields.io/badge/version-0.2.14-blue.svg?cacheSeconds=2592000&label=Version)
 [![Release](https://github.com/itsib/icon-font/actions/workflows/main.yaml/badge.svg)](https://github.com/itsib/icon-font/actions/workflows/main.yaml)
 
 ---
