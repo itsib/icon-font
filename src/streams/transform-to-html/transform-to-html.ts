@@ -323,14 +323,7 @@ const HEAD = `
 
   <script type="application/javascript">
     let activeAnimationButton; 
-    let prefix;
-    
-    const dialog = document.getElementById('icon-dialog');
-    
-    dialog.addEventListener('cancel', () => {
-      console.log('cancel');
-    })
-    
+    let prefix;    
     function renderExample() {
       const iconDemo = document.getElementById('icon-demo');
       const code = document.getElementById('code-example');
@@ -345,7 +338,7 @@ const HEAD = `
       code.innerHTML = html;
     }
     function onChooseIcon(button) {
-      
+      const dialog = document.getElementById('icon-dialog');
       const header = document.getElementById('dialog-header');
       const iconDemo = document.getElementById('icon-demo');
 
@@ -358,6 +351,7 @@ const HEAD = `
       dialog.showModal();
     }
     function onClose() {
+      const dialog = document.getElementById('icon-dialog');
       dialog.close();
      
       if (activeAnimationButton) {
