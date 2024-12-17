@@ -17,7 +17,7 @@ export function createDemoCommand(): Command {
 
       const config = await loadConfig(cwd, configFile, configArgs);
 
-      const server = createServer(config);
+      const server = createServer({ ...config, types: ['eot', 'woff', 'woff2', 'ttf', 'svg'] });
 
       scanAvailablePort(config.port, (error, port) => {
         if (error || !port) {

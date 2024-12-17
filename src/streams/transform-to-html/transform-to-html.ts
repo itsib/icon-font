@@ -1,6 +1,10 @@
 import { Transform, TransformCallback } from 'node:stream';
 import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
-import { BRAND, FAVICON } from '../../constants.ts';
+import { BRAND } from '../../constants.ts';
+import { STYLES } from './styles.ts';
+import { FontType } from '../../types';
+import { slugify } from '../../utils/slugify.ts';
+import { fontFaceUrl } from '../../utils/font-face.ts';
 
 const HEAD = `
 <head>
@@ -8,320 +12,14 @@ const HEAD = `
   <title>{{caption}}</title>
   <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg" />
   <style>
-    html {
-      --border-radius: 8px;
-      --preview-bg: 2 6 23;
-      --label-bg: 12 74 110;
-
-      color: #e2e8f0;
-      background: #0f172a;
-    }
-    body {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif, ui-sans-serif, 
-                    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", 
-                    Roboto, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", 
-                   "Segoe UI Symbol", "Noto Color Emoji";
-      font-weight: 300;
-      font-size: 16px;
-      margin: 0;
-      text-align: center;
-    }
-    .caption {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-    }
-    .caption svg {
-      width: auto;
-      height: 56px;
-    }
-    .caption svg .text-paths {
-      color: white !important;
-    }
-    .buttons-container {
-      width: auto;
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 10px 20px;
-    }
-    .preview {
-      width: 110px;
-      height: 130px;
-      margin: 10px;
-      display: inline-block;
-      border: none;
-      background-color: transparent;
-      color: inherit;
-      outline: none;
-      padding: 0;
-      border-radius: var(--border-radius);
-      position: relative;
-    }
-    .preview .inner {
-      display: inline-block;
-      width: 100%;
-      text-align: center;
-      background: rgb(var(--preview-bg) / 0.7);
-      border-radius: var(--border-radius) var(--border-radius) 0 0;
-    }
-    .preview .inner i {
-      line-height: 100px;
-      font-size: 36px;
-    }
-    .label {
-      display: inline-block;
-      width: 100%;
-      box-sizing: border-box;
-      padding: 5px;
-      font-size: 12px;
-      font-weight: 500;
-      font-family: Monaco, monospace;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      background: rgb(var(--label-bg));
-      border-radius: 0 0 var(--border-radius) var(--border-radius);
-    }
-    [aria-label] {
-      cursor: pointer;
-      position: relative;
-    }
-    [aria-label]::after {
-      width: 120px;
-      background-color: rgba(28, 28, 30, 0.9);
-      border-radius: 5px;
-      border: .5px solid rgba(28, 28, 30, 1);
-      margin-bottom: 16px;
-      box-shadow: 0 0 .1875rem rgba(0, 0, 0, .3);
-      color: #f0f0f0;
-      content: attr(aria-label);
-      font-size: 12px;
-      line-height: 1;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      font-style: normal;
-      font-weight: 500;
-      padding: 10px;
-      text-indent: 0;
-      text-shadow: none;
-      white-space: nowrap;
-      z-index: 50;
-    }
-    [aria-label]::before {
-      content: "";
-      z-index: 49;
-      border: 8px solid transparent;
-      border-top-color: rgba(28, 28, 30, 1);
-      height: 0;
-      width: 0;
-      display: block;
-    }
-    [aria-label]::after,
-    [aria-label]::before {
-      bottom: 100%;
-      box-sizing: border-box;
-      opacity: 0;
-      pointer-events: none;
-      position: absolute;
-      transition: all .2s ease-in-out 0s;
-      transition-delay: 0s;
-      left: 50%;
-      transform: translate(-50%, 10px);
-      transform-origin: top;
-    }
-    [aria-label]:hover::after,
-    [aria-label]:hover::before {
-      opacity: 1;
-      transform: translate(-50%, 4px);
-    }
-
-    dialog {
-      width: 500px;
-      padding: 0;
-      color: white;
-      border: 1px solid rgba(255 255 255 / 0.1);
-      background-color: rgb(var(--preview-bg) / 0.9);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      backdrop-filter: saturate(180%) blur(20px);
-      box-shadow: 0 0 2px 1px rgb(0 0 0 / .1);
-      border-radius: var(--border-radius);
-      animation: fade-out 0.2s ease-out;
-      z-index: 5000;
-      overflow: visible;
-      user-select: none;
-      -moz-user-select: none;
-      -webkit-user-select: none;
-    }
-    dialog[open] {
-      animation: fade-in 0.2s ease-out;
-    }
-    dialog[open]::backdrop {
-      animation: backdrop-fade-in 0.2s ease-out forwards;
-    }
-    dialog .header {
-      margin: 0;
-      padding: 10px 15px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    dialog .header .close {
-      left: 10px;
-      top: -3px;
-      width: 30px;
-      height: 30px;
-      font-size: 20px;
-      color: white;
-      background: transparent;
-      border: none;
-      border-radius: 50%;
-      position: relative;
-      cursor: pointer;
-    }
-    dialog .content {
-      padding: 0 15px 10px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    dialog .content .cell-1 {
-      width: 160px;
-      height: 80px;
-      padding: 40px 0;
-    }
-    dialog .content .cell-1 .icon {
-      display: block;
-    }
-    dialog .content .cell-2 {
-      width: calc(100% - 180px);
-      position: relative;
-    }
-    dialog .content .cell-2 .copy {
-      right: 8px;
-      top: 8px;
-      padding: 0;
-      color: rgb(255 255 255 / 0.7);
-      background: transparent;
-      border: none;
-      position: absolute;
-    }
-    dialog .content .cell-2 .copy:hover {
-      color: rgb(255 255 255 / 1);
-    }
-    dialog .content .cell-2 .example {
-      min-height: 80px;
-      padding: 32px 20px 18px;
-      border-radius: 6px;
-      border: 1px solid rgb(255 255 255 / 0.2);
-      background: rgb(10 10 10);
-      overflow-x: auto;
-      box-sizing: border-box;
-    }
-    dialog .content .cell-2 code {
-      font-size: 13px;
-      white-space: nowrap;
-       user-select: text;
-      -moz-user-select: text;
-      -webkit-user-select: text;
-    }
-    dialog .content .cell-3 {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: start;
-    }
-    dialog .content .cell-3 .caption {
-      margin-bottom: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      text-align: start;
-    }
-    dialog .content .cell-3 .buttons {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      column-gap: 4px;
-    }
-    dialog .content .cell-3 .buttons button {
-      height: 22px;
-      margin-bottom: 4px;
-      padding: 2px 6px;
-      font-size: 12px;
-      line-height: 1;
-      color: white;
-      background-color: rgba(255 255 255 / 0.1);
-      border: none;
-      border-radius: 3px;
-      display: inline-block;
-      cursor: pointer;
-    }
-    dialog .content .cell-3 .buttons button.active {
-      background-color: rgb(var(--label-bg));
-    }
-    
-    dialog ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-      transition: all .15s ease-in-out;
-    }
-    dialog ::-webkit-scrollbar-track {
-      padding: 4px 0;
-      position: relative;
-      background-color: transparent;
-    }
-    dialog ::-webkit-scrollbar-button {
-      height: 8px;
-      background-color: transparent;
-    }
-    dialog ::-webkit-scrollbar-thumb {
-      border-radius: 4px;
-      background-color: rgb(255 255 255 / 0.5);
-    }
-    dialog ::-webkit-scrollbar-corner {
-      display: none;
-    }
-
-    @keyframes fade-in {
-      0% {
-        opacity: 0;
-        transform: translateY(-20px);
-        display: none;
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-        display: block;
-      }
-    }
-    @keyframes fade-out {
-      0% {
-        opacity: 1;
-        transform: translateY(0);
-        display: block;
-      }
-
-      100% {
-        opacity: 0;
-        transform: translateY(-20px);
-        display: none;
-      }
-    }
-    @keyframes backdrop-fade-in {
-      0% {
-        background-color: rgb(0 0 0 / 0%);
-      }
-
-      100% {
-        background-color: rgb(0 0 0 / 25%);
-      }
-    }
+    {{styles}}
   </style>
 
-  <link rel="stylesheet" type="text/css" href="/style.css"/>
+  <link title="icons-style" rel="stylesheet" type="text/css" href="/style.css"/>
 
   <script type="application/javascript">
+    const fontName = '{{fontName}}';
+    const fontFaceUrls = JSON.parse('{{fontFaceUrls}}');
     let activeAnimationButton; 
     let prefix;    
     function renderExample() {
@@ -398,11 +96,31 @@ const HEAD = `
         button.addEventListener('mouseout', back);
       });
     }
-  </script>
-
-  <script type="application/javascript">
-    let health = 'unknown';
-    async function checkHealth() {
+    async function onFontSelect(select) {
+      const errorBlock = document.getElementById('select-error');
+      errorBlock.innerText = '';
+      try {
+        const style = Array.from(document.styleSheets).find(style => style.title === 'icons-style');
+        const cssRule = Array.from(style.cssRules).find(rule => rule instanceof CSSStyleRule && rule.cssText.startsWith('.icon { font-family'));
+       
+        if (select.value === 'disabled') {
+          cssRule.styleMap.set('font-family', fontName);
+        } else if (select.value in fontFaceUrls) {
+          const customFontName = fontName + select.value.toUpperCase();
+          
+          if (!Array.from(document.fonts).some(font => font.family === customFontName)) {
+            const url = decodeURIComponent(fontFaceUrls[select.value]);
+            const font = new FontFace(fontName + select.value.toUpperCase(), url);
+            const loaded = await font.load()
+            document.fonts.add(loaded);
+          }
+          cssRule.styleMap.set('font-family', customFontName);
+        }
+      } catch (error) {
+        errorBlock.innerText = error.message;
+      }
+    }
+    async function healthStatus() {
       try {
         const res = await fetch('/healthcheck', {
           method: 'GET',
@@ -411,28 +129,32 @@ const HEAD = `
           },
         });
         if (!res.ok) {
-          health = 'failed';
+          return 'failed';
         }
 
         const data = await res.json();
-        // Reload by server command
         if (data.status === 'reload') {
-          return window.location.reload(true);
-        } 
-        // If "ok" after failed then reload. 
-        else if (data.status === 'ok') {
-          if (health === 'failed') {
-            return window.location.reload(true);
-          } else {
-            health = 'healthy';
-          }
+          return 'reload';
+        } else if (data.status === 'ok') {
+          return 'healthy';
         }
-      } catch {
-        health = 'failed';
-      }
+      } catch {}
+      
+      return 'failed';
     }
-
-    setInterval(checkHealth, 1000);
+    
+    (async () => {
+      let health = await healthStatus();
+      
+      setInterval(async () => {
+        const status = await healthStatus();
+        if (status === 'reload' || (health === 'failed' && status === 'healthy')) {
+          return window.location.reload();
+        }
+        health = status;        
+      }, 1000);
+      
+    })();
   </script>
 </head>
 `;
@@ -478,29 +200,60 @@ const DIALOG = `
 </dialog>
 `;
 
+const FONT_SELECTOR = `
+<div class="font-selector">
+  <label for="font-select">Force select font-face</label>
+  <div class="select-wrap">
+    <select id="font-select" aria-errormessage="select-error" onchange="onFontSelect(this)">
+      <option value="disabled">All Fonts Used</option>
+      <option value="ttf">TrueType Font (ttf)</option>
+      <option value="woff">Web Open Font Format (woff)</option>
+      <option value="woff2">Web Open Font Format 2.0 (woff2)</option>
+      <option value="eot">Embedded OpenType (eot)</option>
+      <option value="svg">Scalable Vector Graphics (svg)</option>
+    </select>
+  </div>
+  <div id="select-error" class="error"></div>
+</div>
+`;
+
 export class TransformToHtml extends Transform {
 
   private readonly _fontName: string;
+
+  private readonly _types: FontType[];
+
+  private readonly _url: string;
 
   private readonly _prefix: string;
 
   private _isHeaderRendered = false;
 
-  constructor(fontName: string, prefix: string) {
+  constructor(fontName: string, types: FontType[], prefix: string, url: string) {
     super({ objectMode: true });
 
     this._fontName = fontName;
+    this._types = types;
     this._prefix = prefix;
+    this._url = url;
   }
 
   private _header(): string {
+    const fontId = slugify(this._fontName);
+    const fontFaceUrls = this._types.reduce((acc, type) => ({ ...acc, [type]: encodeURIComponent(fontFaceUrl(this._url, fontId, type)) }), {})
+
     let output = '<!DOCTYPE html>\n';
     output += '<html lang="en">\n';
-    output += HEAD.replace('{{caption}}', this._fontName);
+    output += HEAD
+      .replace('{{caption}}', this._fontName)
+      .replace('{{styles}}', STYLES)
+      .replace('{{fontName}}', this._fontName)
+      .replace('{{fontFaceUrls}}', JSON.stringify(fontFaceUrls));
     output += '<body>\n';
     output += `<h1 class="caption">\n`;
     output += BRAND + '\n';
     output += `</h1>\n`;
+    output += FONT_SELECTOR + '\n';
 
     output += '<div class="buttons-container">\n';
 

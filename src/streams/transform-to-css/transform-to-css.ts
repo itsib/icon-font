@@ -1,9 +1,8 @@
 import { Transform, TransformCallback } from 'node:stream';
 import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
 import { FontType } from '../../types';
-import { slugify } from '../../utils/slugify.ts';
-import { join } from 'node:path';
-import { encodeCss, encodeHtml } from '../../utils/coders.ts';
+import { encodeCss } from '../../utils/coders.ts';
+import { fontFace } from '../../utils/font-face.ts';
 
 const STYLES = `
 .{{prefix}} {
@@ -301,8 +300,6 @@ const STYLES = `
 
 export class TransformToCss extends Transform {
 
-  private readonly _fontId: string;
-
   private readonly _fontName: string;
 
   private readonly _types: FontType[];
@@ -316,43 +313,14 @@ export class TransformToCss extends Transform {
   constructor(fontName: string, types: FontType[], prefix: string, url: string) {
     super({ objectMode: true });
 
-    this._fontId = slugify(fontName);
     this._fontName = fontName;
     this._types = types;
     this._prefix = prefix;
     this._url = url;
   }
 
-  private _fontFaceUrl(type: FontType): string {
-    const fontUrl = join(this._url, `${this._fontId}.${type}`);
-    switch (type) {
-      case 'eot':
-        return `url("${fontUrl}#iefix") format("embedded-opentype")`;
-      case 'woff2':
-        return `url("${fontUrl}") format("woff2")`;
-      case 'woff':
-        return `url("${fontUrl}") format("woff")`;
-      case 'ttf':
-        return `url("${fontUrl}") format("truetype")`;
-      case 'svg':
-        return `url("${fontUrl}") format("svg")`;
-      default:
-        throw new Error(`Unsupported type "${type}"`);
-    }
-  }
-
   private _header() {
-    let output = '@font-face {\n'
-    output += `  font-family: "${this._fontName}";\n`;
-    output += '  src: ';
-
-    for (let i = 0; i < this._types.length; i++) {
-      const type = this._types[i];
-      const fontUrl = this._fontFaceUrl(type);
-      output += i === 0 ? fontUrl : `     ${fontUrl}`;
-      output += i === this._types.length - 1 ? ';\n' : ',\n';
-    }
-    output += '}\n';
+    let output = fontFace(this._url, this._fontName, this._types);
 
     output += STYLES.replace('{{fontName}}', this._fontName).replace(/\{\{prefix}}/g, this._prefix) + '\n';
 

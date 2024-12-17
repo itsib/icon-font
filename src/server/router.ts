@@ -16,7 +16,7 @@ import { TransformTtfToWoff } from '../streams/transform-ttf-to-woff/transform-t
 async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const filesReadStream = new StreamRead(config.input);
   const prepareStream = new TransformPrepareIcons();
-  const htmlStyleStream = new TransformToHtml(config.name, config.prefix);
+  const htmlStyleStream = new TransformToHtml(config.name, config.types, config.prefix, '/');
 
   res.writeHead(200, { 'Content-Type': 'text/html' });
 
