@@ -2,8 +2,12 @@ import { FontType } from '../types';
 import { join } from 'node:path';
 import { slugify } from './slugify.ts';
 
-export function fontFaceUrl(base: string, fontId: string, type: FontType): string {
-  const fontUrl = join(base, `${fontId}.${type}`);
+export function fontFaceUrl(base: string, fontId: string, type: FontType, hash?: string): string {
+  let fontUrl = join(base, `${fontId}.${type}`);
+  if (hash) {
+    fontUrl += `?hash=${hash}`;
+  }
+
   switch (type) {
     case 'eot':
       return `url("${fontUrl}#iefix") format("embedded-opentype")`;
@@ -20,7 +24,7 @@ export function fontFaceUrl(base: string, fontId: string, type: FontType): strin
   }
 }
 
-export function fontFace(base: string, fontName: string, types: FontType[]) {
+export function fontFace(base: string, fontName: string, types: FontType[], hash?: string): string {
   const fontId = slugify(fontName);
   let output = '@font-face {\n'
   output += `  font-family: "${fontName}";\n`;
@@ -28,7 +32,7 @@ export function fontFace(base: string, fontName: string, types: FontType[]) {
 
   for (let i = 0; i < types.length; i++) {
     const type = types[i];
-    const fontUrl = fontFaceUrl(base, fontId, type);
+    const fontUrl = fontFaceUrl(base, fontId, type, hash);
     output += i === 0 ? fontUrl : `     ${fontUrl}`;
     output += i === types.length - 1 ? ';\n' : ',\n';
   }

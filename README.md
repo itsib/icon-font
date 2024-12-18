@@ -67,7 +67,8 @@ You need to create an `icon-font.json` file with json format in the root of your
   "prefix": "icon",
   "types": [ "woff2", "woff", "ttf", "eot"],
   "port": 9000,
-  "fontUrl": "./"
+  "fontUrl": "./",
+  "fontUrlHash": false
 }
 ```
 
@@ -75,14 +76,14 @@ You need to create an `icon-font.json` file with json format in the root of your
 
 > Configuration parameters passed through the CLI have a higher priority than the configuration file.
 
-| Option    |    Type    | Required | Description                                                                                       |
-|:----------|:----------:|:--------:|---------------------------------------------------------------------------------------------------|
-| `input`   |  `string`  |    ✔     | The directory containing the SVG icon files that will be included in the font being created       |
-| `output`  |  `string`  |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created. |
-| `name`    |  `string`  |          | The name of the new font, by default `IconFont`                                                   |
-| `prefix`  |  `string`  |          | Class name prefix. Default `icon`                                                                 |
-| `types`   | `string[]` |          | Output font types, to be generated. Default: `[ "woff2", "woff", "ttf", "eot"]`                   |
-| `port`    |  `number`  |          | Demo server port. Default `9000` (http://localhost:9000).                                         |
-| `fontUrl` |  `string`  |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`      |
-
+| Option        |               Type               | Required | Description                                                                                                                                                         |
+|:--------------|:--------------------------------:|:--------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `input`       |             `string`             |    ✔     | The directory containing the SVG icon files that will be included in the font being created                                                                         |
+| `output`      |             `string`             |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created.                                                                   |
+| `name`        |             `string`             |          | The name of the new font, by default `IconFont`                                                                                                                     |
+| `prefix`      |             `string`             |          | Class name prefix. Default `icon`                                                                                                                                   |
+| `types`       |            `string[]`            |          | Output font types, to be generated. Default: `[ "woff2", "woff", "ttf", "eot"]`                                                                                     |
+| `port`        |             `number`             |          | Demo server port. Default `9000` (http://localhost:9000).                                                                                                           |
+| `fontUrl`     |             `string`             |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`                                                                        |
+| `fontUrlHash` | `string` \|  false \| `"random"` |          | Adds the GET parameter 'hash=${HASH}' at the end of the URL to reset the browser cache. Set to 'random' for random number. Or use yur own value. False is disabled. | 
 

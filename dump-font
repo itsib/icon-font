@@ -1,0 +1,202 @@
+#!/usr/bin/env node
+import { Buffer } from 'node:buffer';
+import fs from 'node:fs';
+import { access } from 'node:fs/promises';
+import path from 'node:path';
+
+const VERSION = '0.0.1';
+
+const HELP = `
+Usage: dump [file]
+
+Parse TTF font tables info and validate.
+
+Options:
+  -v, --version         output the current version
+  -h, --help            display this help
+`;
+
+const PLACES = {
+
+};
+
+/**
+ * Render Header
+ * @param gutterWidth
+ */
+function renderHeader(gutterWidth) {
+  process.stdout.write(`\x1b[0;97;44m${' '.repeat(gutterWidth + 4)}`);
+  for (let i = 0; i < 16; i++) {
+    const coll = i.toString(16).toUpperCase().padStart(2, '0');
+    if (i && i % 8 === 0) {
+      process.stdout.write(`  `);
+    }
+
+    process.stdout.write(`${coll} `);
+  }
+  process.stdout.write(`\x1b[0m\n`)
+}
+
+/**
+ * Display byte in table
+ * @param {number} gutterWidth
+ * @param {Buffer<ArrayBufferLike>} data
+ */
+function _renderBytesTable(gutterWidth, data) {
+  let offset = 0;
+  const output = [
+    {
+      offset: '0x' + `${offset}`.padStart(gutterWidth, '0'),
+      name: 'Version',
+      value: '0x' + data.readUint32BE(offset).toString(16).toUpperCase(),
+    },
+    {
+      offset: '0x' + `${(offset += 4)}`.padStart(gutterWidth, '0'),
+      name: 'Tables Count',
+      value: data.readUint16BE(offset),
+    },
+    {
+      offset: '0x' + `${(offset += 2)}`.padStart(gutterWidth, '0'),
+      name: 'Search Range',
+      value: data.readUint16BE(offset),
+    },
+    {
+      offset: '0x' + `${(offset += 2)}`.padStart(gutterWidth, '0'),
+      name: 'Entry Selector',
+      value: data.readUint16BE(offset),
+    },
+    {
+      offset: '0x' + `${(offset += 2)}`.padStart(gutterWidth, '0'),
+      name: 'Range Shift',
+      value: data.readUint16BE(offset),
+    },
+  ];
+
+  console.table(output, ['offset', 'name', 'value']);
+}
+
+/**
+ *
+ * @param {number[]} bytes
+ * @returns {string}
+ */
+function renderBytes(bytes) {
+  return bytes.reduce((acc, byte, index) => {
+    if (byte <= 0x1F || (byte >= 0x7F && byte <= 0xA0) || byte === 0xFF || byte === 0xA8) {
+      return acc + '.';
+    }
+
+    const char = String.fromCodePoint(byte);
+    if (/^\s+$/.test(char)) {
+      return acc + ' ';
+    }
+    return acc + char;
+  }, '');
+}
+
+/**
+ * Display byte in table
+ * @param {number} gutterWidth
+ * @param {Buffer<ArrayBufferLike>} data
+ */
+function renderBytesTable(gutterWidth, data) {
+  const ascii = [];
+  for (let offset = 0; offset < data.length; offset++) {
+    /** @type {number} */
+    const byte = data[offset];
+
+    // Render addresses column
+    if (offset % 16 === 0) {
+      const address = offset.toString(16).toUpperCase().padStart(gutterWidth, '0');
+      process.stdout.write(`\x1b[0;97;44m ${address} \x1b[0m  `);
+    }
+
+    // Render byte
+    const byteHex = byte.toString(16).padStart(2, '0').toUpperCase();
+    process.stdout.write(byteHex + ' ');
+    ascii.push(byte);
+
+    // Separate 8 bytes
+    if (offset > 0 && (offset + 1) % 8 === 0) {
+      process.stdout.write('  ');
+    }
+
+    if (offset > 0 && (offset + 1) % 16 === 0) {
+      // process.stdout.write(` \x1b[2;37m${renderBytes(ascii)}\x1b[0m\n`);
+      process.stdout.write('\n');
+      ascii.length = 0;
+    }
+  }
+
+}
+
+function run(filePath) {
+  const { size } = fs.statSync(filePath);
+  const gutterWidth = size.toString(16).length;
+
+  const basename = path.basename(filePath);
+  const dirname = path.dirname(filePath);
+  const stream = fs.createReadStream(filePath);
+
+  stream.on('end', () => {
+    process.stdout.write('\n');
+    renderHeader(gutterWidth);
+    process.stdout.write('\n');
+    process.stdout.write(`\x1b[0;93mFile:\x1b[0m \x1b[0;37m${path.relative(process.cwd(), dirname)}${path.sep}\x1b[0m\x1b[0;96m${basename}\x1b[0m\n`);
+    process.stdout.write(`\x1b[0;93mSize:\x1b[0m \x1b[0;96m${size}\x1b[0m \x1b[0;37mbytes «0x${size.toString(16).toUpperCase()}»\x1b[0m\n`);
+    process.stdout.write('\n');
+  });
+
+  stream.on('open', () => {
+    process.stdout.write('\n');
+    renderHeader(gutterWidth);
+  });
+
+  stream.on('error', err => {
+    console.error(err);
+  });
+
+  stream.on('data', data => {
+    renderBytesTable(gutterWidth, data);
+  });
+
+}
+
+(async () => {
+  if (process.argv.some(arg => arg === '-h' || arg === '--help')) {
+    console.info(HELP.replace(/^\s+/, ''));
+    return;
+  }
+  if (process.argv.some(arg => arg === '-v' || arg === '--version')) {
+    console.info(VERSION);
+    return;
+  }
+
+
+  let filePath = process.argv[2];
+  if (!filePath) {
+    console.error('No [file] provided');
+    console.info(HELP.replace(/^\s+/, ''));
+    return;
+  }
+  if (path.extname(filePath) !== '.ttf') {
+    console.error('Files with TTF extension supports only');
+    return;
+  }
+  filePath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
+
+  try {
+    await access(filePath);
+
+    /** @type {Buffer} */
+    const buffer = Buffer.allocUnsafe(2);
+    buffer.writeUint8(1);
+    buffer.writeUint8(0, 1);
+
+    console.log(buffer);
+
+    // run(filePath);
+  } catch (error) {
+    console.error(error.message);
+  }
+})();

@@ -139,7 +139,7 @@ export function createGenerateCommand(): Command {
       const filenameCss = path.join(config.output, `${slug}.css`);
       new StreamRead(config.input)
         .pipe(new TransformPrepareIcons())
-        .pipe(new TransformToCss(config.name, config.types, config.prefix, config.fontUrl))
+        .pipe(new TransformToCss(config.name, config.types, config.prefix, config.fontUrl, config.fontUrlHash))
         .pipe(createWriteStream(filenameCss, 'utf8'));
 
       Logger.created(filenameCss);

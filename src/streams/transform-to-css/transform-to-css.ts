@@ -8,12 +8,12 @@ const STYLES = `
 .{{prefix}} {
   font-family: "{{fontName}}", sans-serif;
   font-weight: 500;
-  font-size: 1em;
+  font-size: var(--{{prefix}}-size, 1em);
   font-style: normal;
   font-variant: normal;
   text-rendering: auto;
   line-height: 1;
-  display: var(--icon-display, inline-block);
+  display: var(--{{prefix}}-display, inline-block);
   speak: none;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
@@ -86,84 +86,84 @@ const STYLES = `
 
 .{{prefix}}-beat {
   animation-name: icon-motion-beat;
-  animation-delay: var(--icon-animation-delay, 0s);
-  animation-direction: var(--icon-animation-direction, normal);
-  animation-duration: var(--icon-animation-duration, 1s);
-  animation-iteration-count: var(--icon-animation-iteration-count, infinite);
-  animation-timing-function: var(--icon-animation-timing, ease-in-out)
+  animation-delay: var(--{{prefix}}-animation-delay, 0s);
+  animation-direction: var(--{{prefix}}-animation-direction, normal);
+  animation-duration: var(--{{prefix}}-animation-duration, 1s);
+  animation-iteration-count: var(--{{prefix}}-animation-iteration-count, infinite);
+  animation-timing-function: var(--{{prefix}}-animation-timing, ease-in-out)
 }
 
 .{{prefix}}-bounce {
   animation-name: icon-motion-bounce;
-  animation-delay: var(--icon-animation-delay, 0s);
-  animation-direction: var(--icon-animation-direction, normal);
-  animation-duration: var(--icon-animation-duration, 1s);
-  animation-iteration-count: var(--icon-animation-iteration-count, infinite);
-  animation-timing-function: var(--icon-animation-timing, cubic-bezier(.28,.84,.42,1));
+  animation-delay: var(--{{prefix}}-animation-delay, 0s);
+  animation-direction: var(--{{prefix}}-animation-direction, normal);
+  animation-duration: var(--{{prefix}}-animation-duration, 1s);
+  animation-iteration-count: var(--{{prefix}}-animation-iteration-count, infinite);
+  animation-timing-function: var(--{{prefix}}-animation-timing, cubic-bezier(.28,.84,.42,1));
 }
 
 .{{prefix}}-fade {
   animation-name: icon-motion-fade;
-  animation-iteration-count: var(--icon-animation-iteration-count, infinite);
-  animation-timing-function: var(--icon-animation-timing, cubic-bezier(.4,0,.6,1));
+  animation-iteration-count: var(--{{prefix}}-animation-iteration-count, infinite);
+  animation-timing-function: var(--{{prefix}}-animation-timing, cubic-bezier(.4,0,.6,1));
 }
 
 .{{prefix}}-beat-fade,
 .{{prefix}}-fade {
-  animation-delay: var(--icon-animation-delay,0s);
-  animation-direction: var(--icon-animation-direction,normal);
-  animation-duration: var(--icon-animation-duration,1s);
+  animation-delay: var(--{{prefix}}-animation-delay,0s);
+  animation-direction: var(--{{prefix}}-animation-direction,normal);
+  animation-duration: var(--{{prefix}}-animation-duration,1s);
 }
 
 .{{prefix}}-beat-fade {
   animation-name: icon-motion-beat-fade;
-  animation-iteration-count: var(--icon-animation-iteration-count,infinite);
-  animation-timing-function: var(--icon-animation-timing,cubic-bezier(.4,0,.6,1));
+  animation-iteration-count: var(--{{prefix}}-animation-iteration-count,infinite);
+  animation-timing-function: var(--{{prefix}}-animation-timing,cubic-bezier(.4,0,.6,1));
 }
 
 .{{prefix}}-flip {
   animation-name: icon-motion-flip;
-  animation-delay: var(--icon-animation-delay,0s);
-  animation-direction: var(--icon-animation-direction,normal);
-  animation-duration: var(--icon-animation-duration,1s);
-  animation-iteration-count: var(--icon-animation-iteration-count,infinite);
-  animation-timing-function: var(--icon-animation-timing,ease-in-out);
+  animation-delay: var(--{{prefix}}-animation-delay,0s);
+  animation-direction: var(--{{prefix}}-animation-direction,normal);
+  animation-duration: var(--{{prefix}}-animation-duration,1s);
+  animation-iteration-count: var(--{{prefix}}-animation-iteration-count,infinite);
+  animation-timing-function: var(--{{prefix}}-animation-timing,ease-in-out);
 }
 
 .{{prefix}}-shake {
   animation-name: icon-motion-shake;
-  animation-duration: var(--icon-animation-duration,1s);
-  animation-iteration-count: var(--icon-animation-iteration-count,infinite);
-  animation-timing-function: var(--icon-animation-timing,linear);
+  animation-duration: var(--{{prefix}}-animation-duration,1s);
+  animation-iteration-count: var(--{{prefix}}-animation-iteration-count,infinite);
+  animation-timing-function: var(--{{prefix}}-animation-timing,linear);
 }
 
 .{{prefix}}-spin-reverse {
-  --icon-animation-direction: reverse;
+  --{{prefix}}-animation-direction: reverse;
 }
 
 .{{prefix}}-shake,
 .{{prefix}}-spin-reverse,
 .{{prefix}}-spin {
-  animation-delay: var(--icon-animation-delay,0s);
-  animation-direction: var(--icon-animation-direction,normal);
+  animation-delay: var(--{{prefix}}-animation-delay,0s);
+  animation-direction: var(--{{prefix}}-animation-direction,normal);
 }
 
 .{{prefix}}-spin-reverse,
 .{{prefix}}-spin {
   animation-name: icon-motion-spin;
-  animation-duration: var(--icon-animation-duration,2s);
-  animation-iteration-count: var(--icon-animation-iteration-count,infinite);
-  animation-timing-function: var(--icon-animation-timing,linear);
+  animation-duration: var(--{{prefix}}-animation-duration,2s);
+  animation-iteration-count: var(--{{prefix}}-animation-iteration-count,infinite);
+  animation-timing-function: var(--{{prefix}}-animation-timing,linear);
 }
 
 
 .{{prefix}}-pulse,
 .{{prefix}}-spin-pulse {
   animation-name: icon-motion-spin;
-  animation-direction: var(--icon-animation-direction, normal);
-  animation-duration: var(--icon-animation-duration, 1s);
-  animation-iteration-count: var(--icon-animation-iteration-count, infinite);
-  animation-timing-function: var(--icon-animation-timing, steps(8));
+  animation-direction: var(--{{prefix}}-animation-direction, normal);
+  animation-duration: var(--{{prefix}}-animation-duration, 1s);
+  animation-iteration-count: var(--{{prefix}}-animation-iteration-count, infinite);
+  animation-timing-function: var(--{{prefix}}-animation-timing, steps(8));
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -191,7 +191,7 @@ const STYLES = `
   }
 
   45% {
-    transform: scale(var(--icon-beat-scale,1.25))
+    transform: scale(var(--{{prefix}}-beat-scale,1.25))
   }
 }
 
@@ -201,19 +201,19 @@ const STYLES = `
   }
 
   10% {
-    transform: scale(var(--icon-bounce-start-scale-x,1.1),var(--icon-bounce-start-scale-y,.9)) translateY(0)
+    transform: scale(var(--{{prefix}}-bounce-start-scale-x,1.1),var(--{{prefix}}-bounce-start-scale-y,.9)) translateY(0)
   }
 
   30% {
-    transform: scale(var(--icon-bounce-jump-scale-x,.9),var(--icon-bounce-jump-scale-y,1.1)) translateY(var(--icon-bounce-height,-.5em))
+    transform: scale(var(--{{prefix}}-bounce-jump-scale-x,.9),var(--{{prefix}}-bounce-jump-scale-y,1.1)) translateY(var(--{{prefix}}-bounce-height,-.5em))
   }
 
   50% {
-    transform: scale(var(--icon-bounce-land-scale-x,1.05),var(--icon-bounce-land-scale-y,.95)) translateY(0)
+    transform: scale(var(--{{prefix}}-bounce-land-scale-x,1.05),var(--{{prefix}}-bounce-land-scale-y,.95)) translateY(0)
   }
 
   57% {
-    transform: scale(1) translateY(var(--icon-bounce-rebound,-.125em))
+    transform: scale(1) translateY(var(--{{prefix}}-bounce-rebound,-.125em))
   }
 
   64% {
@@ -227,25 +227,25 @@ const STYLES = `
 
 @keyframes icon-motion-fade {
   50% {
-    opacity: var(--icon-fade-opacity,.4)
+    opacity: var(--{{prefix}}-fade-opacity,.4)
   }
 }
 
 @keyframes icon-motion-beat-fade {
   0%,to {
-    opacity: var(--icon-beat-fade-opacity,.4);
+    opacity: var(--{{prefix}}-beat-fade-opacity,.4);
     transform: scale(1)
   }
 
   50% {
     opacity: 1;
-    transform: scale(var(--icon-beat-fade-scale,1.125))
+    transform: scale(var(--{{prefix}}-beat-fade-scale,1.125))
   }
 }
 
 @keyframes icon-motion-flip {
   50% {
-    transform: rotate3d(var(--icon-flip-x,0),var(--icon-flip-y,1),var(--icon-flip-z,0),var(--icon-flip-angle,-180deg))
+    transform: rotate3d(var(--{{prefix}}-flip-x,0),var(--{{prefix}}-flip-y,1),var(--{{prefix}}-flip-z,0),var(--{{prefix}}-flip-angle,-180deg))
   }
 }
 
@@ -308,19 +308,27 @@ export class TransformToCss extends Transform {
 
   private readonly _url: string;
 
+  private readonly _hash?: string;
+
   private _isHeaderRendered = false;
 
-  constructor(fontName: string, types: FontType[], prefix: string, url: string) {
+  constructor(fontName: string, types: FontType[], prefix: string, url: string, fontUrlHash: string | 'random' | false) {
     super({ objectMode: true });
 
     this._fontName = fontName;
     this._types = types;
     this._prefix = prefix;
     this._url = url;
+    if (fontUrlHash === 'random') {
+      this._hash = Math.round(Math.random() * 10000000).toString();
+    } else if (fontUrlHash) {
+      this._hash = fontUrlHash;
+    }
+
   }
 
   private _header() {
-    let output = fontFace(this._url, this._fontName, this._types);
+    let output = fontFace(this._url, this._fontName, this._types, this._hash);
 
     output += STYLES.replace('{{fontName}}', this._fontName).replace(/\{\{prefix}}/g, this._prefix) + '\n';
 

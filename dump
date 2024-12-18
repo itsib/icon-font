@@ -35,13 +35,7 @@ function renderBytes(bytes) {
   }, '');
 }
 
-/**
- * Display byte in table
- * @param {number} gutterWidth
- * @param {Buffer<ArrayBufferLike>} data
- */
-function renderBytesTable(gutterWidth, data) {
-  const ascii = [];
+function renderHeader(gutterWidth) {
   process.stdout.write(`\x1b[0;97;44m${' '.repeat(gutterWidth + 4)}`);
   for (let i = 0; i < 16; i++) {
     const coll = i.toString(16).toUpperCase().padStart(2, '0');
@@ -52,15 +46,23 @@ function renderBytesTable(gutterWidth, data) {
     process.stdout.write(`${coll} `);
   }
   process.stdout.write(`\x1b[0m\n`)
+}
 
-
+/**
+ * Display byte in table
+ * @param {number} gutterWidth
+ * @param {number} start
+ * @param {Buffer<ArrayBufferLike>} data
+ */
+function renderBytesTable(gutterWidth, start, data) {
+  const ascii = [];
   for (let offset = 0; offset < data.length; offset++) {
     /** @type {number} */
     const byte = data[offset];
 
     // Render address column
     if (offset % 16 === 0) {
-      const address = offset.toString(16).toUpperCase().padStart(gutterWidth, '0');
+      const address = (offset + start).toString(16).toUpperCase().padStart(gutterWidth, '0');
       process.stdout.write(`\x1b[0;97;44m ${address} \x1b[0m  `);
     }
 
@@ -95,31 +97,35 @@ function run(filePath) {
   const gutterWidth = size.toString(16).length;
   
   const basename = path.basename(filePath);
-  const dirname = path.dirname(filePath);
+  let dirname = path.relative(process.cwd(), path.dirname(filePath));
+  dirname = dirname && !dirname.endsWith(path.sep) ? dirname + path.sep : dirname;
+
   const stream = fs.createReadStream(filePath);
 
   stream.on('end', () => {
-    const line = `─`.repeat(49 + gutterWidth + 4);
-    process.stdout.write(`\n\x1b[2;37m${line}\x1b[0m\n`);
-    process.stdout.write(`\x1b[0;93mFile:\x1b[0m \x1b[0;37m${path.relative(process.cwd(), dirname)}${path.sep}\x1b[0m\x1b[0;96m${basename}\x1b[0m\n`);
-    process.stdout.write(`\x1b[0;93mSize:\x1b[0m \x1b[0;96m${size}\x1b[0m \x1b[0;37mbytes «0x${size.toString(16).toUpperCase()}»\x1b[0m\n`);
+    process.stdout.write('\n');
+    renderHeader(gutterWidth);
+    process.stdout.write('\n');
+    process.stdout.write(`\x1b[0;93mFile:\x1b[0m \x1b[0;37m${dirname}\x1b[0m\x1b[0;96m${basename}\x1b[0m\n`);
+    process.stdout.write(`\x1b[0;93mSize:\x1b[0m \x1b[0;96m${size}\x1b[0m \x1b[0;37mbytes\n`);
+    process.stdout.write(`\x1b[0;93mLast:\x1b[0m \x1b[0;96m0x${(size - 1).toString(16).toUpperCase()}\x1b[0m \x1b[0;37maddress\n`);
     process.stdout.write('\n');
   });
 
   stream.on('open', () => {
     process.stdout.write('\n');
+    renderHeader(gutterWidth);
   })
 
   stream.on('error', (err) => {
     console.error(err);
   });
 
+  let startChunk = 0;
   stream.on('data', (data) => {
-    renderBytesTable(gutterWidth, data);
+    renderBytesTable(gutterWidth, startChunk, data);
+    startChunk += data.length;
   });
-
-
-  // console.log('\x1b[0;97mTotal:\x1b[0m \x1b[0;94m%i\x1b[0m \x1b[0;93m0x%s\x1b[0m Bytes', data.length, data.length.toString(16).toUpperCase());
 }
 
 (async () => {

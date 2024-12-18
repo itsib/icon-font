@@ -3,7 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { Logger } from './logger.ts';
 
-const ALLOWED_KEYS: (keyof AppConfig)[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl'];
+const ALLOWED_KEYS: (keyof AppConfig)[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl', 'fontUrlHash'];
 
 const FILENAMES = ['icon-font.json', '.iconfontrc'];
 
@@ -13,6 +13,7 @@ const DEFAULT: Required<Omit<AppConfig, 'input' | 'output'>> = {
   types: [ 'woff2', 'woff', 'ttf', 'eot'],
   port: 9001,
   fontUrl: './',
+  fontUrlHash: false,
 }
 
 async function searchConfig(cwd: string): Promise<string | null> {

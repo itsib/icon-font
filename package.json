@@ -20,7 +20,8 @@
   },
   "bin": {
     "icon-font": "icon-font",
-    "dump": "dump"
+    "dump": "dump",
+    "dump-font": "dump-font"
   },
   "main": "./icon-font",
   "files": [
