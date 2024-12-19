@@ -21,6 +21,9 @@ Simple utilities for icon-font generation, automation and presentation. Includes
 - The output file format is `TTF`, `EOT`, `SVG`, `WOFF`, `WOFF2`
 - A web server to demonstrate the result. The server will watch the changes in the input files and instantly display the result.
 
+![Demo Interface](https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/demo.gif)
+
+
 ---
 
 ## Usage
