@@ -11,20 +11,6 @@ export function tableIdentifier(value: string, littleEndian?: number): number {
   return result;
 }
 
-export function stringToAscII(str: string): Uint8Array {
-  const bytes: number[] = [];
-  const len = str ? (str.length < 256 ? str.length : 255) : 0;
-
-  bytes.push(len);
-  for (let i = 0; i < len; i++) {
-    const char = str.charCodeAt(i);
-
-    // non-ASCII characters are substituted with '_'
-    bytes.push(char < 128 ? char : 95);
-  }
-  return Uint8Array.from(bytes);
-}
-
 export function toUTF8Bytes(str: string): Uint8Array {
   const byteArray = [];
 
@@ -55,8 +41,4 @@ export function toUCS2Bytes(str: string): Uint8Array {
   return Uint8Array.from(byteArray);
 }
 
-export function dateToUInt64(date: Date): number {
-  const startDate = new Date('1904-01-01T00:00:00.000Z');
-  return Math.floor((date.getTime() - startDate.getTime()) / 1000);
-}
 

@@ -112,6 +112,10 @@ export interface SymbolMeta {
    * Inner shape height
    */
   height: number;
+  /**
+   * The number of font design units per em unit.
+   */
+  unitsPerEm: number;
 }
 
 

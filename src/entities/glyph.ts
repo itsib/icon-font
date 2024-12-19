@@ -7,6 +7,8 @@ export interface GlyphConstructorArgs {
   name: string;
   path: string;
   codepoint: number;
+  x: number;
+  y: number;
   height: number;
   width: number;
 }
@@ -38,10 +40,10 @@ export class Glyph {
     this.flags = [];
     this.allX = [];
     this.allY = [];
-    this.xMin = 0;
-    this.xMax = this.width;
-    this.yMin = 0;
-    this.yMax = this.height;
+    this.xMin = args.x;
+    this.xMax = args.x + this.width;
+    this.yMin = args.y;
+    this.yMax = args.y + this.height;
 
     if (!args.path) {
       this.contours = [];
@@ -49,7 +51,7 @@ export class Glyph {
       return;
     }
 
-    const pathData = new SVGPathData(args.path).toAbs().aToC().normalizeST();
+    const pathData = new SVGPathData(args.path);
     this.contours = svgPathToContour(pathData, 0.3);
     this.sizeBytes = 12 + (this.contours.length * 2); // glyph fixed properties
 
@@ -80,10 +82,10 @@ export class Glyph {
           this.sizeBytes += (-0xFF <= point.y && point.y <= 0xFF) ? 1 : 2;
         }
 
-        this.xMin = Math.min(this.xMin, Math.floor(point.x));
-        this.xMax = Math.max(this.xMax, -Math.floor(-point.x));
-        this.yMin = Math.min(this.yMin, Math.floor(point.y));
-        this.yMax = Math.max(this.yMax, -Math.floor(-point.y));
+        this.xMin = Math.round(Math.min(this.xMin, Math.floor(point.x)));
+        this.xMax = Math.round(Math.max(this.xMax, -Math.floor(-point.x)));
+        this.yMin = Math.round(Math.min(this.yMin, Math.floor(point.y)));
+        this.yMax = Math.round(Math.max(this.yMax, -Math.floor(-point.y)));
       }
     }
 

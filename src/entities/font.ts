@@ -35,7 +35,7 @@ export interface FontConstructorArgs {
   metadata?: string;
   description?: string;
   url?: string;
-  size: number;
+  unitsPerEm: number;
   glyphTotalSize: number;
   glyphs: Glyph[];
   codePoints: { [key: number]: Glyph };
@@ -48,11 +48,47 @@ export class Font {
   copyright: string;
   description: string;
   url: string;
+  /**
+   * Creation date.
+   *
+   * @description
+   * 	Number of seconds since 12:00 midnight that
+   * 	started January 1st, 1904, in GMT/UTC time zone.
+   */
+  created: number;
 
   width: number;
   height: number;
+  /**
+   * The number of font design units per em unit.
+   *
+   * @description
+   *  Font files use their own coordinate system of font design units.
+   *  A font design unit is the smallest measurable unit in the em
+   *  square, an imaginary square that is used to size and align
+   *  glyphs. The concept of em square is used as a reference
+   *  scale factor when defining font size and device transformation
+   *  semantics. The size of one em square is also commonly
+   *  used to compute the paragraph indentation value.
+   */
   unitsPerEm: number;
+  /**
+   * Distance from the top of character to the baseline.
+   *
+   * @description
+   *  The ascent value of the font face in font design units.
+   *  Ascent is the distance from the top of font character
+   *  alignment box to the English baseline.
+   */
   ascent: number;
+  /**
+   * Distance from the bottom of character to baseline.
+   *
+   * @description
+   *  The descent value of the font face in font design units.
+   *  Descent is the distance from the bottom of font character
+   * alignment box to the English baseline.
+   */
   descent: number;
   weight: number;
   widthClass: number;
@@ -61,9 +97,6 @@ export class Font {
   readonly codePoints: { [key: number]: Glyph };
   readonly glyphTotalSize: number;
 
-  private int_lineGap?: number;
-  private int_underlinePosition?: number;
-
   constructor(args: FontConstructorArgs) {
     this.id = slugify(args.fontFamily);
     this.fontFamily = args.fontFamily;
@@ -71,11 +104,12 @@ export class Font {
     this.copyright = args.metadata ?? '';
     this.description = args.description ?? '';
     this.url = args.url ?? '';
+    this.created = Math.floor(Date.now() / 1000) + 2082844800;
 
-    this.width = args.size;
-    this.height = args.size;
-    this.unitsPerEm = args.size;
-    this.ascent = -args.size;
+    this.width = args.unitsPerEm;
+    this.height = args.unitsPerEm;
+    this.unitsPerEm = args.unitsPerEm;
+    this.ascent = args.unitsPerEm; // Math.floor(args.unitsPerEm / 1.3333333333333333);
     this.descent = 0;
     this.weight = 400;
     this.widthClass = 5; // Medium (normal)

@@ -25,7 +25,7 @@ export class TransformToTtf extends Transform {
 
   private readonly _metadata?: string;
 
-  private _size: number = 0;
+  private _unitsPerEm: number = 0;
 
   private _isInitialized = false;
 
@@ -36,17 +36,17 @@ export class TransformToTtf extends Transform {
   private _glyphsTotalSize = 0;
 
   private static _TABLES: TTFTable[] = [
-    { innerName: 'GSUB', order: 4, create: createGSUBTable },
-    { innerName: 'OS/2', order: 4, create: createOS2Table },
-    { innerName: 'cmap', order: 6, create: createCMapTable },
-    { innerName: 'glyf', order: 8, create: createGlyfTable },
-    { innerName: 'head', order: 2, create: createHeadTable },
-    { innerName: 'hhea', order: 1, create: createHHeadTable },
-    { innerName: 'hmtx', order: 5, create: createHtmxTable },
-    { innerName: 'loca', order: 7, create: createLocaTable },
-    { innerName: 'maxp', order: 3, create: createMaxpTable },
-    { innerName: 'name', order: 9, create: createNameTable },
-    { innerName: 'post', order: 10, create: createPostTable }
+    { innerName: 'GSUB', order: 4, create: createGSUBTable },   // Glyph substitution data
+    { innerName: 'OS/2', order: 4, create: createOS2Table },    // OS/2 and Windows specific metrics
+    { innerName: 'cmap', order: 6, create: createCMapTable },   // Character to glyph mapping
+    { innerName: 'glyf', order: 8, create: createGlyfTable },   // Glyph data
+    { innerName: 'head', order: 2, create: createHeadTable },   // Font Head
+    { innerName: 'hhea', order: 1, create: createHHeadTable },  // Horizontal header
+    { innerName: 'hmtx', order: 5, create: createHtmxTable },   // Horizontal metrics
+    { innerName: 'loca', order: 7, create: createLocaTable },   // Index to location
+    { innerName: 'maxp', order: 3, create: createMaxpTable },   // Maximum profile
+    { innerName: 'name', order: 9, create: createNameTable },   // Naming table
+    { innerName: 'post', order: 10, create: createPostTable },  // 	PostScript information
   ];
 
   private static _VERSION = 0x10000;
@@ -64,15 +64,17 @@ export class TransformToTtf extends Transform {
     if (this._isInitialized) return;
     this._isInitialized = true;
 
-    this._size = Math.max(chunk.metadata.width, chunk.metadata.height);
+    this._unitsPerEm = chunk.metadata.unitsPerEm;
 
     this._glyphs.push(new Glyph({
       id: 0,
       name: '',
       path: '',
       codepoint: 0,
+      x: 0,
+      y: 0,
       width: 0,
-      height: this._size,
+      height: this._unitsPerEm,
     }));
   }
 
@@ -84,6 +86,8 @@ export class TransformToTtf extends Transform {
       name: chunk.metadata.name,
       path: chunk.toString(),
       codepoint: chunk.metadata.codepoint,
+      x: chunk.metadata.x,
+      y: chunk.metadata.y,
       height: chunk.metadata.height,
       width: chunk.metadata.width,
     });
@@ -102,7 +106,7 @@ export class TransformToTtf extends Transform {
       metadata: this._metadata,
       description: 'The best icon font in the world',
       url: 'https://github.com/itsib/icon-font',
-      size: this._size,
+      unitsPerEm: this._unitsPerEm,
       glyphTotalSize: this._glyphsTotalSize,
       glyphs: this._glyphs,
       codePoints: this._glyphsByCode,

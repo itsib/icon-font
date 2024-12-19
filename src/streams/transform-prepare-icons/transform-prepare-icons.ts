@@ -2,7 +2,7 @@ import { Transform, TransformCallback } from 'node:stream';
 import sax from 'sax';
 import { BufferWithMeta, FileMetadata, SymbolMeta } from '../../types/types.ts';
 import { SVGCommand, SVGPathData, SVGPathDataParser, SVGPathDataTransformer } from 'svg-pathdata';
-import { START_UNICODE, SYMBOL_SIZE } from '../../constants.ts';
+import { START_UNICODE, SYMBOL_BACKDROP_SIZE, SYMBOL_PADDING, SYMBOL_SHAPE_SIZE } from '../../constants.ts';
 import { Buffer } from 'node:buffer';
 import { populateMetadata } from '../../utils/populate-metadata.ts';
 import { svgRectToPath } from '../../svg-helpers/svg-rect-to-path.ts';
@@ -12,8 +12,11 @@ import type { SvgTransformation } from '../../types';
 import { round } from '../../utils/round.ts';
 
 export class TransformPrepareIcons extends Transform {
+  _padding = SYMBOL_PADDING;
 
-  _size = SYMBOL_SIZE;
+  _shapeSize = SYMBOL_SHAPE_SIZE;
+
+  _backdropSize = SYMBOL_BACKDROP_SIZE;
 
   _startUnicode = START_UNICODE;
 
@@ -39,8 +42,8 @@ export class TransformPrepareIcons extends Transform {
     const currentSize = Math.round(Math.max(width, height));
 
     // If the shape fits into a given square, we do nothing
-    if (currentSize !== this._size) {
-      pathData = pathData.scale(this._size / currentSize);
+    if (currentSize !== this._shapeSize) {
+      pathData = pathData.scale(this._shapeSize / currentSize);
     }
     return pathData;
   }
@@ -48,8 +51,8 @@ export class TransformPrepareIcons extends Transform {
   private _adjustAlign(pathData: SVGPathData): SVGPathData {
     const { x, y, width, height } = this._sizeAndPos(pathData);
 
-    const dX = x - (this._size - width) / 2;
-    const dY = y - (this._size - height) / 2;
+    const dX = x - (this._backdropSize - width) / 2;
+    const dY = y - (this._backdropSize - height) / 2;
 
     return pathData.translate(-dX, -dY);
   }
@@ -136,10 +139,10 @@ export class TransformPrepareIcons extends Transform {
         });
       }
 
-      if (width !== this._size || height !== this._size) {
+      if (width !== this._backdropSize || height !== this._backdropSize) {
         output.push({
-          attribute: `scale(${this._size / width}, ${this._size / height})`,
-          function: SVGPathDataTransformer.SCALE(this._size / width, this._size / height),
+          attribute: `scale(${this._backdropSize / width}, ${this._backdropSize / height})`,
+          function: SVGPathDataTransformer.SCALE(this._backdropSize / width, this._backdropSize / height),
         });
       }
       return output;
@@ -225,18 +228,21 @@ export class TransformPrepareIcons extends Transform {
 
       let svgPathData = new SVGPathData(commands);
       svgPathData = this._adjustSize(svgPathData);
+      svgPathData = svgPathData.scale(1, -1);
       svgPathData = this._adjustAlign(svgPathData);
+      const { x, y, width, height } = this._sizeAndPos(svgPathData);
 
-      const path = svgPathData.round(100).scale(1, -1).encode();
+      const path = svgPathData.toAbs().aToC().normalizeST().round(100).encode();
 
       const meta: SymbolMeta = {
         index: chunk.metadata.index,
         name: chunk.metadata.name,
         codepoint: this._startUnicode + chunk.metadata.index,
-        x: 0,
-        y: 0,
-        width: this._size,
-        height: this._size,
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+        unitsPerEm: this._backdropSize,
       }
 
       callback(null, populateMetadata(Buffer.from(path), meta));
