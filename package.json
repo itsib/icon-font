@@ -1,7 +1,7 @@
 {
   "name": "@itsib/icon-font",
   "description": "CLI utilities for icon-font generation, automation and presentation. Includes preview web server.",
-  "version": "0.2.18",
+  "version": "0.3.0",
   "license": "MIT",
   "type": "module",
   "private": false,
