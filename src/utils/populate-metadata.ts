@@ -1,4 +1,4 @@
-import { BufferWithMeta } from '../types/types.ts';
+import { BufferWithMeta } from '../types';
 
 export function populateMetadata<Meta>(buffer: Buffer, metadata: Meta): BufferWithMeta<Meta> {
   Object.defineProperty(buffer, 'metadata', {

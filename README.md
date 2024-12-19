@@ -87,3 +87,23 @@ You need to create an `icon-font.json` file with json format in the root of your
 | `fontUrl`     |             `string`             |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`                                                                        |
 | `fontUrlHash` | `string` \|  false \| `"random"` |          | Adds the GET parameter 'hash=${HASH}' at the end of the URL to reset the browser cache. Set to 'random' for random number. Or use yur own value. False is disabled. | 
 
+## References
+
+- [ots-sanitize](https://manpages.ubuntu.com/manpages/jammy/man1/ots-sanitize.1.html) - is  a  program  which  validates and/or transcodes a font file using the OTS library.. Installation:
+  ```shell  
+  sudo apt install opentype-sanitizer
+  ```
+  Usage:
+  ```shell
+  ots-sanitize dist/fonts/icon-font.ttf
+  ```
+ 
+- [ttfdump](https://manpages.ubuntu.com/manpages/focal/en/man1/ttfdump.1.html) - dumps the contents of a TrueType font file in ASCII form.  A TrueType font file is consist of various tables. Installation:
+  ```shell
+  sudo apt install texlive-binaries
+  ```
+  Usage
+  ```shell
+  ttfdump -t head dist/fonts/icon-font.ttf
+  ttfdump -t OS/2 dist/fonts/icon-font.ttf
+  ```

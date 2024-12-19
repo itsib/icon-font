@@ -1,8 +1,8 @@
 import { readdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
-import { FileMetadata } from '../../types/types.ts';
 import { Readable } from 'node:stream';
 import fs from 'node:fs';
+import { FileMetadata } from '../../types';
 import { populateMetadata } from '../../utils/populate-metadata.ts';
 import { compareFiles } from '../../utils/compare-files.ts';
 

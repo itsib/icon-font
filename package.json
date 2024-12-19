@@ -35,9 +35,10 @@
     "dev": "npm run inject && vite",
     "inject": "node scripts/inject.mjs",
     "build": "npm run inject && tsc && vite build",
-    "preversion": "echo \"releases\"",
+    "preversion": "npm test",
     "version": "node ./scripts/version.mjs && git add .",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "test": "./scripts/test.sh"
   },
   "devDependencies": {
     "@types/node": "^20.17.9",

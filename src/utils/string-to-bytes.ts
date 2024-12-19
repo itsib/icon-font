@@ -41,4 +41,16 @@ export function toUCS2Bytes(str: string): Uint8Array {
   return Uint8Array.from(byteArray);
 }
 
+export function stringToAscII(str: string): Uint8Array {
+  const bytes: number[] = [];
+  const len = str ? (str.length < 256 ? str.length : 255) : 0;
 
+  bytes.push(len);
+  for (let i = 0; i < len; i++) {
+    const char = str.charCodeAt(i);
+
+    // non-ASCII characters are substituted with '_'
+    bytes.push(char < 128 ? char : 95);
+  }
+  return Uint8Array.from(bytes);
+}

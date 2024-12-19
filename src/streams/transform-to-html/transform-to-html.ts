@@ -1,8 +1,7 @@
 import { Transform, TransformCallback } from 'node:stream';
-import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
+import { BufferWithMeta, SymbolMetadata, FontType } from '../../types';
 import { BRAND } from '../../constants.ts';
 import { STYLES } from './styles.ts';
-import { FontType } from '../../types';
 import { slugify } from '../../utils/slugify.ts';
 import { fontFaceUrl } from '../../utils/font-face.ts';
 import { HEAD } from './head.ts';
@@ -110,7 +109,7 @@ export class TransformToHtml extends Transform {
     return output;
   }
 
-  _transform(chunk: BufferWithMeta<SymbolMeta>, _encoding: BufferEncoding, callback: TransformCallback) {
+  _transform(chunk: BufferWithMeta<SymbolMetadata>, _encoding: BufferEncoding, callback: TransformCallback) {
     let output = '';
     if (!this._isHeaderRendered) {
       output += this._header();

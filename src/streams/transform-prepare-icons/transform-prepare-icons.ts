@@ -1,22 +1,20 @@
 import { Transform, TransformCallback } from 'node:stream';
-import sax from 'sax';
-import { BufferWithMeta, FileMetadata, SymbolMeta } from '../../types/types.ts';
 import { SVGCommand, SVGPathData, SVGPathDataParser, SVGPathDataTransformer } from 'svg-pathdata';
-import { START_UNICODE, SYMBOL_BACKDROP_SIZE, SYMBOL_PADDING, SYMBOL_SHAPE_SIZE } from '../../constants.ts';
 import { Buffer } from 'node:buffer';
+import sax from 'sax';
+import { BufferWithMeta, FileMetadata, SymbolMetadata } from '../../types';
+import { START_UNICODE, SYMBOL_BOX_SIZE, SYMBOL_SHAPE_SIZE } from '../../constants.ts';
 import { populateMetadata } from '../../utils/populate-metadata.ts';
 import { svgRectToPath } from '../../svg-helpers/svg-rect-to-path.ts';
 import { svgLineToPath } from '../../svg-helpers/svg-line-to-path.ts';
 import { svgCircleToPath } from '../../svg-helpers/svg-circle-to-path.ts';
 import type { SvgTransformation } from '../../types';
-import { round } from '../../utils/round.ts';
 
 export class TransformPrepareIcons extends Transform {
-  _padding = SYMBOL_PADDING;
 
   _shapeSize = SYMBOL_SHAPE_SIZE;
 
-  _backdropSize = SYMBOL_BACKDROP_SIZE;
+  _symbolBoxSize = SYMBOL_BOX_SIZE;
 
   _startUnicode = START_UNICODE;
 
@@ -26,14 +24,11 @@ export class TransformPrepareIcons extends Transform {
 
   private _sizeAndPos(pathData: SVGPathData): { x: number; y: number, width: number; height: number } {
     const { minX, maxX, minY, maxY } = pathData.getBounds();
-    const width = maxX - minX;
-    const height = maxY - minY;
-
     return {
       x: minX,
       y: minY,
-      width: width,
-      height: height,
+      width: maxX - minX,
+      height: maxY - minY,
     }
   }
 
@@ -51,8 +46,8 @@ export class TransformPrepareIcons extends Transform {
   private _adjustAlign(pathData: SVGPathData): SVGPathData {
     const { x, y, width, height } = this._sizeAndPos(pathData);
 
-    const dX = x - (this._backdropSize - width) / 2;
-    const dY = y - (this._backdropSize - height) / 2;
+    const dX = x - (this._symbolBoxSize - width) / 2;
+    const dY = y - (this._symbolBoxSize - height) / 2;
 
     return pathData.translate(-dX, -dY);
   }
@@ -139,10 +134,10 @@ export class TransformPrepareIcons extends Transform {
         });
       }
 
-      if (width !== this._backdropSize || height !== this._backdropSize) {
+      if (width !== this._symbolBoxSize || height !== this._symbolBoxSize) {
         output.push({
-          attribute: `scale(${this._backdropSize / width}, ${this._backdropSize / height})`,
-          function: SVGPathDataTransformer.SCALE(this._backdropSize / width, this._backdropSize / height),
+          attribute: `scale(${this._symbolBoxSize / width}, ${this._symbolBoxSize / height})`,
+          function: SVGPathDataTransformer.SCALE(this._symbolBoxSize / width, this._symbolBoxSize / height),
         });
       }
       return output;
@@ -234,7 +229,7 @@ export class TransformPrepareIcons extends Transform {
 
       const path = svgPathData.toAbs().aToC().normalizeST().round(100).encode();
 
-      const meta: SymbolMeta = {
+      const meta: SymbolMetadata = {
         index: chunk.metadata.index,
         name: chunk.metadata.name,
         codepoint: this._startUnicode + chunk.metadata.index,
@@ -242,7 +237,7 @@ export class TransformPrepareIcons extends Transform {
         y: y,
         width: width,
         height: height,
-        unitsPerEm: this._backdropSize,
+        boxSize: this._symbolBoxSize,
       }
 
       callback(null, populateMetadata(Buffer.from(path), meta));

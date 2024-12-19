@@ -20,7 +20,7 @@ interface TableHeader {
 }
 
 function getIDByUnicode(font: Font, unicode: number): number {
-  return font.codePoints[unicode] ? font.codePoints[unicode].id : 0;
+  return font.glyphsByCodePoints[unicode] ? font.glyphsByCodePoints[unicode].id : 0;
 }
 
 function getSegments(font: Font, bounds?: number): Segment[] {
@@ -29,21 +29,20 @@ function getSegments(font: Font, bounds?: number): Segment[] {
   const result: Segment[] = [];
   let segment: Segment | undefined;
 
-  Object.keys(font.codePoints).forEach(unicode => {
-    const unicodeNum = parseInt(unicode, 10);
-    if (unicodeNum >= bounds) {
+  font.codePoints.forEach(codePoint => {
+    if (codePoint >= bounds) {
       return false;
     }
-    if (!segment || unicodeNum !== (segment.end + 1)) {
+    if (!segment || codePoint !== (segment.end + 1)) {
       if (segment) {
         result.push(segment);
       }
       segment = {
-        start: unicodeNum,
-        end: unicodeNum
+        start: codePoint,
+        end: codePoint
       };
     } else {
-      segment.end = unicodeNum;
+      segment.end = codePoint;
     }
   });
 
@@ -58,12 +57,12 @@ function getSegments(font: Font, bounds?: number): Segment[] {
   return result;
 }
 
-function getCodePoints(codePoints: Font['codePoints'], bounds?: number): CodePoint[] {
+function getCodePoints(glyphsByCodePoints: Font['glyphsByCodePoints'], bounds?: number): CodePoint[] {
   bounds = bounds || Number.MAX_VALUE;
 
   const result: CodePoint[] = [];
 
-  Object.entries(codePoints).forEach(([unicode, glyph]) => {
+  Object.entries(glyphsByCodePoints).forEach(([unicode, glyph]) => {
     const unicodeNum = parseInt(unicode, 10);
     if (unicodeNum > bounds) {
       return false;
@@ -192,7 +191,7 @@ function createFormat4Table(font: Font): BufferByte {
 function createFormat12Table(font: Font): BufferByte {
   const FORMAT = 12;
 
-  const codePoints = getCodePoints(font.codePoints);
+  const codePoints = getCodePoints(font.glyphsByCodePoints);
 
   const length = (
     4 // nGroups
@@ -221,7 +220,7 @@ export function createCMapTable(font: Font): BufferByte {
    */
   const TABLE_HEAD = 8;
 
-  const singleByteTable = createFormat0Table(font.codePoints);
+  const singleByteTable = createFormat0Table(font.glyphsByCodePoints);
   const twoByteTable = createFormat4Table(font);
   const fourByteTable = createFormat12Table(font);
 

@@ -1,7 +1,7 @@
 import { Transform, TransformCallback } from 'node:stream';
 import { SVGPathData } from 'svg-pathdata';
 import { slugify } from '../../utils/slugify.ts';
-import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
+import { BufferWithMeta, SymbolMetadata } from '../../types';
 import { encodeHtml } from '../../utils/coders.ts';
 
 export class TransformToSvg extends Transform {
@@ -46,7 +46,7 @@ export class TransformToSvg extends Transform {
     return output;
   }
 
-  _transform(chunk: BufferWithMeta<SymbolMeta>, _encoding: BufferEncoding, callback: TransformCallback) {
+  _transform(chunk: BufferWithMeta<SymbolMetadata>, _encoding: BufferEncoding, callback: TransformCallback) {
     const size = Math.max(chunk.metadata.width, chunk.metadata.height);
     let output = '';
     if (!this._isHeaderRendered) {

@@ -7,10 +7,7 @@ export interface GlyphConstructorArgs {
   name: string;
   path: string;
   codepoint: number;
-  x: number;
-  y: number;
-  height: number;
-  width: number;
+  boxSize: number;
 }
 
 export class Glyph {
@@ -18,32 +15,28 @@ export class Glyph {
   name: string;
   contours: Contour[];
   codepoint: number;
+  x: number;
+  y: number;
   height: number;
   width: number;
   flags: number[];
   allX: number[];
   allY: number[];
   sizeBytes: number;
-  xMin: number;
-  xMax: number;
-  yMin: number;
-  yMax: number;
 
   constructor(args: GlyphConstructorArgs) {
     this.id = args.id;
     this.name = args.name;
 
     this.codepoint = args.codepoint;
-    this.width = args.width;
-    this.height = args.height;
+    this.x = 0;
+    this.y = 0;
+    this.width = args.boxSize;
+    this.height = args.boxSize;
 
     this.flags = [];
     this.allX = [];
     this.allY = [];
-    this.xMin = args.x;
-    this.xMax = args.x + this.width;
-    this.yMin = args.y;
-    this.yMax = args.y + this.height;
 
     if (!args.path) {
       this.contours = [];
@@ -56,6 +49,22 @@ export class Glyph {
     this.sizeBytes = 12 + (this.contours.length * 2); // glyph fixed properties
 
     this._prepareFields();
+  }
+
+  get xMin(): number {
+    return this.x;
+  }
+
+  get xMax(): number {
+    return this.x + this.width;
+  }
+
+  get yMin(): number {
+    return this.y;
+  }
+
+  get yMax(): number {
+    return this.y + this.height;
   }
 
   private _prepareFields() {
@@ -81,17 +90,7 @@ export class Glyph {
           // add 1 or 2 bytes for each coordinate depends on its size
           this.sizeBytes += (-0xFF <= point.y && point.y <= 0xFF) ? 1 : 2;
         }
-
-        this.xMin = Math.round(Math.min(this.xMin, Math.floor(point.x)));
-        this.xMax = Math.round(Math.max(this.xMax, -Math.floor(-point.x)));
-        this.yMin = Math.round(Math.min(this.yMin, Math.floor(point.y)));
-        this.yMax = Math.round(Math.max(this.yMax, -Math.floor(-point.y)));
       }
-    }
-
-    if (this.xMin < -32768 || this.xMax > 32767 || this.yMin < -32768 || this.yMax > 32767) {
-      const value = this.xMin < -32768 ? 'xMin' : this.xMax > 32767 ? 'xMax' : this.yMin < -32768 ? 'yMin' : 'yMax';
-      throw new Error(`${value} value for glyph "${this.name}" is out of bounds (actual ${this[value]}, expected -32768..32767)`);
     }
 
     this._simplifyFlags();

@@ -1,6 +1,6 @@
-export const SYMBOL_BACKDROP_SIZE = 512;
+export const SYMBOL_BOX_SIZE = 512;
 export const SYMBOL_SHAPE_SIZE = 480;
-export const SYMBOL_PADDING = Math.round(SYMBOL_BACKDROP_SIZE - SYMBOL_SHAPE_SIZE) / 2;
+export const SYMBOL_PADDING = Math.round(SYMBOL_BOX_SIZE - SYMBOL_SHAPE_SIZE) / 2;
 
 export const START_UNICODE = 0xea01;
 

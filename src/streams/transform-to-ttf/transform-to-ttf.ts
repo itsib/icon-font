@@ -1,6 +1,6 @@
 import { Transform, TransformCallback } from 'node:stream';
 import { Buffer } from 'node:buffer';
-import { BufferWithMeta, SymbolMeta } from '../../types/types.ts';
+import { BufferWithMeta, SymbolMetadata, TTFTable } from '../../types';
 import { Glyph } from '../../entities/glyph.ts';
 import { Font } from '../../entities/font.ts';
 import { createPostTable } from './tables/post.ts';
@@ -15,7 +15,6 @@ import { createMaxpTable } from './tables/maxp.ts';
 import { createHeadTable } from './tables/head.ts';
 import { createHHeadTable } from './tables/hhea.ts';
 import { tableIdentifier } from '../../utils/string-to-bytes.ts';
-import { TTFTable } from '../../types';
 import { BufferByte } from '../../entities/buffer-byte.ts';
 import { computeChecksum, unsignedLong } from '../../utils/compute-checksum.ts';
 
@@ -25,7 +24,7 @@ export class TransformToTtf extends Transform {
 
   private readonly _metadata?: string;
 
-  private _unitsPerEm: number = 0;
+  private _boxSize: number = 0;
 
   private _isInitialized = false;
 
@@ -60,25 +59,22 @@ export class TransformToTtf extends Transform {
     this._metadata = metadata;
   }
 
-  _init(chunk: BufferWithMeta<SymbolMeta>) {
+  _init(chunk: BufferWithMeta<SymbolMetadata>) {
     if (this._isInitialized) return;
     this._isInitialized = true;
 
-    this._unitsPerEm = chunk.metadata.unitsPerEm;
+    this._boxSize = chunk.metadata.boxSize;
 
     this._glyphs.push(new Glyph({
       id: 0,
       name: '',
       path: '',
       codepoint: 0,
-      x: 0,
-      y: 0,
-      width: 0,
-      height: this._unitsPerEm,
+      boxSize: this._boxSize,
     }));
   }
 
-  _transform(chunk: BufferWithMeta<SymbolMeta>, _encoding: BufferEncoding, callback: TransformCallback) {
+  _transform(chunk: BufferWithMeta<SymbolMetadata>, _encoding: BufferEncoding, callback: TransformCallback) {
     this._init(chunk);
 
     const glyph = new Glyph({
@@ -86,10 +82,7 @@ export class TransformToTtf extends Transform {
       name: chunk.metadata.name,
       path: chunk.toString(),
       codepoint: chunk.metadata.codepoint,
-      x: chunk.metadata.x,
-      y: chunk.metadata.y,
-      height: chunk.metadata.height,
-      width: chunk.metadata.width,
+      boxSize: chunk.metadata.boxSize,
     });
 
     this._glyphs.push(glyph);
@@ -106,10 +99,10 @@ export class TransformToTtf extends Transform {
       metadata: this._metadata,
       description: 'The best icon font in the world',
       url: 'https://github.com/itsib/icon-font',
-      unitsPerEm: this._unitsPerEm,
+      glyphBoxSize: this._boxSize,
       glyphTotalSize: this._glyphsTotalSize,
       glyphs: this._glyphs,
-      codePoints: this._glyphsByCode,
+      glyphsByCodePoints: this._glyphsByCode,
     });
 
     const headerSize = 12 + (16 * TransformToTtf._TABLES.length);
