@@ -31,23 +31,40 @@ export const HEAD = `
       const dialog = document.getElementById('icon-dialog');
       const header = document.getElementById('dialog-header');
       const iconDemo = document.getElementById('icon-demo');
-
+      
+      dialog.style.display = 'block';
       prefix = button.dataset.prefix;
       header.innerText = button.dataset.name;
       iconDemo.className = button.dataset.prefix + ' ' + button.dataset.class + ' icon-5x';
 
       renderExample();
       
-      dialog.showModal();
+      setTimeout(() => dialog.showModal(), 10);
+    }
+    function onDialogClick(event, dialog) {
+      if (event.target === dialog) {
+        onClose();
+      }
+      
     }
     function onClose() {
+      const iconDemo = document.getElementById('icon-demo');
       const dialog = document.getElementById('icon-dialog');
+      const colorPicker = document.getElementById('color-picker');
       dialog.close();
+      
+      dialog.addEventListener('transitionend', () => {  
+        dialog.style.display = 'none';
      
-      if (activeAnimationButton) {
-        activeAnimationButton.classList.remove('active');
-        activeAnimationButton = undefined;
-      }
+        setTimeout(() => {
+          if (activeAnimationButton) {
+            activeAnimationButton.classList.remove('active');
+            activeAnimationButton = undefined;
+          }
+          iconDemo.style.color = '#ffffff';
+          colorPicker.value = '#ffffff';
+        }, 5);
+      }, { once: true });
     }
     function onAnimationClick(button) {
       const iconDemo = document.getElementById('icon-demo');
@@ -87,6 +104,9 @@ export const HEAD = `
         timeout = setTimeout(() => button.setAttribute('aria-label', label), 5000);
         button.addEventListener('mouseout', back);
       });
+    }
+    function onColorChange(event) {
+      document.getElementById('icon-demo').style.color = event.target.value;
     }
     async function onFontSelect(select) {
       const errorBlock = document.getElementById('select-error');

@@ -9,6 +9,7 @@ html {
   --preview-bg: 2 6 23;
   --label-bg: 12 74 110;
 
+  color-scheme: dark;
   color: #e2e8f0;
   background: #0f172a;
 }
@@ -205,27 +206,38 @@ body {
 }
 
 dialog {
-  width: 500px;
+  top: 0;
+  width: 600px;
+  margin-top: 250px;
   padding: 0;
   color: white;
   border: 1px solid rgba(255 255 255 / 0.1);
-  background-color: rgb(var(--preview-bg) / 0.9);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
+  background-color: rgb(var(--preview-bg) / 0.95);
   box-shadow: 0 0 2px 1px rgb(0 0 0 / .1);
   border-radius: var(--border-radius);
-  animation: fade-out 0.2s ease-out;
-  z-index: 5000;
   overflow: visible;
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
+  transition: all 0.2s ease-out;
+  z-index: 5000;
+  transform: translateY(-20px);
+  opacity: 0;
+  display: none;
+}
+dialog::backdrop {
+  background-color: rgb(0 0 0 / 0.4) !important;
+  transition: all 0.2s ease-in;
+  opacity: 0;
 }
 dialog[open] {
-  animation: fade-in 0.2s ease-out;
+  opacity: 1;
+  transform: translateY(0);
 }
 dialog[open]::backdrop {
-  animation: backdrop-fade-in 0.2s ease-out forwards;
+ -webkit-backdrop-filter: saturate(120%) blur(5px);
+  backdrop-filter: saturate(120%) blur(5px);
+  opacity: 1;
 }
 dialog .header {
   margin: 0;
@@ -254,32 +266,21 @@ dialog .content {
   justify-content: space-between;
 }
 dialog .content .cell-1 {
-  width: 160px;
-  height: 160px;
-  padding: 40px 0;
+  width: 180px;
+  height: 180px;
+  padding: 50px 0;
 }
 dialog .content .cell-1 .icon {
   display: block;
 }
 dialog .content .cell-2 {
-  width: calc(100% - 180px);
+  width: calc(100% - 200px);
   position: relative;
 }
-dialog .content .cell-2 .copy {
-  right: 8px;
-  top: 8px;
-  padding: 0;
-  color: rgb(255 255 255 / 0.7);
-  background: transparent;
-  border: none;
-  position: absolute;
-}
-dialog .content .cell-2 .copy:hover {
-  color: rgb(255 255 255 / 1);
-}
 dialog .content .cell-2 .example {
-  min-height: 80px;
-  padding: 32px 20px 18px;
+  min-height: 60px;
+  margin-top: 10px;
+  padding: 18px 20px;
   border-radius: 6px;
   border: 1px solid rgb(255 255 255 / 0.2);
   background: rgb(10 10 10);
@@ -293,6 +294,17 @@ dialog .content .cell-2 code {
   -moz-user-select: text;
   -webkit-user-select: text;
 }
+dialog .content .cell-2 .color-picker {
+  margin-top: 16px;
+  text-align: end;
+}
+dialog .content .cell-2 .color-picker input {
+  margin-left: 10px;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 6px;
+  background: rgb(10 10 10);
+}
+
 dialog .content .cell-3 {
   width: 100%;
   display: flex;
@@ -312,7 +324,7 @@ dialog .content .cell-3 .buttons {
   column-gap: 4px;
 }
 dialog .content .cell-3 .buttons button {
-  height: 22px;
+  height: 24px;
   margin-bottom: 4px;
   padding: 2px 6px;
   font-size: 12px;
@@ -348,41 +360,5 @@ dialog ::-webkit-scrollbar-thumb {
 }
 dialog ::-webkit-scrollbar-corner {
   display: none;
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-    display: none;
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    display: block;
-  }
-}
-@keyframes fade-out {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-    display: block;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateY(-20px);
-    display: none;
-  }
-}
-@keyframes backdrop-fade-in {
-  0% {
-    background-color: rgb(0 0 0 / 0%);
-  }
-
-  100% {
-    background-color: rgb(0 0 0 / 25%);
-  }
 }
 `;

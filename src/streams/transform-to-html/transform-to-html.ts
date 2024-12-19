@@ -7,7 +7,7 @@ import { fontFaceUrl } from '../../utils/font-face.ts';
 import { HEAD } from './head.ts';
 
 const DIALOG = `
-<dialog id="icon-dialog" role="alertdialog" aria-modal="true">
+<dialog id="icon-dialog" role="alertdialog" aria-modal="true" onclick="onDialogClick(event, this)">
   <h3 class="header">
     <div id="dialog-header">Dialog</div>
 
@@ -19,14 +19,16 @@ const DIALOG = `
       <i id="icon-demo" class="icon icon-folder-key icon-5x"></i>
     </div>
     <div class="cell-2">
-      <div class="example">
-        <code id="code-example"></code>
+      <div aria-label="Copy to clipboard" onclick="onCopy(this)">
+         <div class="example">
+          <code id="code-example"></code>
+        </div>
       </div>
-      <button type="button" class="copy" aria-label="Copy to clipboard" onclick="onCopy(this)">
-        <svg viewBox="0 0 512 512" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-          <path fill="currentColor" d="m81.454 16c-35.902 0-65.454 29.552-65.454 65.454v218.18c0 35.902 29.552 65.454 65.454 65.454a21.818 21.818 0 0 0 21.818-21.818 21.818 21.818 0 0 0-21.818-21.818c-12.099 0-21.818-9.719-21.818-21.818v-218.18c0-12.099 9.719-21.818 21.818-21.818h218.18c12.099 0 21.818 9.719 21.818 21.818a21.818 21.818 0 0 0 21.818 21.818 21.818 21.818 0 0 0 21.818-21.818c0-35.902-29.552-65.454-65.454-65.454zm130.91 130.91c-35.884 0-65.454 29.57-65.454 65.454v218.18c0 35.884 29.57 65.454 65.454 65.454h218.18c35.884 0 65.454-29.57 65.454-65.454v-218.18c0-35.884-29.57-65.454-65.454-65.454zm0 43.636h218.18c12.465 0 21.818 9.3534 21.818 21.818v218.18c0 12.465-9.3534 21.818-21.818 21.818h-218.18c-12.465 0-21.818-9.3534-21.818-21.818v-218.18c0-12.465 9.3534-21.818 21.818-21.818z" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
+      
+      <div class="color-picker">
+        <label for="color-picker">Icon color picker</label>
+        <input type="color" id="color-picker" value="#ffffff" oninput="onColorChange(event)">
+      </div>
     </div>
     <div class="cell-3">
       <div class="caption">Animations</div>
