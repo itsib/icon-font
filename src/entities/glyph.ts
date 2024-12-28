@@ -44,10 +44,6 @@ export class Glyph {
       return;
     }
 
-    if (this.name === 'heard') {
-      console.log(this.name);
-    }
-
     const pathData = new SVGPathData(args.path);
     this.contours = svgPathToContour(pathData, 0.2);
     this.sizeBytes = 12 + (this.contours.length * 2); // glyph fixed properties
