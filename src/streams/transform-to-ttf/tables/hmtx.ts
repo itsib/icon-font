@@ -1,6 +1,5 @@
 import { BufferByte } from '../../../entities/buffer-byte.ts';
 import { Font } from '../../../entities/font.ts';
-import { Glyph } from '../../../entities/glyph.ts';
 
 export function createHtmxTable(font: Font): BufferByte {
   const buffer = new BufferByte(font.glyphs.length * 4);

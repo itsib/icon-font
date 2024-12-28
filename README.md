@@ -110,3 +110,5 @@ You need to create an `icon-font.json` file with json format in the root of your
   ttfdump -t head dist/fonts/icon-font.ttf
   ttfdump -t OS/2 dist/fonts/icon-font.ttf
   ```
+  
+- [TrueFont spec](https://learn.microsoft.com/en-us/typography/opentype/spec/) - documentation for the TrueFont tables.
