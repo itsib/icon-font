@@ -27,7 +27,7 @@ export function fontFaceUrl(base: string, fontId: string, type: FontType, hash?:
 export function fontFace(base: string, fontName: string, types: FontType[], hash?: string): string {
   const fontId = slugify(fontName);
   let output = '@font-face {\n'
-  output += '  font-display: auto;\n';
+  output += '  font-display: fallback;\n';
   output += `  font-family: "${fontName}";\n`;
   output += '  src: ';
 
