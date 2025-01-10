@@ -2,7 +2,7 @@ import { Transform, TransformCallback } from 'node:stream';
 import { SVGCommand, SVGPathData, SVGPathDataParser, SVGPathDataTransformer } from 'svg-pathdata';
 import { Buffer } from 'node:buffer';
 import sax from 'sax';
-import { BufferWithMeta, FileMetadata, SymbolMetadata } from '../../types';
+import { BufferWithMeta, FileMetadata, IconTune, SymbolMetadata } from '../../types';
 import { START_UNICODE, SYMBOL_BOX_SIZE, SYMBOL_SHAPE_SIZE } from '../../constants.ts';
 import { populateMetadata } from '../../utils/populate-metadata.ts';
 import { svgRectToPath } from '../../svg-helpers/svg-rect-to-path.ts';
@@ -18,8 +18,12 @@ export class TransformPrepareIcons extends Transform {
 
   _startUnicode = START_UNICODE;
 
-  constructor() {
+  _iconsOptions: { [name: string]: IconTune };
+
+  constructor(iconsOptions?: { [name: string]: IconTune }) {
     super({ objectMode: true });
+
+    this._iconsOptions = iconsOptions || {};
   }
 
   private _sizeAndPos(pathData: SVGPathData): { x: number; y: number, width: number; height: number } {
@@ -32,24 +36,38 @@ export class TransformPrepareIcons extends Transform {
     }
   }
 
-  private _adjustSize(pathData: SVGPathData): SVGPathData {
+  private _adjustSize(pathData: SVGPathData, tunes?: IconTune): SVGPathData {
     const { width, height } = this._sizeAndPos(pathData);
-    const currentSize = Math.round(Math.max(width, height));
+    const currentSize = Math.round(tunes?.size === 'cover' ? Math.min(width, height) : Math.max(width, height));
 
     // If the shape fits into a given square, we do nothing
     if (currentSize !== this._shapeSize) {
       pathData = pathData.scale(this._shapeSize / currentSize);
     }
+
+    // Tune icon size
+    if (typeof tunes?.size === 'number') {
+      pathData = pathData.scale(tunes.size);
+    }
+
     return pathData;
   }
 
-  private _adjustAlign(pathData: SVGPathData): SVGPathData {
+  private _adjustAlign(pathData: SVGPathData, tunes?: IconTune): SVGPathData {
     const { x, y, width, height } = this._sizeAndPos(pathData);
 
-    const dX = x - (this._symbolBoxSize - width) / 2;
-    const dY = y - (this._symbolBoxSize - height) / 2;
+    let dX = x - (this._symbolBoxSize - width) / 2;
+    let dY = y - (this._symbolBoxSize - height) / 2;
 
-    return pathData.translate(-dX, -dY);
+    if (tunes?.x != null) {
+      dX = dX - (this._symbolBoxSize * tunes.x);
+    }
+
+    if (tunes?.y != null) {
+      dY = dY - (this._symbolBoxSize * tunes.y);
+    }
+
+    return  pathData.translate(-dX, -dY);
   }
 
   private _parseTransformAttr(transform?: string): SvgTransformation[] {
@@ -215,6 +233,7 @@ export class TransformPrepareIcons extends Transform {
     parser.onend = () => {
       const commands: SVGCommand[] = [];
       const parser = new SVGPathDataParser();
+      const tunes: IconTune | undefined = this._iconsOptions[chunk.metadata.name];
 
       for (let i = 0; i < paths.length; i++) {
         parser.parse(paths[i], commands);
@@ -222,9 +241,9 @@ export class TransformPrepareIcons extends Transform {
       parser.finish(commands);
 
       let svgPathData = new SVGPathData(commands);
-      svgPathData = this._adjustSize(svgPathData);
+      svgPathData = this._adjustSize(svgPathData, tunes);
       svgPathData = svgPathData.scale(1, -1);
-      svgPathData = this._adjustAlign(svgPathData);
+      svgPathData = this._adjustAlign(svgPathData, tunes);
       const { x, y, width, height } = this._sizeAndPos(svgPathData);
 
       const path = svgPathData.toAbs().aToC().normalizeST().round(100).encode();

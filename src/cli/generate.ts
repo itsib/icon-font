@@ -40,7 +40,7 @@ export function createGenerateCommand(): Command {
               const filename = path.join(config.output, `${slug}.svg`);
               pipeline(
                 new StreamRead(config.input),
-                new TransformPrepareIcons(),
+                new TransformPrepareIcons(config.iconsTune),
                 new TransformToSvg(config.name),
                 createWriteStream(filename),
                 error => {
@@ -59,7 +59,7 @@ export function createGenerateCommand(): Command {
               const filename = path.join(config.output, `${slug}.ttf`);
               pipeline(
                 new StreamRead(config.input),
-                new TransformPrepareIcons(),
+                new TransformPrepareIcons(config.iconsTune),
                 new TransformToTtf(config.name),
                 createWriteStream(filename),
                 error => {
@@ -78,7 +78,7 @@ export function createGenerateCommand(): Command {
               const filename = path.join(config.output, `${slug}.eot`);
               pipeline(
                 new StreamRead(config.input),
-                new TransformPrepareIcons(),
+                new TransformPrepareIcons(config.iconsTune),
                 new TransformToTtf(config.name),
                 new TransformTtfToEot(),
                 createWriteStream(filename),
@@ -98,7 +98,7 @@ export function createGenerateCommand(): Command {
               const filename = path.join(config.output, `${slug}.woff`);
               pipeline(
                 new StreamRead(config.input),
-                new TransformPrepareIcons(),
+                new TransformPrepareIcons(config.iconsTune),
                 new TransformToTtf(config.name),
                 new TransformTtfToWoff(),
                 createWriteStream(filename),
@@ -118,7 +118,7 @@ export function createGenerateCommand(): Command {
               const filename = path.join(config.output, `${slug}.woff2`);
               pipeline(
                 new StreamRead(config.input),
-                new TransformPrepareIcons(),
+                new TransformPrepareIcons(config.iconsTune),
                 new TransformToTtf(config.name),
                 new TransformTtfToWoff2(),
                 createWriteStream(filename),
@@ -138,7 +138,7 @@ export function createGenerateCommand(): Command {
 
       const filenameCss = path.join(config.output, `${slug}.css`);
       new StreamRead(config.input)
-        .pipe(new TransformPrepareIcons())
+        .pipe(new TransformPrepareIcons(config.iconsTune))
         .pipe(new TransformToCss(config.name, config.types, config.prefix, config.fontUrl, config.fontUrlHash))
         .pipe(createWriteStream(filenameCss, 'utf8'));
 

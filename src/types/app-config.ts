@@ -1,5 +1,34 @@
 export type FontType = 'woff2' | 'woff' | 'ttf' | 'eot' | 'svg';
 
+export interface IconTune {
+  /**
+   * The x-axis displacement of the icon.
+   * In basis point (percent / 100)
+   */
+  x?: number;
+  /**
+   * The x-axis displacement of the icon.
+   * In basis point (percent / 100)
+   */
+  y?: number;
+  /**
+   * Tune the icon size.
+   *
+   * @description
+   * - If a number is passed, the size will be multiplied by it.
+   *   For example, the icon is 300x500, size = 1.2,
+   *   then the result will be 360x600.
+   * - If 'cover' is passed, the icon will
+   *   fill the entire 512x512 square.
+   * - If 'contain' is passed, the icon will
+   *   be inscribed in a 512x512 square.
+   *   This is default behavior.
+   *
+   * @default 'contain'
+   */
+  size?: number | 'cover' | 'contain';
+}
+
 export interface AppConfig {
   /**
    * Directory containing SVG icons.
@@ -40,4 +69,9 @@ export interface AppConfig {
    * @default false - is disabled
    */
   fontUrlHash: string | 'random' | false;
+  /**
+   * Adjust the size and
+   * alignment for each individual icon.
+   */
+  iconsTune?: { [name: string]: IconTune };
 }

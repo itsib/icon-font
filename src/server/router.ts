@@ -15,7 +15,7 @@ import { TransformTtfToWoff } from '../streams/transform-ttf-to-woff/transform-t
 
 async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const filesReadStream = new StreamRead(config.input);
-  const prepareStream = new TransformPrepareIcons();
+  const prepareStream = new TransformPrepareIcons(config.iconsTune);
   const htmlStyleStream = new TransformToHtml(config.name, config.types, config.prefix, '/');
 
   res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -25,7 +25,7 @@ async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse
 
 async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const filesReadStream = new StreamRead(config.input);
-  const prepareStream = new TransformPrepareIcons();
+  const prepareStream = new TransformPrepareIcons(config.iconsTune);
   const cssStyleStream = new TransformToCss(config.name, config.types, config.prefix, '/', false);
 
   res.writeHead(200, {
@@ -43,7 +43,7 @@ async function faviconHandler(_req: http.IncomingMessage, res: http.ServerRespon
 
 async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const filesReadStream = new StreamRead(config.input);
-  const prepareStream = new TransformPrepareIcons();
+  const prepareStream = new TransformPrepareIcons(config.iconsTune);
   const svgFontStream = new TransformToSvg(config.name);
 
   res.writeHead(200, {
@@ -56,7 +56,7 @@ async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerRespon
 
 async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const filesReadStream = new StreamRead(config.input);
-  const prepareStream = new TransformPrepareIcons();
+  const prepareStream = new TransformPrepareIcons(config.iconsTune);
   const ttfFontStream = new TransformToTtf(config.name);
 
   res.writeHead(200, {
@@ -69,7 +69,7 @@ async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerRespon
 
 async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const filesReadStream = new StreamRead(config.input);
-  const prepareStream = new TransformPrepareIcons();
+  const prepareStream = new TransformPrepareIcons(config.iconsTune);
   const ttfFontStream = new TransformToTtf(config.name);
   const woffFontStream = new TransformTtfToWoff();
 
@@ -82,7 +82,7 @@ async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerRespo
 
 async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const filesReadStream = new StreamRead(config.input);
-  const prepareStream = new TransformPrepareIcons();
+  const prepareStream = new TransformPrepareIcons(config.iconsTune);
   const ttfFontStream = new TransformToTtf(config.name);
   const woff2FontStream = new TransformTtfToWoff2();
 
@@ -95,7 +95,7 @@ async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResp
 
 async function eotFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
   const filesReadStream = new StreamRead(config.input);
-  const prepareStream = new TransformPrepareIcons();
+  const prepareStream = new TransformPrepareIcons(config.iconsTune);
   const ttfFontStream = new TransformToTtf(config.name);
   const eotFontStream = new TransformTtfToEot();
 

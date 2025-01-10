@@ -15,6 +15,7 @@ Simple utilities for icon-font generation, automation and presentation. Includes
 ## Features
 
 - Formatting of svg icons. The contour will be adjusted to the size of 512px and placed in the center.
+- Tune icon size and position if necessary.
 - Optimization. Extra points that do not affect the contour curves will be removed.
 - Configuration support as in package.json, and in a separate file. It can also be transmitted via the command line interface.
 - The input file format is svg.
@@ -71,7 +72,8 @@ You need to create an `icon-font.json` file with json format in the root of your
   "types": [ "woff2", "woff", "ttf", "eot"],
   "port": 9000,
   "fontUrl": "./",
-  "fontUrlHash": false
+  "fontUrlHash": false,
+  "iconsTune": {}
 }
 ```
 
@@ -79,20 +81,21 @@ You need to create an `icon-font.json` file with json format in the root of your
 
 > Configuration parameters passed through the CLI have a higher priority than the configuration file.
 
-| Option        |               Type               | Required | Description                                                                                                                                                         |
-|:--------------|:--------------------------------:|:--------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `input`       |             `string`             |    ✔     | The directory containing the SVG icon files that will be included in the font being created                                                                         |
-| `output`      |             `string`             |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created.                                                                   |
-| `name`        |             `string`             |          | The name of the new font, by default `IconFont`                                                                                                                     |
-| `prefix`      |             `string`             |          | Class name prefix. Default `icon`                                                                                                                                   |
-| `types`       |            `string[]`            |          | Output font types, to be generated. Default: `[ "woff2", "woff", "ttf", "eot"]`                                                                                     |
-| `port`        |             `number`             |          | Demo server port. Default `9000` (http://localhost:9000).                                                                                                           |
-| `fontUrl`     |             `string`             |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`                                                                        |
-| `fontUrlHash` | `string` \|  false \| `"random"` |          | Adds the GET parameter 'hash=${HASH}' at the end of the URL to reset the browser cache. Set to 'random' for random number. Or use yur own value. False is disabled. | 
+| Option              |               Type               | Required | Description                                                                                                                                                         |
+|:--------------------|:--------------------------------:|:--------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `input`             |             `string`             |    ✔     | The directory containing the SVG icon files that will be included in the font being created                                                                         |
+| `output`            |             `string`             |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created.                                                                   |
+| `name`              |             `string`             |          | The name of the new font, by default `IconFont`                                                                                                                     |
+| `prefix`            |             `string`             |          | Class name prefix. Default `icon`                                                                                                                                   |
+| `types`             |            `string[]`            |          | Output font types, to be generated. Default: `[ "woff2", "woff", "ttf", "eot"]`                                                                                     |
+| `port`              |             `number`             |          | Demo server port. Default `9000` (http://localhost:9000).                                                                                                           |
+| `fontUrl`           |             `string`             |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`                                                                        |
+| `fontUrlHash`       | `string` \|  false \| `"random"` |          | Adds the GET parameter 'hash=${HASH}' at the end of the URL to reset the browser cache. Set to 'random' for random number. Or use yur own value. False is disabled. | 
+| `iconsTune`         |   `{[name: string]: IconTune}`   |          | Adjust the positioning and size of the icon. See below. Default `{}`                                                                                                | 
 
 ## References
 
-- [ots-sanitize](https://manpages.ubuntu.com/manpages/jammy/man1/ots-sanitize.1.html) - is  a  program  which  validates and/or transcodes a font file using the OTS library.. Installation:
+- [ots-sanitize](https://manpages.ubuntu.com/manpages/jammy/man1/ots-sanitize.1.html) - is  a  program  which  validates and/or transcodes a font file using the OTS library. Installation:
   ```shell  
   sudo apt install opentype-sanitizer
   ```

@@ -3,11 +3,11 @@ import { readdir, readFile } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { Logger } from './logger.ts';
 
-const ALLOWED_KEYS: (keyof AppConfig)[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl', 'fontUrlHash'];
+const ALLOWED_KEYS: (keyof AppConfig)[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl', 'fontUrlHash', 'iconsTune'];
 
 const FILENAMES = ['icon-font.json', '.iconfontrc'];
 
-const DEFAULT: Required<Omit<AppConfig, 'input' | 'output'>> = {
+const DEFAULT: Required<Omit<AppConfig, 'input' | 'output' | 'iconsTune'>> = {
   name: 'IconFont',
   prefix: 'icon',
   types: [ 'woff2', 'woff', 'ttf', 'eot'],
@@ -77,6 +77,8 @@ async function parseConfig(content: string | null, args?: Partial<AppConfig>): P
             continue;
           }
           config.types = [...parsed.types];
+        } else if (key === 'iconsTune') {
+          config[key] = parsed[key];
         } else {
           if (typeof parsed[key] !== 'string') {
             Logger.warn(`Field ${key} should be a string`);
@@ -105,6 +107,8 @@ async function parseConfig(content: string | null, args?: Partial<AppConfig>): P
         if (typeof args.types !== 'object' || !Array.isArray(args.types)) continue;
 
         config.types = args.types;
+      } else if (key === 'iconsTune') {
+        // Cannot pass iconsOptions through cmd args. Skip.
       } else {
         if (typeof args[key] !== 'string') continue;
 
