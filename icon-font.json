@@ -7,7 +7,7 @@
   "port": 9000,
   "fontUrl": "/fonts",
   "fontUrlHash": "random",
-  "iconsOptions": {
+  "iconsTune": {
     "medium": {
       "size": "cover"
     },

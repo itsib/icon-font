@@ -81,17 +81,47 @@ You need to create an `icon-font.json` file with json format in the root of your
 
 > Configuration parameters passed through the CLI have a higher priority than the configuration file.
 
-| Option              |               Type               | Required | Description                                                                                                                                                         |
-|:--------------------|:--------------------------------:|:--------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `input`             |             `string`             |    ✔     | The directory containing the SVG icon files that will be included in the font being created                                                                         |
-| `output`            |             `string`             |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created.                                                                   |
-| `name`              |             `string`             |          | The name of the new font, by default `IconFont`                                                                                                                     |
-| `prefix`            |             `string`             |          | Class name prefix. Default `icon`                                                                                                                                   |
-| `types`             |            `string[]`            |          | Output font types, to be generated. Default: `[ "woff2", "woff", "ttf", "eot"]`                                                                                     |
-| `port`              |             `number`             |          | Demo server port. Default `9000` (http://localhost:9000).                                                                                                           |
-| `fontUrl`           |             `string`             |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`                                                                        |
-| `fontUrlHash`       | `string` \|  false \| `"random"` |          | Adds the GET parameter 'hash=${HASH}' at the end of the URL to reset the browser cache. Set to 'random' for random number. Or use yur own value. False is disabled. | 
-| `iconsTune`         |   `{[name: string]: IconTune}`   |          | Adjust the positioning and size of the icon. See below. Default `{}`                                                                                                | 
+| Option        |               Type               | Required | Description                                                                                                                                                         |
+|:--------------|:--------------------------------:|:--------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `input`       |             `string`             |    ✔     | The directory containing the SVG icon files that will be included in the font being created                                                                         |
+| `output`      |             `string`             |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created.                                                                   |
+| `name`        |             `string`             |          | The name of the new font, by default `IconFont`                                                                                                                     |
+| `prefix`      |             `string`             |          | Class name prefix. Default `icon`                                                                                                                                   |
+| `types`       |            `string[]`            |          | Output font types, to be generated. Default: `[ "woff2", "woff", "ttf", "eot"]`                                                                                     |
+| `port`        |             `number`             |          | Demo server port. Default `9000` (http://localhost:9000).                                                                                                           |
+| `fontUrl`     |             `string`             |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`                                                                        |
+| `fontUrlHash` | `string` \|  false \| `"random"` |          | Adds the GET parameter 'hash=${HASH}' at the end of the URL to reset the browser cache. Set to 'random' for random number. Or use yur own value. False is disabled. | 
+| `iconsTune`   |   `{[name: string]: IconTune}`   |          | Adjust the positioning and size for each icon. See below. Default `{}`                                                                                              | 
+
+###  Icons Tune
+
+The icon is sized and aligned automatically. But you can also configure each individual icon. To do this, use the `iconsTune` field, which contains an object whose keys 
+are the names of icon files without an extension. For example:
+
+```json5
+{
+  "iconsTune": {
+    "helicopter": {
+      "x": 0.1,
+      "y": -0.5,
+      "size": 1.2
+    }
+  }
+}
+```
+
+This means that the icon with the file name helicopter.svg will be shifted to the right by 10%, down by 50%, and enlarged by one and a half times.
+
+![Icon Tune demo](https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/icon-tune-demo.png)
+
+> Do not forget that for screens, the Y-axis begins (point 0) at the top, but in the OpenType and TrueType specifications, Y has a beginning at the bottom.
+
+| Option | Type                                 | Description                                                                                                                                                                                                                                                                                                                                      |
+|--------|--------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `x`    | `number`                             | The x-axis displacement of the icon. In basis point (percent / 100)                                                                                                                                                                                                                                                                              |
+| `y`    | `number`                             | The y-axis displacement of the icon. In basis point (percent / 100)                                                                                                                                                                                                                                                                              |
+| `size` | `number` \| `'cover'` \| `'contain'` | Tune the icon size. <br>If a `number` is passed, the size will be multiplied by it. For example, the icon is 300x500, size = 1.2, then the result will be 360x600. <br>If `cover` is passed, the icon will fill the entire 512x512 square. <br>If `contain` is passed, the icon will be inscribed in a 512x512 square. This is default behavior. |
+
 
 ## References
 

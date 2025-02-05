@@ -14,6 +14,7 @@ import { TransformTtfToEot } from '../streams/transform-ttf-to-eot/transform-ttf
 import { TransformToCss } from '../streams/transform-to-css/transform-to-css.ts';
 import { TransformTtfToWoff } from '../streams/transform-ttf-to-woff/transform-ttf-to-woff.ts';
 import { TransformTtfToWoff2 } from '../streams/transform-ttf-to-woff2/transform-ttf-to-woff2.ts';
+import { AppConfig } from '../types';
 
 export function createGenerateCommand(): Command {
   const subprogram = new Command();
@@ -23,11 +24,11 @@ export function createGenerateCommand(): Command {
     .alias('g')
     .alias('gen')
     .description('Generate icon font')
-    .action(async (args: any, command: Command) => {
+    .action(async (args: any) => {
       const start = Date.now();
 
       const { config: configFile, cwd, ...configArgs } = args;
-      const config = await loadConfig(cwd, configFile, configArgs);
+      const config = await loadConfig(cwd, configFile, configArgs as Partial<AppConfig>);
 
       await fs.rm(config.output, { recursive: true, force: true });
       await fs.mkdir(config.output, { recursive: true });

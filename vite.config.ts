@@ -51,9 +51,9 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
     },
     publicDir: 'assets',
     esbuild: {
-      legalComments: 'none',
-      platform: 'node',
-      target: ['node20'],
+        legalComments: 'none',
+        platform: 'node',
+        target: ['node20'],
     },
     server: {
       host: false,

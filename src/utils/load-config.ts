@@ -77,6 +77,12 @@ async function parseConfig(content: string | null, args?: Partial<AppConfig>): P
             continue;
           }
           config.types = [...parsed.types];
+        } else if (key === 'fontUrlHash') {
+          if (parsed.fontUrlHash === 'random' || typeof parsed.fontUrlHash === 'string' || parsed.fontUrlHash === false) {
+            config.fontUrlHash = parsed.fontUrlHash;
+          } else {
+            Logger.warn('Field fontUrlHash should be a string, false or "random"');
+          }
         } else if (key === 'iconsTune') {
           config[key] = parsed[key];
         } else {

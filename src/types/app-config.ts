@@ -65,7 +65,7 @@ export interface AppConfig {
    * Adds the GET parameter 'hash=${HASH}'
    * at the end of the URL to reset the browser cache.
    * Set to 'random' for random number.
-   * Or use yur own value
+   * Or use your own value
    * @default false - is disabled
    */
   fontUrlHash: string | 'random' | false;
