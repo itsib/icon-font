@@ -102,15 +102,15 @@ are the names of icon files without an extension. For example:
 {
   "iconsTune": {
     "helicopter": {
-      "x": 0.1,
+      "x": 0.2,
       "y": -0.5,
-      "size": 1.2
+      "size": 1.5
     }
   }
 }
 ```
 
-This means that the icon with the file name helicopter.svg will be shifted to the right by 10%, down by 50%, and enlarged by one and a half times.
+This means that the icon with the file name helicopter.svg will be shifted to the right by 20%, down by 50%, and enlarged by one and a half times.
 
 ![Icon Tune demo](https://raw.githubusercontent.com/itsib/icon-font/refs/heads/master/assets/icon-tune-demo.png)
 
