@@ -50,33 +50,21 @@ const STYLES = `
 }
 .{{prefix}}-2xs {
   font-size: .625em;
-  line-height: .1em;
-  vertical-align: .225em
 }
 .{{prefix}}-xs {
   font-size: .75em;
-  line-height: .08333em;
-  vertical-align: .125em
 }
 .{{prefix}}-sm {
   font-size: .875em;
-  line-height: .07143em;
-  vertical-align: .05357em
 }
 .{{prefix}}-lg {
   font-size: 1.25em;
-  line-height: .05em;
-  vertical-align: -.075em
 }
 .{{prefix}}-xl {
   font-size: 1.5em;
-  line-height: .04167em;
-  vertical-align: -.125em
 }
 .{{prefix}}-2xl {
   font-size: 2em;
-  line-height: .03125em;
-  vertical-align: -.1875em
 }
 .{{prefix}}-fw {
   text-align: center;
