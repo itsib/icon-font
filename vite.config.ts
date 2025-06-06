@@ -72,6 +72,21 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
         },
       },
       rollupOptions: {
+        output: {
+          compact: true,
+          chunkFileNames: '[name].[format]',
+          manualChunks: (id, meta) => {
+            id = id.replace(__dirname + '/', '')
+            if (!/^src/.test(id)) {
+              return 'vendor';
+            }
+            if (/^src\/compilers/) {
+              return 'compilers'
+            }
+
+            return 'main';
+          }
+        },
         external: [
           ...nodeNativeModules(),
           'typescript',

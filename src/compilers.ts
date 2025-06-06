@@ -11,35 +11,37 @@ export interface Callback {
   (error: Error | null): void;
 }
 
-export type Tune = AppConfig['iconsTune'];
+export type IconsTune = AppConfig['iconsTune'];
+
+export type { AppConfig, IconTune }
 
 export interface CompileFn {
-  (name: string, src: Readable, dst: Writable, tune?: Tune, callback?: Callback): void
+  (name: string, src: Readable, dst: Writable, tune?: IconsTune, callback?: Callback): void
   (name: string, src: Readable, dst: Writable, callback?: Callback): void
 }
 
 const fakeCallback = (() => {}) as Callback;
 
-const resolveRest = (...rest: (Tune | Callback | undefined)[]): { callback: Callback, iconsTune: Tune } => {
+const resolveRest = (...rest: (IconsTune | Callback | undefined)[]): { callback: Callback, iconsTune: IconsTune } => {
   if (rest.length === 0) {
     return {
       callback: fakeCallback,
-      iconsTune: {} as Tune,
+      iconsTune: {} as IconsTune,
     }
   } else if (typeof rest[0] === 'function') {
     return {
       callback: rest[0] as Callback,
-      iconsTune: {} as Tune,
+      iconsTune: {} as IconsTune,
     }
   } else {
     return {
       callback: (rest[1] || fakeCallback) as Callback,
-      iconsTune: (rest[0] || {}) as Tune,
+      iconsTune: (rest[0] || {}) as IconsTune,
     }
   }
 }
 
-export const compileWoff2: CompileFn = (name, src, dst, ...rest: (Tune | Callback | undefined)[]) => {
+export const compileWoff2: CompileFn = (name, src, dst, ...rest: (IconsTune | Callback | undefined)[]) => {
   const { callback, iconsTune } = resolveRest(...rest);
 
   pipeline(
@@ -52,7 +54,7 @@ export const compileWoff2: CompileFn = (name, src, dst, ...rest: (Tune | Callbac
   )
 }
 
-export const compileWoff: CompileFn = (name, src, dst, ...rest: (Tune | Callback | undefined)[]) => {
+export const compileWoff: CompileFn = (name, src, dst, ...rest: (IconsTune | Callback | undefined)[]) => {
   const { callback, iconsTune } = resolveRest(...rest);
 
   pipeline(
@@ -65,7 +67,7 @@ export const compileWoff: CompileFn = (name, src, dst, ...rest: (Tune | Callback
   )
 }
 
-export const compileEot: CompileFn = (name, src, dst, ...rest: (Tune | Callback | undefined)[]) => {
+export const compileEot: CompileFn = (name, src, dst, ...rest: (IconsTune | Callback | undefined)[]) => {
   const { callback, iconsTune } = resolveRest(...rest);
 
   pipeline(
@@ -78,7 +80,7 @@ export const compileEot: CompileFn = (name, src, dst, ...rest: (Tune | Callback 
   )
 }
 
-export const compileTtf: CompileFn = (name, src, dst, ...rest: (Tune | Callback | undefined)[]) => {
+export const compileTtf: CompileFn = (name, src, dst, ...rest: (IconsTune | Callback | undefined)[]) => {
   const { callback, iconsTune } = resolveRest(...rest);
 
   pipeline(
@@ -90,7 +92,7 @@ export const compileTtf: CompileFn = (name, src, dst, ...rest: (Tune | Callback 
   )
 }
 
-export const compileSvg: CompileFn = (name, src, dst, ...rest: (Tune | Callback | undefined)[]) => {
+export const compileSvg: CompileFn = (name, src, dst, ...rest: (IconsTune | Callback | undefined)[]) => {
   const { callback, iconsTune } = resolveRest(...rest);
 
   pipeline(
