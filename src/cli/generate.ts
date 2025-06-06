@@ -1,5 +1,4 @@
 import { Command } from 'commander';
-import { pipeline } from 'node:stream';
 import { loadConfig } from '../utils/load-config.ts';
 import fs from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
@@ -8,13 +7,9 @@ import { slugify } from '../utils/slugify.js';
 import { Logger } from '../utils/logger.js';
 import { StreamRead } from '../streams/stream-read/stream-read.ts';
 import { TransformPrepareIcons } from '../streams/transform-prepare-icons/transform-prepare-icons.ts';
-import { TransformToSvg } from '../streams/transform-to-svg/transform-to-svg.ts';
-import { TransformToTtf } from '../streams/transform-to-ttf/transform-to-ttf.ts';
-import { TransformTtfToEot } from '../streams/transform-ttf-to-eot/transform-ttf-to-eot.ts';
 import { TransformToCss } from '../streams/transform-to-css/transform-to-css.ts';
-import { TransformTtfToWoff } from '../streams/transform-ttf-to-woff/transform-ttf-to-woff.ts';
-import { TransformTtfToWoff2 } from '../streams/transform-ttf-to-woff2/transform-ttf-to-woff2.ts';
 import { AppConfig } from '../types';
+import { compileEot, compileSvg, compileTtf, compileWoff, compileWoff2 } from '../compilers.ts';
 
 export function createGenerateCommand(): Command {
   const subprogram = new Command();
@@ -39,97 +34,99 @@ export function createGenerateCommand(): Command {
           case 'svg': {
             await new Promise<void>((resolve, reject) => {
               const filename = path.join(config.output, `${slug}.svg`);
-              pipeline(
+
+              compileSvg(
+                config.name,
                 new StreamRead(config.input),
-                new TransformPrepareIcons(config.iconsTune),
-                new TransformToSvg(config.name),
                 createWriteStream(filename),
+                config.iconsTune,
                 error => {
                   if (error) {
                     return reject(error);
                   }
                   Logger.created(filename);
                   resolve();
-                },
-              );
+                }
+              )
             });
             break;
           }
           case 'ttf': {
             await new Promise<void>((resolve, reject) => {
               const filename = path.join(config.output, `${slug}.ttf`);
-              pipeline(
+
+              compileTtf(
+                config.name,
                 new StreamRead(config.input),
-                new TransformPrepareIcons(config.iconsTune),
-                new TransformToTtf(config.name),
                 createWriteStream(filename),
+                config.iconsTune,
                 error => {
                   if (error) {
                     return reject(error);
                   }
                   Logger.created(filename);
                   resolve();
-                },
-              );
+                }
+              )
             });
             break;
           }
           case 'eot': {
             await new Promise<void>((resolve, reject) => {
               const filename = path.join(config.output, `${slug}.eot`);
-              pipeline(
+
+              compileEot(
+                config.name,
                 new StreamRead(config.input),
-                new TransformPrepareIcons(config.iconsTune),
-                new TransformToTtf(config.name),
-                new TransformTtfToEot(),
                 createWriteStream(filename),
+                config.iconsTune,
                 error => {
                   if (error) {
                     return reject(error);
                   }
                   Logger.created(filename);
                   resolve();
-                },
-              );
+                }
+              )
             });
             break;
           }
           case 'woff': {
             await new Promise<void>((resolve, reject) => {
               const filename = path.join(config.output, `${slug}.woff`);
-              pipeline(
+
+              compileWoff(
+                config.name,
                 new StreamRead(config.input),
-                new TransformPrepareIcons(config.iconsTune),
-                new TransformToTtf(config.name),
-                new TransformTtfToWoff(),
                 createWriteStream(filename),
+                config.iconsTune,
                 error => {
                   if (error) {
                     return reject(error);
                   }
                   Logger.created(filename);
                   resolve();
-                },
-              );
+                }
+              )
             });
             break;
           }
           case 'woff2': {
             await new Promise<void>((resolve, reject) => {
               const filename = path.join(config.output, `${slug}.woff2`);
-              pipeline(
+
+              compileWoff2(
+                config.name,
                 new StreamRead(config.input),
-                new TransformPrepareIcons(config.iconsTune),
-                new TransformToTtf(config.name),
-                new TransformTtfToWoff2(),
                 createWriteStream(filename),
+                config.iconsTune,
                 error => {
                   if (error) {
                     return reject(error);
                   }
                   Logger.created(filename);
                   resolve();
-                },
+                }
               );
             });
             break;

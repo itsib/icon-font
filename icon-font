@@ -12,6 +12,6 @@ import { nextTick } from 'node:process';
 
 
   nextTick(() => {
-    import('./lib/index.js');
+    import('./lib/main.js');
   });
 })();

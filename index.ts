@@ -2,4 +2,4 @@
 (global as any).__APP_VERSION__ = '0.0.0';
 (global as any).__APP_DESCRIPTION__ = '';
 
-import('./src/index');
+import('./src/main');

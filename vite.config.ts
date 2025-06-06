@@ -66,8 +66,10 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       lib: {
         formats: ['cjs', 'es'],
         name: appName,
-        fileName: 'index',
-        entry: resolve(__dirname, './src/index.ts'),
+        entry: {
+          main: resolve(__dirname, './src/main.ts'),
+          compilers: resolve(__dirname, './src/compilers.ts'),
+        },
       },
       rollupOptions: {
         external: [

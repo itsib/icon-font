@@ -31,29 +31,39 @@
     "LICENSE",
     "package.json"
   ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./lib/compilers.d.ts",
+      "import": "./lib/compilers.js",
+      "require": "./lib/compilers.cjs",
+      "default": "./lib/compilers.js"
+    }
+  },
   "scripts": {
     "dev": "npm run inject && vite",
     "inject": "node scripts/inject.mjs",
-    "build": "npm run inject && tsc && vite build",
+    "build": "npm run inject && tsc && vite build && npm run build:types",
+    "build:types": "tsc --emitDeclarationOnly --noEmit false --declaration true",
     "preversion": "npm test",
     "version": "node ./scripts/version.mjs && git add .",
     "postversion": "git push && git push --tags",
     "test": "./scripts/test.sh"
   },
   "devDependencies": {
-    "@types/node": "^20.17.9",
+    "@types/node": "^22.15.30",
     "@types/sax": "^1.2.7",
     "@types/ttf2eot": "^2.0.2",
     "@types/ttf2woff": "^2.0.4",
     "@types/wawoff2": "^1.0.2",
-    "commander": "^12.1.0",
+    "commander": "^14.0.0",
     "prettier": "^3.3.1",
     "sax": "^1.4.1",
     "svg-pathdata": "^7.1.0",
     "ttf2eot": "^3.1.0",
     "ttf2woff": "^3.0.0",
     "typescript": "^5.2.2",
-    "vite": "^5.2.0",
+    "vite": "^6.3.5",
     "wawoff2": "^2.0.1"
   }
 }
