@@ -74,8 +74,8 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       rollupOptions: {
         output: {
           compact: true,
-          chunkFileNames: '[name].[format]',
-          manualChunks: (id, meta) => {
+          chunkFileNames: '[name].[format].js',
+          manualChunks: (id) => {
             id = id.replace(__dirname + '/', '')
             if (!/^src/.test(id)) {
               return 'vendor';
