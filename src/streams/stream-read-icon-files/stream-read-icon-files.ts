@@ -1,3 +1,5 @@
+// noinspection JSAnnotator
+
 import { readdir } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -6,7 +8,7 @@ import { FileMetadata } from '../../types';
 import { populateMetadata } from '../../utils/populate-metadata.ts';
 import { compareFiles } from '../../utils/compare-files.ts';
 
-export class StreamRead extends Readable {
+export class StreamReadIconFiles extends Readable {
 
   private readonly _input: string;
 

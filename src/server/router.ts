@@ -3,14 +3,14 @@ import { slugify } from '../utils/slugify.js';
 import { Logger } from '../utils/logger.js';
 import { FAVICON } from '../constants.ts';
 import { AppConfig } from '../types';
-import { StreamRead } from '../streams/stream-read/stream-read.ts';
+import { StreamReadIconFiles } from '../streams/stream-read-icon-files/stream-read-icon-files.ts';
 import { TransformPrepareIcons } from '../streams/transform-prepare-icons/transform-prepare-icons.ts';
 import { TransformToCss } from '../streams/transform-to-css/transform-to-css.ts';
 import { TransformToHtml } from '../streams/transform-to-html/transform-to-html.ts';
-import { compileEot, compileSvg, compileTtf, compileWoff, compileWoff2 } from '../compilers.ts';
+import { compileCss, compileEot, compileSvg, compileTtf, compileWoff, compileWoff2 } from '../compilers.ts';
 
 async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
-  const filesReadStream = new StreamRead(config.input);
+  const filesReadStream = new StreamReadIconFiles(config.input);
   const prepareStream = new TransformPrepareIcons(config.iconsTune);
   const htmlStyleStream = new TransformToHtml(config.name, config.types, config.prefix, '/');
 
@@ -20,15 +20,16 @@ async function indexHandler(_req: http.IncomingMessage, res: http.ServerResponse
 }
 
 async function stylesCssHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
-  const filesReadStream = new StreamRead(config.input);
-  const prepareStream = new TransformPrepareIcons(config.iconsTune);
-  const cssStyleStream = new TransformToCss(config.name, config.types, config.prefix, '/', false);
-
   res.writeHead(200, {
     'Content-Type': 'text/css',
     'Server': 'Dev Server',
   });
-  filesReadStream.pipe(prepareStream).pipe(cssStyleStream).pipe(res as any);
+
+  compileCss(
+    { ...config, fontUrl: '/', fontUrlHash: false } as AppConfig,
+    new StreamReadIconFiles(config.input),
+    res as any,
+  )
 }
 
 async function faviconHandler(_req: http.IncomingMessage, res: http.ServerResponse) {
@@ -38,7 +39,7 @@ async function faviconHandler(_req: http.IncomingMessage, res: http.ServerRespon
 }
 
 async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
-  const filesReadStream = new StreamRead(config.input);
+  const filesReadStream = new StreamReadIconFiles(config.input);
 
   res.writeHead(200, {
     'Content-Type': 'font/svg+xml',
@@ -54,7 +55,7 @@ async function svgFontHandler(_req: http.IncomingMessage, res: http.ServerRespon
 }
 
 async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
-  const filesReadStream = new StreamRead(config.input);
+  const filesReadStream = new StreamReadIconFiles(config.input);
 
   res.writeHead(200, {
     'Content-Type': 'application/x-font-ttf',
@@ -70,7 +71,7 @@ async function ttfFontHandler(_req: http.IncomingMessage, res: http.ServerRespon
 }
 
 async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
-  const filesReadStream = new StreamRead(config.input);
+  const filesReadStream = new StreamReadIconFiles(config.input);
 
   res.writeHead(200, {
     'Content-Type': 'font/woff',
@@ -86,7 +87,7 @@ async function woffFontHandler(_req: http.IncomingMessage, res: http.ServerRespo
 }
 
 async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
-  const filesReadStream = new StreamRead(config.input);
+  const filesReadStream = new StreamReadIconFiles(config.input);
 
   res.writeHead(200, {
     'Content-Type': 'font/woff2',
@@ -102,7 +103,7 @@ async function woff2FontHandler(_req: http.IncomingMessage, res: http.ServerResp
 }
 
 async function eotFontHandler(_req: http.IncomingMessage, res: http.ServerResponse, config: Omit<AppConfig, 'output'>) {
-  const filesReadStream = new StreamRead(config.input);
+  const filesReadStream = new StreamReadIconFiles(config.input);
 
   res.writeHead(200, {
     'Content-Type': 'application/vnd.ms-fontobject',

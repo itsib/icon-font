@@ -1,5 +1,7 @@
 import { AppConfig, IconTune } from './types';
 import { pipeline, Writable, Readable } from 'node:stream';
+import { StreamReadIconFiles } from './streams/stream-read-icon-files/stream-read-icon-files.ts';
+import { TransformToCss } from './streams/transform-to-css/transform-to-css.ts';
 import { TransformPrepareIcons } from './streams/transform-prepare-icons/transform-prepare-icons.ts';
 import { TransformToTtf } from './streams/transform-to-ttf/transform-to-ttf.ts';
 import { TransformTtfToWoff2 } from './streams/transform-ttf-to-woff2/transform-ttf-to-woff2.ts';
@@ -18,6 +20,10 @@ export type { AppConfig, IconTune }
 export interface CompileFn {
   (name: string, src: Readable, dst: Writable, tune?: IconsTune, callback?: Callback): void
   (name: string, src: Readable, dst: Writable, callback?: Callback): void
+}
+
+export interface CompileCssFn {
+  (config: AppConfig, src: Readable, dst: Writable, callback?: Callback): void
 }
 
 const fakeCallback = (() => {}) as Callback;
@@ -103,3 +109,15 @@ export const compileSvg: CompileFn = (name, src, dst, ...rest: (IconsTune | Call
     callback,
   )
 }
+
+export const compileCss: CompileCssFn = (config, src, dst, callback?: Callback) => {
+  pipeline(
+    src,
+    new TransformPrepareIcons(config.iconsTune),
+    new TransformToCss(config.name, config.types, config.prefix, config.fontUrl, config.fontUrlHash),
+    dst,
+    callback || (() => {}),
+  )
+}
+
+export { StreamReadIconFiles }

@@ -5,11 +5,11 @@ import { createWriteStream } from 'node:fs';
 import path from 'node:path';
 import { slugify } from '../utils/slugify.js';
 import { Logger } from '../utils/logger.js';
-import { StreamRead } from '../streams/stream-read/stream-read.ts';
+import { StreamReadIconFiles } from '../streams/stream-read-icon-files/stream-read-icon-files.ts';
 import { TransformPrepareIcons } from '../streams/transform-prepare-icons/transform-prepare-icons.ts';
 import { TransformToCss } from '../streams/transform-to-css/transform-to-css.ts';
 import { AppConfig } from '../types';
-import { compileEot, compileSvg, compileTtf, compileWoff, compileWoff2 } from '../compilers.ts';
+import { compileCss, compileEot, compileSvg, compileTtf, compileWoff, compileWoff2 } from '../compilers.ts';
 
 export function createGenerateCommand(): Command {
   const subprogram = new Command();
@@ -37,7 +37,7 @@ export function createGenerateCommand(): Command {
 
               compileSvg(
                 config.name,
-                new StreamRead(config.input),
+                new StreamReadIconFiles(config.input),
                 createWriteStream(filename),
                 config.iconsTune,
                 error => {
@@ -57,7 +57,7 @@ export function createGenerateCommand(): Command {
 
               compileTtf(
                 config.name,
-                new StreamRead(config.input),
+                new StreamReadIconFiles(config.input),
                 createWriteStream(filename),
                 config.iconsTune,
                 error => {
@@ -77,7 +77,7 @@ export function createGenerateCommand(): Command {
 
               compileEot(
                 config.name,
-                new StreamRead(config.input),
+                new StreamReadIconFiles(config.input),
                 createWriteStream(filename),
                 config.iconsTune,
                 error => {
@@ -97,7 +97,7 @@ export function createGenerateCommand(): Command {
 
               compileWoff(
                 config.name,
-                new StreamRead(config.input),
+                new StreamReadIconFiles(config.input),
                 createWriteStream(filename),
                 config.iconsTune,
                 error => {
@@ -117,7 +117,7 @@ export function createGenerateCommand(): Command {
 
               compileWoff2(
                 config.name,
-                new StreamRead(config.input),
+                new StreamReadIconFiles(config.input),
                 createWriteStream(filename),
                 config.iconsTune,
                 error => {
@@ -135,12 +135,21 @@ export function createGenerateCommand(): Command {
       }
 
       const filenameCss = path.join(config.output, `${slug}.css`);
-      new StreamRead(config.input)
-        .pipe(new TransformPrepareIcons(config.iconsTune))
-        .pipe(new TransformToCss(config.name, config.types, config.prefix, config.fontUrl, config.fontUrlHash))
-        .pipe(createWriteStream(filenameCss, 'utf8'));
 
-      Logger.created(filenameCss);
+      await new Promise<void>((resolve, reject) => {
+        compileCss(
+          config,
+          new StreamReadIconFiles(config.input),
+          createWriteStream(filenameCss, 'utf8'),
+          error => {
+            if (error) {
+              return reject(error);
+            }
+            Logger.created(filenameCss);
+            resolve();
+          }
+        )
+      })
 
       Logger.done(Date.now() - start);
     });
