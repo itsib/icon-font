@@ -7,7 +7,7 @@
 
 Simple utilities for icon-font generation, automation and presentation. Includes preview web server.
 
-[![Version](https://img.shields.io/badge/version-0.3.8-blue.svg?cacheSeconds=2592000&label=Version)](https://www.npmjs.com/package/@itsib/icon-font)
+[![Version](https://img.shields.io/badge/version-0.3.9-blue.svg?cacheSeconds=2592000&label=Version)](https://www.npmjs.com/package/@itsib/icon-font)
 [![Release](https://github.com/itsib/icon-font/actions/workflows/main.yaml/badge.svg)](https://github.com/itsib/icon-font/actions/workflows/main.yaml)
 
 ---
