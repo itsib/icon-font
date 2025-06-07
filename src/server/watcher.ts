@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events';
+import { EventEmitter } from 'node:events';
 import { watch } from 'node:fs';
 import { Logger } from '../utils/logger.js';
 

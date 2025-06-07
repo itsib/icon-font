@@ -1,6 +1,6 @@
 import { Transform, TransformCallback } from 'node:stream';
 import { BufferWithMeta, SymbolMetadata, FontType } from '../../types';
-import { BRAND } from '../../constants.ts';
+import { BRAND } from '../../utils/constants.ts';
 import { STYLES } from './styles.ts';
 import { slugify } from '../../utils/slugify.ts';
 import { fontFaceUrl } from '../../utils/font-face.ts';

@@ -67,25 +67,25 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
         formats: ['cjs', 'es'],
         name: appName,
         entry: {
-          main: resolve(__dirname, './src/main.ts'),
-          compilers: resolve(__dirname, './src/compilers.ts'),
+          index: resolve(__dirname, './src/index.ts'),
+          'cli/index': resolve(__dirname, './src/cli/index.ts'),
         },
       },
       rollupOptions: {
         output: {
           compact: true,
-          chunkFileNames: '[name].[format].js',
-          manualChunks: (id) => {
-            id = id.replace(__dirname + '/', '')
-            if (!/^src/.test(id)) {
-              return 'vendor';
-            }
-            if (/^src\/compilers/) {
-              return 'compilers'
-            }
-
-            return 'main';
-          }
+          // chunkFileNames: '[name].[format].js',
+          // manualChunks: (id) => {
+          //   id = id.replace(__dirname + '/', '')
+          //   if (!/^src/.test(id)) {
+          //     return 'vendor';
+          //   }
+          //   if (/^src\/compilers/) {
+          //     return 'compilers'
+          //   }
+          //
+          //   return 'main';
+          // }
         },
         external: [
           ...nodeNativeModules(),

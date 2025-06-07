@@ -3,7 +3,7 @@ import { SVGCommand, SVGPathData, SVGPathDataParser, SVGPathDataTransformer } fr
 import { Buffer } from 'node:buffer';
 import sax from 'sax';
 import { BufferWithMeta, FileMetadata, IconTune, SymbolMetadata } from '../../types';
-import { START_UNICODE, SYMBOL_BOX_SIZE, SYMBOL_SHAPE_SIZE } from '../../constants.ts';
+import { START_UNICODE, SYMBOL_BOX_SIZE, SYMBOL_SHAPE_SIZE } from '../../utils/constants.ts';
 import { populateMetadata } from '../../utils/populate-metadata.ts';
 import { svgRectToPath } from '../../svg-helpers/svg-rect-to-path.ts';
 import { svgLineToPath } from '../../svg-helpers/svg-line-to-path.ts';

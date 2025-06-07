@@ -1,6 +1,6 @@
 import { Command } from 'commander';
-import { createGenerateCommand } from './cli/generate.js';
-import { createDemoCommand } from './cli/demo.js';
+import { createGenerateCommand } from './generate.js';
+import { createDemoCommand } from './demo.js';
 
 const Program = new Command();
 

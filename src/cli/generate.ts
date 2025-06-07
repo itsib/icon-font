@@ -1,15 +1,13 @@
 import { Command } from 'commander';
+import { pipeline } from 'node:stream/promises';
 import { loadConfig } from '../utils/load-config.ts';
 import fs from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
 import path from 'node:path';
 import { slugify } from '../utils/slugify.js';
 import { Logger } from '../utils/logger.js';
-import { StreamReadIconFiles } from '../streams/stream-read-icon-files/stream-read-icon-files.ts';
-import { TransformPrepareIcons } from '../streams/transform-prepare-icons/transform-prepare-icons.ts';
-import { TransformToCss } from '../streams/transform-to-css/transform-to-css.ts';
 import { AppConfig } from '../types';
-import { compileCss, compileEot, compileSvg, compileTtf, compileWoff, compileWoff2 } from '../compilers.ts';
+import { prepare, read, toCss, toSvg, toTtf, ttfToEot, ttfToWoff, ttfToWoff2 } from '../index.ts';
 
 export function createGenerateCommand(): Command {
   const subprogram = new Command();
@@ -32,103 +30,65 @@ export function createGenerateCommand(): Command {
       for await (const type of config.types) {
         switch (type) {
           case 'svg': {
-            await new Promise<void>((resolve, reject) => {
-              const filename = path.join(config.output, `${slug}.svg`);
+            const filename = path.join(config.output, `${slug}.svg`);
 
-              compileSvg(
-                config.name,
-                new StreamReadIconFiles(config.input),
-                createWriteStream(filename),
-                config.iconsTune,
-                error => {
-                  if (error) {
-                    return reject(error);
-                  }
-                  Logger.created(filename);
-                  resolve();
-                }
-              )
-            });
+            await pipeline(
+              read(config.input),
+              prepare(config.iconsTune),
+              toSvg('config.name'),
+              createWriteStream(filename),
+            )
             break;
           }
           case 'ttf': {
-            await new Promise<void>((resolve, reject) => {
-              const filename = path.join(config.output, `${slug}.ttf`);
+            const filename = path.join(config.output, `${slug}.ttf`);
 
-              compileTtf(
-                config.name,
-                new StreamReadIconFiles(config.input),
-                createWriteStream(filename),
-                config.iconsTune,
-                error => {
-                  if (error) {
-                    return reject(error);
-                  }
-                  Logger.created(filename);
-                  resolve();
-                }
-              )
-            });
+            await pipeline(
+              read(config.input),
+              prepare(config.iconsTune),
+              toTtf('config.name'),
+              createWriteStream(filename),
+            )
+            Logger.created(filename);
             break;
           }
           case 'eot': {
-            await new Promise<void>((resolve, reject) => {
-              const filename = path.join(config.output, `${slug}.eot`);
+            const filename = path.join(config.output, `${slug}.eot`);
 
-              compileEot(
-                config.name,
-                new StreamReadIconFiles(config.input),
-                createWriteStream(filename),
-                config.iconsTune,
-                error => {
-                  if (error) {
-                    return reject(error);
-                  }
-                  Logger.created(filename);
-                  resolve();
-                }
-              )
-            });
+            await pipeline(
+              read(config.input),
+              prepare(config.iconsTune),
+              toTtf('config.name'),
+              ttfToEot(),
+              createWriteStream(filename),
+            )
+            Logger.created(filename);
             break;
           }
           case 'woff': {
-            await new Promise<void>((resolve, reject) => {
-              const filename = path.join(config.output, `${slug}.woff`);
+            const filename = path.join(config.output, `${slug}.woff`);
 
-              compileWoff(
-                config.name,
-                new StreamReadIconFiles(config.input),
-                createWriteStream(filename),
-                config.iconsTune,
-                error => {
-                  if (error) {
-                    return reject(error);
-                  }
-                  Logger.created(filename);
-                  resolve();
-                }
-              )
-            });
+            await pipeline(
+              read(config.input),
+              prepare(config.iconsTune),
+              toTtf('config.name'),
+              ttfToWoff(),
+              createWriteStream(filename),
+            )
+            Logger.created(filename);
             break;
           }
           case 'woff2': {
-            await new Promise<void>((resolve, reject) => {
-              const filename = path.join(config.output, `${slug}.woff2`);
+            const filename = path.join(config.output, `${slug}.woff2`);
 
-              compileWoff2(
-                config.name,
-                new StreamReadIconFiles(config.input),
-                createWriteStream(filename),
-                config.iconsTune,
-                error => {
-                  if (error) {
-                    return reject(error);
-                  }
-                  Logger.created(filename);
-                  resolve();
-                }
-              );
-            });
+            await pipeline(
+              read(config.input),
+              prepare(config.iconsTune),
+              toTtf('config.name'),
+              ttfToWoff2(),
+              createWriteStream(filename),
+            )
+            Logger.created(filename);
             break;
           }
         }
@@ -136,21 +96,13 @@ export function createGenerateCommand(): Command {
 
       const filenameCss = path.join(config.output, `${slug}.css`);
 
-      await new Promise<void>((resolve, reject) => {
-        compileCss(
-          config,
-          new StreamReadIconFiles(config.input),
-          createWriteStream(filenameCss, 'utf8'),
-          error => {
-            if (error) {
-              return reject(error);
-            }
-            Logger.created(filenameCss);
-            resolve();
-          }
-        )
-      })
-
+      await pipeline(
+        read(config.input),
+        prepare(config.iconsTune),
+        toCss(config.name, config.types, config.prefix, config.fontUrl, config.fontUrlHash),
+        createWriteStream(filenameCss, 'utf8'),
+      )
+      Logger.created(filenameCss);
       Logger.done(Date.now() - start);
     });
 
