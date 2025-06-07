@@ -34,10 +34,10 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./lib/compilers.d.ts",
-      "import": "./lib/compilers.js",
-      "require": "./lib/compilers.cjs",
-      "default": "./lib/compilers.js"
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js",
+      "require": "./lib/index.cjs",
+      "default": "./lib/index.js"
     }
   },
   "scripts": {
