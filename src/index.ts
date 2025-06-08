@@ -14,7 +14,7 @@ export type AppConfig = InnerAppConfig;
 
 export type FontType = InnerFontType;
 
-export const read = (path: string) => {
+export const read = (path: string | string[]) => {
   return new StreamReadIconFiles(path)
 }
 
