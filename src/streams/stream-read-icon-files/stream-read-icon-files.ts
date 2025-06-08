@@ -10,9 +10,9 @@ import { compareFiles } from '../../utils/compare-files.ts';
 
 export class StreamReadIconFiles extends Readable {
 
-  private readonly _directory: string | null;
+  private readonly _basePath: string;
 
-  private readonly _svgFiles: string[] | null;
+  private readonly _svgFiles?: string[];
 
   private _files?: Promise<FileMetadata[]>;
 
@@ -20,27 +20,21 @@ export class StreamReadIconFiles extends Readable {
 
   /**
    * Constructor
-   * @param input path of directory or files list
+   * @param basePath path of directory or files list
+   * @param svgFiles if undefined - all files in basePath
    */
-  constructor(input: string | string[]) {
+  constructor(basePath: string, svgFiles?: string[]) {
     super({ objectMode: true });
 
-    if (typeof input === 'string') {
-      this._directory = input;
-      this._svgFiles = null;
-    } else {
-      this._directory = null;
-      this._svgFiles = input;
-    }
+    this._basePath = basePath;
+    this._svgFiles = svgFiles;
   }
 
   async _readFiles(): Promise<string[]> {
-    if (this._directory) {
-      return readdir(this._directory, { encoding: 'utf8' })
-    } else if (this._svgFiles) {
+    if (this._svgFiles) {
       return Promise.resolve([...this._svgFiles])
     } else {
-      return Promise.reject(new Error('NO_ICONS'))
+      return readdir(this._basePath, { encoding: 'utf8' })
     }
   }
 
@@ -50,12 +44,13 @@ export class StreamReadIconFiles extends Readable {
         .then(files => files.sort(compareFiles))
         .then(files => {
           let index = 0;
+
           return files.reduce<FileMetadata[]>((acc, filename) => {
             if (filename.endsWith(`.svg`)) {
               acc.push({
                 name: filename.replace(extname(filename), ''),
                 index: index,
-                file: join(this._directory!, filename)
+                file: join(this._basePath, filename)
               });
               index++;
             }
