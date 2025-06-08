@@ -1,7 +1,7 @@
 // noinspection JSAnnotator
 
 import { readdir } from 'node:fs/promises';
-import { extname, join } from 'node:path';
+import { extname, join, basename } from 'node:path';
 import { Readable } from 'node:stream';
 import fs from 'node:fs';
 import { FileMetadata } from '../../types';
@@ -48,7 +48,7 @@ export class StreamReadIconFiles extends Readable {
           return files.reduce<FileMetadata[]>((acc, filename) => {
             if (filename.endsWith(`.svg`)) {
               acc.push({
-                name: filename.replace(extname(filename), ''),
+                name: basename(filename).replace(extname(filename), ''),
                 index: index,
                 file: join(this._basePath, filename)
               });

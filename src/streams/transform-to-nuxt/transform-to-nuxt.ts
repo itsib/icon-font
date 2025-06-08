@@ -50,24 +50,7 @@ const DIALOG = `
 </dialog>
 `;
 
-const FONT_SELECTOR = `
-<div class="font-selector">
-  <label for="font-select">Force select font-face</label>
-  <div class="select-wrap">
-    <select id="font-select" aria-errormessage="select-error" onchange="onFontSelect(this)">
-      <option value="disabled">All Fonts Used</option>
-      <option value="ttf">TrueType Font (ttf)</option>
-      <option value="woff">Web Open Font Format (woff)</option>
-      <option value="woff2">Web Open Font Format 2.0 (woff2)</option>
-      <option value="eot">Embedded OpenType (eot)</option>
-      <option value="svg">Scalable Vector Graphics (svg)</option>
-    </select>
-  </div>
-  <div id="select-error" class="error"></div>
-</div>
-`;
-
-export class TransformToHtml extends Transform {
+export class TransformToNuxt extends Transform {
 
   private readonly _fontName: string;
 
@@ -105,11 +88,11 @@ export class TransformToHtml extends Transform {
     output += `<h1 class="caption">\n`;
     output += BRAND + '\n';
     output += `</h1>\n`;
-    output += FONT_SELECTOR + '\n';
-
-    output += '<div class="buttons-container">\n';
 
     output += DIALOG;
+
+    output += '<div class="buttons-container">\n';
+    output += '   <div class="scrollable">\n';
 
     return output;
   }
@@ -125,23 +108,22 @@ export class TransformToHtml extends Transform {
 <button 
   type="button" 
   class="preview" 
-  data-name=${chunk.metadata.name} 
-  data-prefix=${this._prefix} 
+  aria-label="${chunk.metadata.name}"
+  data-name="${chunk.metadata.name}" 
+  data-prefix="${this._prefix}" 
   data-class="${this._prefix}-${chunk.metadata.name}" 
   onclick="onChooseIcon(this)"
 >
   <span class="inner">
     <i class="${this._prefix} ${this._prefix}-${chunk.metadata.name}"></i>
   </span>
-  <br>
-  <span class="label">${chunk.metadata.name}</span>
 </button>`;
 
     callback(null, output);
   }
 
   _flush(callback: TransformCallback) {
-    callback(null, '</div>\n</body>\n</html>');
+    callback(null, '</div>\n</div>\n</body>\n</html>');
   }
 }
 

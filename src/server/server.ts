@@ -1,37 +1,28 @@
+import type { Server } from 'node:http';
 import http from 'node:http';
-import url from 'node:url';
-import path from 'node:path';
-import { handleRoute } from './router.js';
-import { Watcher } from './watcher.js';
-import { AppConfig } from '../types';
+import { ServerConfig } from '../types';
+import { Watcher } from './watcher.ts';
+import { Logger } from '../utils/logger.ts';
+import { healthMiddleware, routeMiddleware } from './middlewares';
 
-export function createServer(config: Omit<AppConfig, 'output'>): http.Server {
-  let shouldReload = false;
+export type DemoServer = Server & { shouldReload?: boolean, config?: ServerConfig };
+
+export function createServer(config: ServerConfig): DemoServer {
   const watcher = new Watcher(config.input);
 
-  watcher.on('change', () => {
-    shouldReload = true;
-  });
+  const server: DemoServer = http.createServer(callback);
+  server.config = config;
 
-  return http.createServer(async function server(this: http.Server, req, res) {
-    const parsedUrl = req.url && new url.URL(`http://localhost:${req.socket.localPort}${req.url}`) || null;
-    if (!parsedUrl) {
-      throw new Error(`URL not parsable`);
-    }
+  watcher.on('change', () => { server.shouldReload = true });
 
-    let routePath = path.normalize(parsedUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
+  return server;
+}
 
-    if (routePath === '/healthcheck') {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({
-        status: shouldReload ? 'reload' : 'ok',
-      }));
-    } else {
-      if (routePath === '/' || routePath === '/index.html') {
-        shouldReload = false;
-      }
+async function callback(this: DemoServer, req: http.IncomingMessage, res: http.ServerResponse<http.IncomingMessage>) {
+  Logger.route(req.method || 'GET', req.url || '/');
 
-      await handleRoute(routePath, req, res, config);
-    }
-  });
+  const config = this.config!;
+
+  await healthMiddleware(req, res, this)
+  await routeMiddleware(req, res, config)
 }

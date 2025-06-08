@@ -5,17 +5,15 @@ import { fontFace } from '../../utils/font-face.ts';
 
 const STYLES = `
 .{{prefix}} {
-  font-family: "{{fontName}}", sans-serif;
-  font-weight: 500;
-  font-size: var(--{{prefix}}-size, 1em);
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  line-height: 1;
-  display: var(--{{prefix}}-display, inline-block);
-  speak: none;
+  font-family: "{{fontName}}";
+  font-weight: 400;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
+  display: var(--{{prefix}}-display, inline-block);
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-rendering: auto;
 }
 
 .{{prefix}}-1x {

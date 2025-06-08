@@ -29,6 +29,8 @@ export interface IconTune {
   size?: number | 'cover' | 'contain';
 }
 
+export type IconsTune = { [name: string]: IconTune };
+
 export interface AppConfig {
   /**
    * Directory containing SVG icons.
@@ -73,5 +75,9 @@ export interface AppConfig {
    * Adjust the size and
    * alignment for each individual icon.
    */
-  iconsTune?: { [name: string]: IconTune };
+  iconsTune?: IconsTune;
+}
+
+export interface ServerConfig extends Omit<AppConfig, 'output' | 'types' | 'fontUrl' | 'fontUrlHash'> {
+  base?: string;
 }

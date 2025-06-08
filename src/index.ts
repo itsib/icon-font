@@ -1,4 +1,4 @@
-import type { AppConfig as InnerAppConfig , FontType as InnerFontType } from './types';
+import type { IconsTune, FontType } from './types';
 import { StreamReadIconFiles } from './streams/stream-read-icon-files/stream-read-icon-files.ts';
 import { TransformToCss } from './streams/transform-to-css/transform-to-css.ts';
 import { TransformPrepareIcons } from './streams/transform-prepare-icons/transform-prepare-icons.ts';
@@ -7,18 +7,15 @@ import { TransformTtfToWoff2 } from './streams/transform-ttf-to-woff2/transform-
 import { TransformTtfToWoff } from './streams/transform-ttf-to-woff/transform-ttf-to-woff.ts';
 import { TransformTtfToEot } from './streams/transform-ttf-to-eot/transform-ttf-to-eot.ts';
 import { TransformToSvg } from './streams/transform-to-svg/transform-to-svg.ts';
-
-export type IconsTune = InnerAppConfig['iconsTune'];
-
-export type AppConfig = InnerAppConfig;
-
-export type FontType = InnerFontType;
+export * from './server/middlewares';
+export * from './server/server';
+export * from './types/app-config'
 
 export const read = (basePath: string, filenames?: string[]) => {
   return new StreamReadIconFiles(basePath, filenames)
 }
 
-export const prepare = (iconsTune?: AppConfig['iconsTune']) =>  {
+export const prepare = (iconsTune?: IconsTune) =>  {
   return new TransformPrepareIcons(iconsTune);
 }
 
@@ -45,4 +42,3 @@ export const toSvg = (name: string) => {
 export const toCss = (name: string, types: FontType[], prefix: string, url: string, fontUrlHash: string | 'random' | false) => {
   return new TransformToCss(name, types, prefix, url, fontUrlHash)
 }
-

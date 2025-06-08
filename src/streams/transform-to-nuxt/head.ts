@@ -108,66 +108,6 @@ export const HEAD = `
     function onColorChange(event) {
       document.getElementById('icon-demo').style.color = event.target.value;
     }
-    async function onFontSelect(select) {
-      const errorBlock = document.getElementById('select-error');
-      errorBlock.innerText = '';
-      try {
-        const style = Array.from(document.styleSheets).find(style => style.title === 'icons-style');
-        const cssRule = Array.from(style.cssRules).find(rule => rule instanceof CSSStyleRule && rule.cssText.startsWith('.icon { font-family'));
-       
-        if (select.value === 'disabled') {
-          cssRule.styleMap.set('font-family', fontName);
-        } else if (select.value in fontFaceUrls) {
-          const customFontName = fontName + select.value.toUpperCase();
-          
-          if (!Array.from(document.fonts).some(font => font.family === customFontName)) {
-            const url = decodeURIComponent(fontFaceUrls[select.value]);
-            const font = new FontFace(fontName + select.value.toUpperCase(), url);
-            const loaded = await font.load()
-            document.fonts.add(loaded);
-          }
-          cssRule.styleMap.set('font-family', customFontName);
-        }
-      } catch (error) {
-        errorBlock.innerText = error.message;
-      }
-    }
-    async function healthStatus() {
-      document.baseURI
-      try {
-        const res = await fetch('{{base}}/healthcheck', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        if (!res.ok) {
-          return 'failed';
-        }
-
-        const data = await res.json();
-        if (data.status === 'reload') {
-          return 'reload';
-        } else if (data.status === 'ok') {
-          return 'healthy';
-        }
-      } catch {}
-      
-      return 'failed';
-    }
-    
-    (async () => {
-      let health = await healthStatus();
-      
-      setInterval(async () => {
-        const status = await healthStatus();
-        if (status === 'reload' || (health === 'failed' && status === 'healthy')) {
-          return window.location.reload();
-        }
-        health = status;        
-      }, 1000);
-      
-    })();
   </script>
 </head>
 `;
