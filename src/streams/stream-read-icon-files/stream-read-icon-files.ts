@@ -10,37 +10,71 @@ import { compareFiles } from '../../utils/compare-files.ts';
 
 export class StreamReadIconFiles extends Readable {
 
-  private readonly _input: string;
+  private readonly _directory: string | null;
+
+  private readonly _svgFiles: string[] | null;
 
   private _files?: Promise<FileMetadata[]>;
 
   private _fileIndex = 0;
 
-  constructor(input: string) {
+  /**
+   * Constructor
+   * @param input path of directory or files list
+   */
+  constructor(input: string | string[]) {
     super({ objectMode: true });
-    this._input = input;
+
+    if (typeof input === 'string') {
+      this._directory = input;
+      this._svgFiles = null;
+    } else {
+      this._directory = null;
+      this._svgFiles = input;
+    }
   }
 
   async _getIcons(): Promise<FileMetadata[]> {
     if (!this._files) {
-      this._files = readdir(this._input, { encoding: 'utf8' })
-        .then(files => files.sort(compareFiles))
-        .then(files => {
-          let index = 0;
-          return files.reduce<FileMetadata[]>((acc, filename) => {
+      if (this._directory) {
+        this._files = readdir(this._directory, { encoding: 'utf8' })
+          .then(files => files.sort(compareFiles))
+          .then(files => {
+            let index = 0;
+            return files.reduce<FileMetadata[]>((acc, filename) => {
+              if (filename.endsWith(`.svg`)) {
+                acc.push({
+                  name: filename.replace(extname(filename), ''),
+                  index: index,
+                  file: join(this._directory!, filename)
+                });
+                index++;
+              }
+
+              return acc;
+            }, []);
+          });
+      } else if (this._svgFiles) {
+        let index = 0;
+        this._files = Promise.resolve([...this._svgFiles]
+          .sort(compareFiles)
+          .reduce<FileMetadata[]>((acc, filename) => {
             if (filename.endsWith(`.svg`)) {
               acc.push({
                 name: filename.replace(extname(filename), ''),
                 index: index,
-                file: join(this._input, filename),
+                file: join(this._directory!, filename)
               });
               index++;
             }
 
             return acc;
-          }, []);
-        });
+          }, []));
+      } else {
+        throw new Error('NO_ICONS')
+      }
     }
+
     return this._files;
   }
 
