@@ -34,31 +34,23 @@ export class StreamReadIconFiles extends Readable {
     }
   }
 
+  async _readFiles(): Promise<string[]> {
+    if (this._directory) {
+      return readdir(this._directory, { encoding: 'utf8' })
+    } else if (this._svgFiles) {
+      return Promise.resolve([...this._svgFiles])
+    } else {
+      return Promise.reject(new Error('NO_ICONS'))
+    }
+  }
+
   async _getIcons(): Promise<FileMetadata[]> {
     if (!this._files) {
-      if (this._directory) {
-        this._files = readdir(this._directory, { encoding: 'utf8' })
-          .then(files => files.sort(compareFiles))
-          .then(files => {
-            let index = 0;
-            return files.reduce<FileMetadata[]>((acc, filename) => {
-              if (filename.endsWith(`.svg`)) {
-                acc.push({
-                  name: filename.replace(extname(filename), ''),
-                  index: index,
-                  file: join(this._directory!, filename)
-                });
-                index++;
-              }
-
-              return acc;
-            }, []);
-          });
-      } else if (this._svgFiles) {
-        let index = 0;
-        this._files = Promise.resolve([...this._svgFiles]
-          .sort(compareFiles)
-          .reduce<FileMetadata[]>((acc, filename) => {
+      this._files = this._readFiles()
+        .then(files => files.sort(compareFiles))
+        .then(files => {
+          let index = 0;
+          return files.reduce<FileMetadata[]>((acc, filename) => {
             if (filename.endsWith(`.svg`)) {
               acc.push({
                 name: filename.replace(extname(filename), ''),
@@ -69,10 +61,8 @@ export class StreamReadIconFiles extends Readable {
             }
 
             return acc;
-          }, []));
-      } else {
-        throw new Error('NO_ICONS')
-      }
+          }, []);
+        });
     }
 
     return this._files;
