@@ -14,6 +14,7 @@ export const HEAD = `
     const fontFaceUrls = JSON.parse('{{fontFaceUrls}}');
     let activeAnimationButton; 
     let prefix;    
+    
     function renderExample() {
       const iconDemo = document.getElementById('icon-demo');
       const code = document.getElementById('code-example');
@@ -36,6 +37,7 @@ export const HEAD = `
       prefix = button.dataset.prefix;
       header.innerText = button.dataset.name;
       iconDemo.className = button.dataset.prefix + ' ' + button.dataset.class + ' icon-5x';
+      iconDemo.style.color = document.documentElement.classList.contains('dark') ? '#ffffff' : '#000000';
 
       renderExample();
       
@@ -82,7 +84,7 @@ export const HEAD = `
         return;
       }
       
-      button.classList.add('active')
+      button.classList.add('active');
       iconDemo.classList.add(prefix + '-' + button.dataset.animation);
       activeAnimationButton = button;
       

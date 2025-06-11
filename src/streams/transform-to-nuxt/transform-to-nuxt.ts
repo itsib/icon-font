@@ -28,7 +28,7 @@ const DIALOG = `
       
       <div class="color-picker">
         <label for="color-picker">Icon color picker</label>
-        <input type="color" id="color-picker" value="#ffffff" oninput="onColorChange(event)">
+        <input type="color" id="color-picker" value="#888888" oninput="onColorChange(event)">
       </div>
     </div>
     <div class="cell-3">

@@ -6,12 +6,41 @@ export const STYLES = `
 }
 html {
   --border-radius: 4px;
-  --preview-bg: 2 6 23;
   --label-bg: 12 74 110;
 
-  color-scheme: dark;
-  color: rgb(255, 255, 255);
-  background: rgb(21, 21, 21);
+  --color-accent: rgb(50, 150, 114);
+  --bg-main: rgb(255 255 255);
+  --bg-secondary: rgb(255 255 255);
+  --bg-tooltip: rgb(245 245 245);
+  --bg-button: transparent;
+  --bg-code: rgb(255, 255, 255, 0.1);
+  --bg-code-filter: brightness(0.6) contrast(2);
+  --text-primary: rgb(11, 16, 21);
+  --text-icons: rgb(70, 70, 70);
+  --text-button: rgb(11, 16, 21);
+  --scroll-bar: #80808080;
+  --border: 1px solid rgba(136, 136, 136, 0.3);
+  --border-button: 1px solid rgba(136, 136, 136, 0.3);
+
+  color-scheme: dark light;
+  color: var(--text-primary);
+  background: var(--bg-main);
+}
+html.dark {
+  --color-accent: rgb(50, 150, 114, 0.7);
+  --bg-main: rgb(21, 21, 21);
+  --bg-secondary: rgb(27, 27, 27);
+  --bg-tooltip: rgb(24, 24, 24);
+  --bg-button: rgb(255, 255, 255, 0.1);
+  --bg-code: rgb(27, 27, 27);
+  --bg-code-filter: none;
+  --text-primary: rgb(255, 255, 255);
+  --text-icons: rgb(170, 170, 170);
+  --text-button: rgb(255, 255, 255);
+  --scroll-bar: #80808080;
+  --border: 1px solid rgba(136, 136, 136, 0.3);
+  --border-button: 1px solid transparent;
+
 }
 body {
   height: 100vh;
@@ -39,11 +68,11 @@ body {
   background: transparent
 }
 ::-webkit-scrollbar-thumb {
-  background: #80808033;
+  background: var(--scroll-bar);
   border-radius: 3px
 }
 ::-webkit-scrollbar-thumb:active {
-  background: #80808080;
+  background: var(--scroll-bar);
   border-radius: 3px
 }
 .caption {
@@ -60,16 +89,13 @@ body {
   width: auto;
   height: 24px;
 }
-.caption svg .text-paths {
-  color: white !important;
-}
 .buttons-container {
   width: auto;
   min-height: calc(100% - 54px);
   margin: 0;
   padding: 1.25rem 0;
   overflow-y: auto;
-  background-color: rgb(27, 27, 27);
+  background-color: var(--bg-secondary);
 }
 .buttons-container .scrollable {
   
@@ -86,7 +112,7 @@ body {
   display: inline-block;
   border: 1px solid transparent;
   background-color: transparent;
-  color: rgb(170, 170, 170);
+  color: var(--text-icons);
   outline: none;
   padding: 3px;
   border-radius: var(--border-radius);
@@ -95,8 +121,8 @@ body {
   transition: border-color 0.2s ease-in-out;
 }
 .preview:hover {
-  border-color: rgb(50, 150, 114);
-  color: rgb(50, 150, 114);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 .preview .inner {
   display: inline-block;
@@ -115,7 +141,7 @@ body {
 [aria-label]::after {
   width: fit-content;
   top: 100%;
-  background-color: rgb(24, 24, 24);
+  background-color: var(--bg-tooltip);
   border-radius: 4px;
   border: 1px solid rgba(136, 136, 136, 0.3);
   box-shadow: none;
@@ -149,9 +175,9 @@ dialog {
   width: 500px;
   margin-top: 100px;
   padding: 0;
-  color: white;
-  border: 1px solid rgba(136, 136, 136, 0.3);
-  background-color: rgb(21, 21, 21);
+  color: var(--text-primary);
+  border: var(--border);
+  background-color: var(--bg-main);
   box-shadow: 0 0 2px 1px rgb(0 0 0 / .1);
   border-radius: 6px;
   overflow: visible;
@@ -224,10 +250,11 @@ dialog .content .cell-2 .example {
   margin-top: 10px;
   padding: 12px 16px;
   border-radius: 4px;
-  border: 1px solid rgb(255 255 255 / 0.2);
-  background: rgb(10 10 10);
+  border: var(--border);
+  background: var(--bg-code);
   overflow-x: auto;
   box-sizing: border-box;
+  filter: var(--bg-code-filter);
 }
 dialog .content .cell-2 code {
   font-size: 12px;
@@ -242,9 +269,9 @@ dialog .content .cell-2 .color-picker {
 }
 dialog .content .cell-2 .color-picker input {
   margin-left: 10px;
-  border: 1px solid rgb(255 255 255 / 0.2);
+  border: var(--border);
   border-radius: 6px;
-  background: rgb(10 10 10);
+  background: var(--bg-secondary);
 }
 
 dialog .content .cell-3 {
@@ -273,15 +300,15 @@ dialog .content .cell-3 .buttons button {
   padding: 2px 6px;
   font-size: 12px;
   line-height: 1;
-  color: white;
-  background-color: rgba(255 255 255 / 0.1);
-  border: none;
+  color: var(--text-button);
+  background-color: var(--bg-button);
+  border: var(--border-button);
   border-radius: 3px;
   display: inline-block;
   cursor: pointer;
 }
 dialog .content .cell-3 .buttons button.active {
-  background-color: rgb(var(--label-bg));
+  background-color: var(--color-accent);
 }
 
 dialog ::-webkit-scrollbar {
