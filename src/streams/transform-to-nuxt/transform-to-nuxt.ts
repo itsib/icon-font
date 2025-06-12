@@ -34,16 +34,16 @@ const DIALOG = `
     <div class="cell-3">
       <div class="caption">Animations</div>
       <div id="animation-buttons" class="buttons">
-        <button type="button" data-animation="beat" onclick="onAnimationClick(this)">beat</button>
-        <button type="button" data-animation="bounce" onclick="onAnimationClick(this)">bounce</button>
-        <button type="button" data-animation="fade" onclick="onAnimationClick(this)">fade</button>
-        <button type="button" data-animation="beat-fade" onclick="onAnimationClick(this)">beat fade</button>
-        <button type="button" data-animation="flip" onclick="onAnimationClick(this)">flip</button>
-        <button type="button" data-animation="shake" onclick="onAnimationClick(this)">shake</button>
-        <button type="button" data-animation="spin" onclick="onAnimationClick(this)">spin</button>
-        <button type="button" data-animation="spin-reverse" onclick="onAnimationClick(this)">spin reverse</button>
-        <button type="button" data-animation="pulse" onclick="onAnimationClick(this)">pulse</button>
-        <button type="button" data-animation="spin-pulse" onclick="onAnimationClick(this)">spin pulse</button>
+        <button type="button" class="btn btn-outline" data-animation="beat" onclick="onAnimationClick(this)">beat</button>
+        <button type="button" class="btn btn-outline" data-animation="bounce" onclick="onAnimationClick(this)">bounce</button>
+        <button type="button" class="btn btn-outline" data-animation="fade" onclick="onAnimationClick(this)">fade</button>
+        <button type="button" class="btn btn-outline" data-animation="beat-fade" onclick="onAnimationClick(this)">beat fade</button>
+        <button type="button" class="btn btn-outline" data-animation="flip" onclick="onAnimationClick(this)">flip</button>
+        <button type="button" class="btn btn-outline" data-animation="shake" onclick="onAnimationClick(this)">shake</button>
+        <button type="button" class="btn btn-outline" data-animation="spin" onclick="onAnimationClick(this)">spin</button>
+        <button type="button" class="btn btn-outline" data-animation="spin-reverse" onclick="onAnimationClick(this)">spin reverse</button>
+        <button type="button" class="btn btn-outline" data-animation="pulse" onclick="onAnimationClick(this)">pulse</button>
+        <button type="button" class="btn btn-outline" data-animation="spin-pulse" onclick="onAnimationClick(this)">spin pulse</button>
       </div>
     </div>
   </div>
@@ -87,6 +87,10 @@ export class TransformToNuxt extends Transform {
     output += '<body>\n';
     output += `<h1 class="caption">\n`;
     output += BRAND + '\n';
+    output += '<div class="size-selector">\n';
+    output += '  <button type="button"  class="btn btn-outline" onclick="setZoom(this)" data-zoom="-1"><i class="icon icon-size-md"></i></button>\n';
+    output += '  <button type="button"  class="btn btn-outline" onclick="setZoom(this)" data-zoom="+1"><i class="icon icon-size-sm"></i></button>\n';
+    output += '</div>\n';
     output += `</h1>\n`;
 
     output += DIALOG;

@@ -5,10 +5,16 @@ export const STYLES = `
   box-sizing: border-box;
 }
 html {
-  --border-radius: 4px;
+  --icon-md: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20fill%3D'currentColor'%20d%3D'M9%207c-1.1%200-2%20.9-2%202v8h2V9h2v7h2V9h2v8h2V9a2%202%200%200%200-2-2z'%2F%3E%3C%2Fsvg%3E");
+  --icon-sm: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20fill%3D'currentColor'%20d%3D'M11%207c-1.1%200-2%20.9-2%202v2a2%202%200%200%200%202%202h2v2H9v2h4c1.11%200%202-.89%202-2v-2a2%202%200%200%200-2-2h-2V9h4V7z'%2F%3E%3C%2Fsvg%3E");
+  --icon-zoom-out: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20fill%3D'none'%20stroke%3D'currentColor'%20stroke-linecap%3D'round'%20stroke-width%3D'2'%20d%3D'm21%2021l-4.486-4.494M19%2010.5a8.5%208.5%200%201%201-17%200a8.5%208.5%200%200%201%2017%200Zm-6%200H8'%2F%3E%3C%2Fsvg%3E");
+  --icon-zoom-in: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20fill%3D'none'%20stroke%3D'currentColor'%20stroke-linecap%3D'round'%20stroke-width%3D'2'%20d%3D'm21%2021l-4.486-4.494M19%2010.5a8.5%208.5%200%201%201-17%200a8.5%208.5%200%200%201%2017%200ZM10.5%207v3.5m0%200V14m0-3.5H14m-3.5%200H7'%2F%3E%3C%2Fsvg%3E");
+}
+html {
+  --border-radius: .25rem;
   --label-bg: 12 74 110;
 
-  --color-accent: rgb(50, 150, 114);
+  --color-accent: rgb(9, 158, 97);
   --bg-main: rgb(255 255 255);
   --bg-secondary: rgb(255 255 255);
   --bg-tooltip: rgb(245 245 245);
@@ -27,7 +33,7 @@ html {
   background: var(--bg-main);
 }
 html.dark {
-  --color-accent: rgb(50, 150, 114, 0.7);
+  --color-accent: rgb(9, 158, 97);
   --bg-main: rgb(21, 21, 21);
   --bg-secondary: rgb(27, 27, 27);
   --bg-tooltip: rgb(24, 24, 24);
@@ -38,8 +44,14 @@ html.dark {
   --text-icons: rgb(170, 170, 170);
   --text-button: rgb(255, 255, 255);
   --scroll-bar: #80808080;
-  --border: 1px solid rgba(136, 136, 136, 0.3);
+  --border: 1px solid #9ca3af33;
   --border-button: 1px solid transparent;
+  
+  --btn-border: 1px solid #9ca3af33;
+  --btn-border-hover: 1px solid var(--color-accent);
+  --btn-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  
+  --transition-all: all .2s cubic-bezier(.4,0,.2,1);
 
 }
 body {
@@ -75,13 +87,60 @@ body {
   background: var(--scroll-bar);
   border-radius: 3px
 }
+
+.btn {
+  background: transparent;
+  
+}
+.btn-outline {
+  padding: 6px;
+  border-radius: var(--border-radius);
+  border: var(--border);
+  color: var(--text-icons);
+  transition: var(--transition-all);
+}
+.btn-outline:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.btn-outline:active {
+  background: rgb(9 158 97 / 0.3);
+}
+.btn-outline:disabled {
+  border: var(--border);
+  color: var(--text-icons);
+  pointer-events: none;
+  opacity: 0.7;
+  transition: none;
+}
+.btn-outline .icon {
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  display: block;
+  transition: var(--transition-all);
+}
+.btn-outline .icon-size-md {
+  -webkit-mask: var(--icon-zoom-out) no-repeat;
+  mask: var(--icon-zoom-out) no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+}
+.btn-outline .icon-size-sm {
+  -webkit-mask: var(--icon-zoom-in) no-repeat;
+  mask: var(--icon-zoom-in) no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+}
+
 .caption {
   margin: 0;
   height: 54px;
-  padding: 1rem 1rem 0.75rem;
+  padding: 0.75rem 1rem 0.75rem;
+  border-bottom: var(--border);
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: space-between;
   gap: 16px;
   position: relative;
 }
@@ -89,12 +148,17 @@ body {
   width: auto;
   height: 24px;
 }
+.caption .size-selector {
+  display: flex;
+  gap: 0.5rem;
+}
 .buttons-container {
   width: auto;
   min-height: calc(100% - 54px);
   margin: 0;
   padding: 1.25rem 0;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: var(--bg-secondary);
 }
 .buttons-container .scrollable {
@@ -106,8 +170,8 @@ body {
   flex-wrap: wrap;
 }
 .preview {
-  height: 2rem;
-  width: 2rem;
+  height: calc(var(--icon-font-size, 22px) + 8px);
+  width: calc(var(--icon-font-size, 22px) + 8px);
   margin: 4px;
   display: inline-block;
   border: 1px solid transparent;
@@ -118,7 +182,7 @@ body {
   border-radius: var(--border-radius);
   position: relative;
   box-sizing: content-box;
-  transition: border-color 0.2s ease-in-out;
+  transition: border-color 0.2s ease-in-out, height 0.2s ease-in-out, width 0.2s ease-in-out;
 }
 .preview:hover {
   border-color: var(--color-accent);
@@ -130,9 +194,10 @@ body {
   text-align: center;
 }
 .preview .inner i {
-  font-size: 1.5rem;
+  font-size: var(--icon-font-size, 22px);
   line-height: 2rem;
   display: block;
+  transition: font-size 0.2s ease-in-out;
 }
 [aria-label] {
   cursor: pointer;
@@ -217,7 +282,7 @@ dialog .header .close {
   width: 30px;
   height: 30px;
   font-size: 20px;
-  color: white;
+  color: currentColor;
   background: transparent;
   border: none;
   border-radius: 50%;
@@ -287,28 +352,16 @@ dialog .content .cell-3 .caption {
   font-size: 14px;
   font-weight: 400;
   text-align: start;
+  border: none;
 }
 dialog .content .cell-3 .buttons {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  column-gap: 4px;
-}
-dialog .content .cell-3 .buttons button {
-  height: 24px;
-  margin-bottom: 4px;
-  padding: 2px 6px;
-  font-size: 12px;
-  line-height: 1;
-  color: var(--text-button);
-  background-color: var(--bg-button);
-  border: var(--border-button);
-  border-radius: 3px;
-  display: inline-block;
-  cursor: pointer;
+  gap: 4px;
 }
 dialog .content .cell-3 .buttons button.active {
-  background-color: var(--color-accent);
+  background-color: rgb(9 158 97 / 0.3) !important;
 }
 
 dialog ::-webkit-scrollbar {

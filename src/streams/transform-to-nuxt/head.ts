@@ -12,8 +12,11 @@ export const HEAD = `
   <script type="application/javascript">
     const fontName = '{{fontName}}';
     const fontFaceUrls = JSON.parse('{{fontFaceUrls}}');
+    const fontSizes = [16, 18, 20, 22, 24, 28, 32]
     let activeAnimationButton; 
     let prefix;    
+    let current = 4;
+    let btn;
     
     function renderExample() {
       const iconDemo = document.getElementById('icon-demo');
@@ -109,6 +112,24 @@ export const HEAD = `
     }
     function onColorChange(event) {
       document.getElementById('icon-demo').style.color = event.target.value;
+    }
+    function setZoom(button) {
+      const index = parseInt(button.dataset.zoom);
+      const newFontSize = fontSizes[current + index];
+      if (newFontSize == null) {
+        btn = button
+        btn.disabled = true
+        return;
+      }
+      if (btn) {
+         btn.disabled = false;
+         btn = undefined;
+      }
+     
+      
+      current = current + index;
+      
+      document.documentElement.style.setProperty('--icon-font-size', newFontSize + 'px');
     }
   </script>
 </head>
