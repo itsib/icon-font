@@ -1,5 +1,6 @@
 import { Transform, TransformCallback } from 'node:stream';
-import { SVGCommand, SVGPathData, SVGPathDataParser, SVGPathDataTransformer } from 'svg-pathdata';
+import type { SVGCommand } from 'svg-pathdata';
+import { SVGPathDataTransformer, SVGPathData, SVGPathDataParser } from 'svg-pathdata';
 import { Buffer } from 'node:buffer';
 import sax from 'sax';
 import { BufferWithMeta, FileMetadata, IconTune, SymbolMetadata } from '../../types';

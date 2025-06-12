@@ -1,5 +1,5 @@
 import { defineConfig, UserConfig } from 'vite';
-import { resolve } from 'node:path';
+import { resolve, relative } from 'node:path';
 import pkg from './package.json';
 
 function nodeNativeModules(): string[] {
@@ -75,17 +75,17 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
         output: {
           compact: true,
           // chunkFileNames: '[name].[format].js',
-          // manualChunks: (id) => {
-          //   id = id.replace(__dirname + '/', '')
-          //   if (!/^src/.test(id)) {
-          //     return 'vendor';
-          //   }
-          //   if (/^src\/compilers/) {
-          //     return 'compilers'
-          //   }
-          //
-          //   return 'main';
-          // }
+          manualChunks: (id) => {
+            id = id.replace(__dirname + '/', '')
+            if (!/^src/.test(id)) {
+              return 'vendor';
+            }
+            if (/^src\/cli/.test(id)) {
+              return 'cli/index';
+            }
+
+            return 'index';
+          }
         },
         external: [
           ...nodeNativeModules(),
