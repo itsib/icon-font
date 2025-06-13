@@ -48,6 +48,83 @@ const DIALOG = `
     </div>
   </div>
 </dialog>
+<dialog id="info-dialog" role="alertdialog" aria-modal="true" onclick="backdropClickInfoModal(event, this)">
+  <h3 class="header">
+    <div id="dialog-header">Handbook of Class Utilities</div>
+
+    <button onclick="closeInfoModal()" type="button" class="close">✕</button>
+  </h3>
+  <div class="content">
+  <table class="class-utils-list">
+    <tbody>
+      <tr>
+        <th colspan="2" style="font: 500 14px sans-serif; padding-top: 8px">Icon Size Utils</th>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-1x ... {{prefix}}-10x</td>
+        <td class="">1em - 10em</td>
+      </tr>
+      <tr><td class="cn">{{prefix}}-2xs</td><td>Font Size: 0.625em</td></tr>
+      <tr><td class="cn">{{prefix}}-xs</td><td>Font Size: 0.75em</td></tr>
+      <tr><td class="cn">{{prefix}}-sm</td><td>Font Size: 0.875em</td></tr>
+      <tr><td class="cn">{{prefix}}-lg</td><td>Font Size: 1.25em</td></tr>
+      <tr><td class="cn">{{prefix}}-xl</td><td>Font Size: 1.5em</td></tr>
+      <tr><td class="cn">{{prefix}}-2xl</td><td>Font Size: 2em</td></tr>
+      <tr><td class="cn">{{prefix}}-3xl</td><td>Font Size: 2.5em</td></tr>
+    </tbody>
+    <tbody>
+      <tr>
+        <th colspan="2" style="font: 500 14px sans-serif; padding-top: 8px">Format & Align Utils</th>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-fw</td>
+        <td class="">Align: center, Width: 1.25em</td>
+      </tr>
+    </tbody>
+    <tbody>
+      <tr>
+        <th colspan="2" style="font: 500 14px sans-serif; padding-top: 8px">Animations Utils</th>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-beat</td>
+        <td class="">Scale an icon up or down</td>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-fade</td>
+        <td class="">Fade an icon in and out visually</td>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-beat-fade</td>
+        <td class="">Visually scaling and pulsing an icon in and out</td>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-bounce</td>
+        <td class="">Visually bouncing an icon up and down</td>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-flip</td>
+        <td class="">Rotate an icon in 3D space</td>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-shake</td>
+        <td class="">Shaking an icon back and forth</td>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-spin</td>
+        <td class="">Makes an icon spin 360° clockwise</td>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-spin-pulse</td>
+        <td class="">Makes an icon spin 360° clockwise in 8 incremental steps</td>
+      </tr>
+      <tr>
+        <td class="cn">{{prefix}}-spin-reverse</td>
+        <td class="">When used in conjunction with fa-spin or fa-spin-pulse, makes an icon spin counter-clockwise</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</dialog>
 `;
 
 export class TransformToNuxt extends Transform {
@@ -88,12 +165,13 @@ export class TransformToNuxt extends Transform {
     output += `<h1 class="caption">\n`;
     output += BRAND + '\n';
     output += '<div class="size-selector">\n';
-    output += '  <button type="button"  class="btn btn-outline" onclick="setZoom(this)" data-zoom="-1"><i class="icon icon-size-md"></i></button>\n';
-    output += '  <button type="button"  class="btn btn-outline" onclick="setZoom(this)" data-zoom="+1"><i class="icon icon-size-sm"></i></button>\n';
+    output += '  <button type="button"  class="btn btn-outline" onclick="setZoom(this)" data-zoom="+1"><i class="icon icon-zoom-out"></i></button>\n';
+    output += '  <button type="button"  class="btn btn-outline" onclick="setZoom(this)" data-zoom="-1"><i class="icon icon-zoom-in"></i></button>\n';
+    output += '  <button type="button"  class="btn btn-outline" onclick="openInfoModal(this)"><i class="icon icon-info"></i></button>\n';
     output += '</div>\n';
     output += `</h1>\n`;
 
-    output += DIALOG;
+    output += DIALOG.replace(/\{\{prefix}}/gm, this._prefix);
 
     output += '<div class="buttons-container">\n';
     output += '   <div class="scrollable">\n';

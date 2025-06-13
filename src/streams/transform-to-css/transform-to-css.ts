@@ -64,6 +64,9 @@ const STYLES = `
 .{{prefix}}-2xl {
   font-size: 2em;
 }
+.{{prefix}}-3xl {
+  font-size: 2.5em;
+}
 .{{prefix}}-fw {
   text-align: center;
   width: 1.25em

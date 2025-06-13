@@ -131,6 +131,23 @@ export const HEAD = `
       
       document.documentElement.style.setProperty('--icon-font-size', newFontSize + 'px');
     }
+    function openInfoModal() {
+       const dialog = document.getElementById('info-dialog');
+       dialog.style.display = 'block';
+       
+       setTimeout(() => dialog.showModal(), 10);
+    }
+    function closeInfoModal() {
+      const dialog = document.getElementById('info-dialog');
+      dialog.close();
+      
+      dialog.addEventListener('transitionend', () => { dialog.style.display = 'none'; }, { once: true });
+    }
+    function backdropClickInfoModal(event, dialog) {
+      if (event.target === dialog) {
+        closeInfoModal();
+      }
+    }
   </script>
 </head>
 `;

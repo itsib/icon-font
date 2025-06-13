@@ -5,14 +5,17 @@ export const STYLES = `
   box-sizing: border-box;
 }
 html {
-  --icon-md: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20fill%3D'currentColor'%20d%3D'M9%207c-1.1%200-2%20.9-2%202v8h2V9h2v7h2V9h2v8h2V9a2%202%200%200%200-2-2z'%2F%3E%3C%2Fsvg%3E");
-  --icon-sm: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20fill%3D'currentColor'%20d%3D'M11%207c-1.1%200-2%20.9-2%202v2a2%202%200%200%200%202%202h2v2H9v2h4c1.11%200%202-.89%202-2v-2a2%202%200%200%200-2-2h-2V9h4V7z'%2F%3E%3C%2Fsvg%3E");
+  --icon-info: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%3E%3Cg%20fill%3D'none'%20stroke%3D'currentColor'%20stroke-width%3D'2'%3E%3Ccircle%20cx%3D'12'%20cy%3D'12'%20r%3D'10'%2F%3E%3Cpath%20stroke-linecap%3D'round'%20d%3D'M12%207h.01'%2F%3E%3Cpath%20stroke-linecap%3D'round'%20stroke-linejoin%3D'round'%20d%3D'M10%2011h2v5m-2%200h4'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
   --icon-zoom-out: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20fill%3D'none'%20stroke%3D'currentColor'%20stroke-linecap%3D'round'%20stroke-width%3D'2'%20d%3D'm21%2021l-4.486-4.494M19%2010.5a8.5%208.5%200%201%201-17%200a8.5%208.5%200%200%201%2017%200Zm-6%200H8'%2F%3E%3C%2Fsvg%3E");
   --icon-zoom-in: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24'%20height%3D'24'%20viewBox%3D'0%200%2024%2024'%3E%3Cpath%20fill%3D'none'%20stroke%3D'currentColor'%20stroke-linecap%3D'round'%20stroke-width%3D'2'%20d%3D'm21%2021l-4.486-4.494M19%2010.5a8.5%208.5%200%201%201-17%200a8.5%208.5%200%200%201%2017%200ZM10.5%207v3.5m0%200V14m0-3.5H14m-3.5%200H7'%2F%3E%3C%2Fsvg%3E");
 }
 html {
+  --header-height: 54px;
   --border-radius: .25rem;
-  --label-bg: 12 74 110;
+  --transition-all: all .2s cubic-bezier(.4,0,.2,1);
+  --btn-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  --btn-border: 1px solid #9ca3af33;
+  --btn-border-hover: 1px solid var(--color-accent);
 
   --color-accent: rgb(9, 158, 97);
   --bg-main: rgb(255 255 255);
@@ -22,11 +25,10 @@ html {
   --bg-code: rgb(255, 255, 255, 0.1);
   --bg-code-filter: brightness(0.6) contrast(2);
   --text-primary: rgb(11, 16, 21);
+  --text-secondary: rgb(70, 70, 70);
   --text-icons: rgb(70, 70, 70);
-  --text-button: rgb(11, 16, 21);
   --scroll-bar: #80808080;
   --border: 1px solid rgba(136, 136, 136, 0.3);
-  --border-button: 1px solid rgba(136, 136, 136, 0.3);
 
   color-scheme: dark light;
   color: var(--text-primary);
@@ -41,18 +43,11 @@ html.dark {
   --bg-code: rgb(27, 27, 27);
   --bg-code-filter: none;
   --text-primary: rgb(255, 255, 255);
+  --text-secondary: rgb(170, 170, 170);
   --text-icons: rgb(170, 170, 170);
-  --text-button: rgb(255, 255, 255);
   --scroll-bar: #80808080;
   --border: 1px solid #9ca3af33;
-  --border-button: 1px solid transparent;
   
-  --btn-border: 1px solid #9ca3af33;
-  --btn-border-hover: 1px solid var(--color-accent);
-  --btn-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
-  
-  --transition-all: all .2s cubic-bezier(.4,0,.2,1);
-
 }
 body {
   height: 100vh;
@@ -120,22 +115,28 @@ body {
   display: block;
   transition: var(--transition-all);
 }
-.btn-outline .icon-size-md {
+.btn-outline .icon-zoom-in {
   -webkit-mask: var(--icon-zoom-out) no-repeat;
   mask: var(--icon-zoom-out) no-repeat;
   mask-size: 100% 100%;
   -webkit-mask-size: 100% 100%;
 }
-.btn-outline .icon-size-sm {
+.btn-outline .icon-zoom-out {
   -webkit-mask: var(--icon-zoom-in) no-repeat;
   mask: var(--icon-zoom-in) no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+}
+.btn-outline .icon-info {
+  -webkit-mask: var(--icon-info) no-repeat;
+  mask: var(--icon-info) no-repeat;
   mask-size: 100% 100%;
   -webkit-mask-size: 100% 100%;
 }
 
 .caption {
   margin: 0;
-  height: 54px;
+  height: var(--header-height);
   padding: 0.75rem 1rem 0.75rem;
   border-bottom: var(--border);
   display: flex;
@@ -154,7 +155,7 @@ body {
 }
 .buttons-container {
   width: auto;
-  min-height: calc(100% - 54px);
+  min-height: calc(100% - var(--header-height));
   margin: 0;
   padding: 1.25rem 0;
   overflow-y: auto;
@@ -238,7 +239,7 @@ body {
 dialog {
   top: 0;
   width: 500px;
-  margin-top: 100px;
+  margin-top: 80px;
   padding: 0;
   color: var(--text-primary);
   border: var(--border);
@@ -270,6 +271,7 @@ dialog[open]::backdrop {
   opacity: 1;
 }
 dialog .header {
+  height: var(--header-height);
   margin: 0;
   padding: 10px 15px 0;
   display: flex;
@@ -290,10 +292,12 @@ dialog .header .close {
   cursor: pointer;
 }
 dialog .content {
+  max-height: calc(70vh - var(--header-height));
   padding: 0 15px 10px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  overflow-y: auto;
 }
 dialog .content .cell-1 {
   width: 140px;
@@ -362,6 +366,33 @@ dialog .content .cell-3 .buttons {
 }
 dialog .content .cell-3 .buttons button.active {
   background-color: rgb(9 158 97 / 0.3) !important;
+}
+
+dialog .content .class-utils-list {
+  width: 100%;
+  margin-top: 1rem;
+  text-align: left;
+  font-weight: 400;
+  font-size: 13px;
+}
+dialog .content .class-utils-list caption {
+  margin-bottom: 0.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+}
+dialog .content .class-utils-list th {
+  font-weight: 500;
+}
+dialog .content .class-utils-list td {
+  margin: 5px 0;
+  color: var(--text-secondary);
+  font-weight: 400;
+  font-size: 13px;
+}
+dialog .content .class-utils-list td.cn {
+  color: #6AAB73;
+  font-size: 13px;
 }
 
 dialog ::-webkit-scrollbar {
