@@ -389,10 +389,13 @@ dialog .content .class-utils-list td {
   color: var(--text-secondary);
   font-weight: 400;
   font-size: 13px;
+  vertical-align: text-top;
 }
 dialog .content .class-utils-list td.cn {
+  padding-right: 0.5rem;
   color: #6AAB73;
   font-size: 13px;
+  white-space: nowrap;
 }
 
 dialog ::-webkit-scrollbar {

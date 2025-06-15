@@ -64,13 +64,13 @@ const DIALOG = `
         <td class="cn">{{prefix}}-1x ... {{prefix}}-10x</td>
         <td class="">1em - 10em</td>
       </tr>
-      <tr><td class="cn">{{prefix}}-2xs</td><td>Font Size: 0.625em</td></tr>
-      <tr><td class="cn">{{prefix}}-xs</td><td>Font Size: 0.75em</td></tr>
-      <tr><td class="cn">{{prefix}}-sm</td><td>Font Size: 0.875em</td></tr>
-      <tr><td class="cn">{{prefix}}-lg</td><td>Font Size: 1.25em</td></tr>
-      <tr><td class="cn">{{prefix}}-xl</td><td>Font Size: 1.5em</td></tr>
-      <tr><td class="cn">{{prefix}}-2xl</td><td>Font Size: 2em</td></tr>
-      <tr><td class="cn">{{prefix}}-3xl</td><td>Font Size: 2.5em</td></tr>
+      <tr><td class="cn">{{prefix}}-2xs</td><td>0.625em</td></tr>
+      <tr><td class="cn">{{prefix}}-xs</td><td>0.75em</td></tr>
+      <tr><td class="cn">{{prefix}}-sm</td><td>0.875em</td></tr>
+      <tr><td class="cn">{{prefix}}-lg</td><td>1.25em</td></tr>
+      <tr><td class="cn">{{prefix}}-xl</td><td>1.5em</td></tr>
+      <tr><td class="cn">{{prefix}}-2xl</td><td>2em</td></tr>
+      <tr><td class="cn">{{prefix}}-3xl</td><td>2.5em</td></tr>
     </tbody>
     <tbody>
       <tr>
