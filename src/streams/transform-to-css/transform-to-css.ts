@@ -12,7 +12,7 @@ const STYLES = `
   display: var(--{{prefix}}-display, inline-block);
   font-style: normal;
   font-variant: normal;
-  line-height: 1;
+  line-height: var(--{{prefix}}-line-height, 1);
   text-rendering: auto;
 }
 

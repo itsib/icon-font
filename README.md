@@ -73,7 +73,9 @@ You need to create an `icon-font.json` file with json format in the root of your
   "port": 9000,
   "fontUrl": "./",
   "fontUrlHash": false,
-  "iconsTune": {}
+  "iconsTune": {},
+  "shapeSizeAdjust": 0.9375,
+  "startUnicode": 59905
 }
 ```
 
@@ -81,17 +83,19 @@ You need to create an `icon-font.json` file with json format in the root of your
 
 > Configuration parameters passed through the CLI have a higher priority than the configuration file.
 
-| Option        |               Type               | Required | Description                                                                                                                                                         |
-|:--------------|:--------------------------------:|:--------:|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `input`       |             `string`             |    ✔     | The directory containing the SVG icon files that will be included in the font being created                                                                         |
-| `output`      |             `string`             |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created.                                                                   |
-| `name`        |             `string`             |          | The name of the new font, by default `IconFont`                                                                                                                     |
-| `prefix`      |             `string`             |          | Class name prefix. Default `icon`                                                                                                                                   |
-| `types`       |            `string[]`            |          | Output font types, to be generated. Default: `[ "woff2", "woff", "ttf", "eot"]`                                                                                     |
-| `port`        |             `number`             |          | Demo server port. Default `9000` (http://localhost:9000).                                                                                                           |
-| `fontUrl`     |             `string`             |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`                                                                        |
-| `fontUrlHash` | `string` \|  false \| `"random"` |          | Adds the GET parameter 'hash=${HASH}' at the end of the URL to reset the browser cache. Set to 'random' for random number. Or use yur own value. False is disabled. | 
-| `iconsTune`   |   `{[name: string]: IconTune}`   |          | Adjust the positioning and size for each icon. See below. Default `{}`                                                                                              | 
+| Option            |               Type               | Required | Description                                                                                                                                                                                                                                  |
+|:------------------|:--------------------------------:|:--------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `input`           |             `string`             |    ✔     | The directory containing the SVG icon files that will be included in the font being created                                                                                                                                                  |
+| `output`          |             `string`             |    ✔     | The directory where the generated files will be placed, if it does not exist, it will be created.                                                                                                                                            |
+| `name`            |             `string`             |          | The name of the new font, by default `IconFont`                                                                                                                                                                                              |
+| `prefix`          |             `string`             |          | Class name prefix. Default `icon`                                                                                                                                                                                                            |
+| `types`           |            `string[]`            |          | Output font types, to be generated. Default: `[ "woff2", "woff", "ttf", "eot"]`                                                                                                                                                              |
+| `port`            |             `number`             |          | Demo server port. Default `9000` (http://localhost:9000).                                                                                                                                                                                    |
+| `fontUrl`         |             `string`             |          | The URL where the font files will be available. Used in the css file @font-fase. Default `/`                                                                                                                                                 |
+| `fontUrlHash`     | `string` \|  false \| `"random"` |          | Adds the GET parameter 'hash=${HASH}' at the end of the URL to reset the browser cache. Set to 'random' for random number. Or use yur own value. False is disabled.                                                                          | 
+| `iconsTune`       |   `{[name: string]: IconTune}`   |          | Adjust the positioning and size for each icon. See below. Default `{}`                                                                                                                                                                       | 
+| `shapeSizeAdjust` |             `number`             |          | The standard character block size is 512. The size of the character in the block is 480. With these default parameters, `shapeSizeAdjust = 480 / 512 = 0.9375` In fact, this number means changing the size of characters. Default: `0.9375` |
+| `startUnicode`    |             `number`             |          | The number of the unicode character that the font will be filled with icons from. Default: `0xea01` (`59905`)                                                                                                                                |
 
 ###  Icons Tune
 

@@ -4,7 +4,6 @@ import { SVGPathDataTransformer, SVGPathData, SVGPathDataParser } from 'svg-path
 import { Buffer } from 'node:buffer';
 import sax from 'sax';
 import { BufferWithMeta, FileMetadata, IconTune, SymbolMetadata } from '../../types';
-import { START_UNICODE, SYMBOL_BOX_SIZE, SYMBOL_SHAPE_SIZE } from '../../utils/constants.ts';
 import { populateMetadata } from '../../utils/populate-metadata.ts';
 import { svgRectToPath } from '../../svg-helpers/svg-rect-to-path.ts';
 import { svgLineToPath } from '../../svg-helpers/svg-line-to-path.ts';
@@ -12,19 +11,28 @@ import { svgCircleToPath } from '../../svg-helpers/svg-circle-to-path.ts';
 import type { SvgTransformation } from '../../types';
 
 export class TransformPrepareIcons extends Transform {
+  /**
+   * Symbol glyph size
+   * @default 480
+   */
+  _shapeSize: number;
+  /**
+   * The displayed area
+   * @default 512
+   */
+  _symbolBoxSize: number;
 
-  _shapeSize = SYMBOL_SHAPE_SIZE;
-
-  _symbolBoxSize = SYMBOL_BOX_SIZE;
-
-  _startUnicode = START_UNICODE;
+  _startUnicode: number;
 
   _iconsOptions: { [name: string]: IconTune };
 
-  constructor(iconsOptions?: { [name: string]: IconTune }) {
+  constructor(iconsOptions?: { [name: string]: IconTune }, shapeSizeAdjust = 0.9375, startUnicode = 0xea01) {
     super({ objectMode: true });
 
     this._iconsOptions = iconsOptions || {};
+    this._startUnicode = startUnicode
+    this._symbolBoxSize = 512
+    this._shapeSize = Math.floor(this._symbolBoxSize * shapeSizeAdjust)
   }
 
   private _sizeAndPos(pathData: SVGPathData): { x: number; y: number, width: number; height: number } {

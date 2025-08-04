@@ -34,7 +34,7 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
               toSvg('config.name'),
               createWriteStream(filename),
             )
@@ -45,7 +45,7 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
               toTtf('config.name'),
               createWriteStream(filename),
             )
@@ -57,7 +57,7 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
               toTtf('config.name'),
               ttfToEot(),
               createWriteStream(filename),
@@ -70,7 +70,7 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
               toTtf('config.name'),
               ttfToWoff(),
               createWriteStream(filename),
@@ -83,7 +83,7 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
               toTtf('config.name'),
               ttfToWoff2(),
               createWriteStream(filename),
@@ -98,7 +98,7 @@ export function createGenerateCommand(): Command {
 
       await pipeline(
         read(config.input),
-        prepare(config.iconsTune),
+        prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
         toCss(config.name, config.types, config.prefix, config.fontUrl, config.fontUrlHash),
         createWriteStream(filenameCss, 'utf8'),
       )

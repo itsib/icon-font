@@ -15,8 +15,8 @@ export const read = (basePath: string, filenames?: string[]) => {
   return new StreamReadIconFiles(basePath, filenames)
 }
 
-export const prepare = (iconsTune?: IconsTune) =>  {
-  return new TransformPrepareIcons(iconsTune);
+export const prepare = (iconsTune?: IconsTune, shapeSizeAdjust?: number, startUnicode?: number) =>  {
+  return new TransformPrepareIcons(iconsTune, shapeSizeAdjust, startUnicode);
 }
 
 export const toTtf = (name: string) => {

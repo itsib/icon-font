@@ -1,9 +1,3 @@
-export const SYMBOL_BOX_SIZE = 512;
-export const SYMBOL_SHAPE_SIZE = 480;
-export const SYMBOL_PADDING = Math.round(SYMBOL_BOX_SIZE - SYMBOL_SHAPE_SIZE) / 2;
-
-export const START_UNICODE = 0xea01;
-
 export const FAVICON =
 `<svg version="2.0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <title>IconFont logo</title>

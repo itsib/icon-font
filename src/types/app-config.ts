@@ -76,6 +76,21 @@ export interface AppConfig {
    * alignment for each individual icon.
    */
   iconsTune?: IconsTune;
+  /**
+   * The standard character block size is 512.
+   * The size of the character in the block is 480.
+   * With these default parameters,
+   * ```shapeSizeAdjust = 480 / 512 = 0.9375```
+   * In fact, this number means changing the size of characters.
+   *
+   * @default 0.9375
+   */
+  shapeSizeAdjust?: number;
+  /**
+   * The number of the unicode character that the font will be filled with icons from.
+   * @default 0xea01
+   */
+  startUnicode?: number;
 }
 
 export interface ServerConfig extends Omit<AppConfig, 'output' | 'types' | 'fontUrl' | 'fontUrlHash'> {

@@ -20,7 +20,7 @@ async function indexHandler(_req: Req, res: Res, config: ServerConfig) {
 
   res.writeHead(200, { 'Content-Type': 'text/html' });
 
-  read(config.input).pipe(prepare(config.iconsTune)).pipe(htmlStyleStream).pipe(res as any);
+  read(config.input).pipe(prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode)).pipe(htmlStyleStream).pipe(res as any);
 }
 
 async function stylesCssHandler(_req: Req, res: Res, config: ServerConfig) {
@@ -30,7 +30,7 @@ async function stylesCssHandler(_req: Req, res: Res, config: ServerConfig) {
   });
 
   await read(config.input)
-    .pipe(prepare(config.iconsTune))
+    .pipe(prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode))
     .pipe(toCss(config.name, FONT_TYPES, config.prefix, config.base || '/', false))
     .pipe(res as any);
 }
@@ -48,7 +48,7 @@ async function svgFontHandler(_req: Req, res: Res, config: ServerConfig) {
   });
 
   await read(config.input)
-    .pipe(prepare(config.iconsTune))
+    .pipe(prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode))
     .pipe(toSvg(config.name))
     .pipe(res as any);
 }
@@ -60,7 +60,7 @@ async function ttfFontHandler(_req: Req, res: Res, config: ServerConfig) {
   });
 
   await read(config.input)
-    .pipe(prepare(config.iconsTune))
+    .pipe(prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode))
     .pipe(toTtf(config.name))
     .pipe(res as any);
 }
@@ -72,7 +72,7 @@ async function woffFontHandler(_req: Req, res: Res, config: ServerConfig) {
   });
 
   await read(config.input)
-    .pipe(prepare(config.iconsTune))
+    .pipe(prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode))
     .pipe(toTtf(config.name))
     .pipe(ttfToWoff())
     .pipe(res as any);
@@ -85,7 +85,7 @@ async function woff2FontHandler(_req: Req, res: Res, config: ServerConfig) {
   });
 
   await read(config.input)
-    .pipe(prepare(config.iconsTune))
+    .pipe(prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode))
     .pipe(toTtf(config.name))
     .pipe(ttfToWoff2())
     .pipe(res as any);
@@ -98,7 +98,7 @@ async function eotFontHandler(_req: Req, res: Res, config: ServerConfig) {
   });
 
   await read(config.input)
-    .pipe(prepare(config.iconsTune))
+    .pipe(prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode))
     .pipe(toTtf(config.name))
     .pipe(ttfToEot())
     .pipe(res as any);

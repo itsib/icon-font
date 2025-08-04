@@ -3,7 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { Logger } from './logger.ts';
 
-const ALLOWED_KEYS: (keyof AppConfig)[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl', 'fontUrlHash', 'iconsTune'];
+const ALLOWED_KEYS: (keyof AppConfig)[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl', 'fontUrlHash', 'iconsTune', 'shapeSizeAdjust'];
 
 const FILENAMES = ['icon-font.json', '.iconfontrc'];
 
@@ -14,6 +14,8 @@ const DEFAULT: Required<Omit<AppConfig, 'input' | 'output' | 'iconsTune'>> = {
   port: 9001,
   fontUrl: './',
   fontUrlHash: false,
+  shapeSizeAdjust: 0.9375,
+  startUnicode: 0xea01
 }
 
 async function searchConfig(cwd: string): Promise<string | null> {
@@ -83,8 +85,20 @@ async function parseConfig(content: string | null, args?: Partial<AppConfig>): P
           } else {
             Logger.warn('Field fontUrlHash should be a string, false or "random"');
           }
+        } else if (key === 'startUnicode') {
+          if (typeof parsed[key] === 'number') {
+            config.startUnicode = parsed.startUnicode;
+          } else {
+            Logger.warn('Field startUnicode should be a number');
+          }
         } else if (key === 'iconsTune') {
           config[key] = parsed[key];
+        } else if (key === 'shapeSizeAdjust') {
+          if (typeof parsed[key] === 'number' && parsed[key] > 0 && parsed[key] <= 1) {
+            config.shapeSizeAdjust = parsed[key];
+          } else {
+            Logger.warn('Field shapeSizeAdjust should be a number, greater than 0 and less than or equal 1');
+          }
         } else {
           if (typeof parsed[key] !== 'string') {
             Logger.warn(`Field ${key} should be a string`);
@@ -113,12 +127,26 @@ async function parseConfig(content: string | null, args?: Partial<AppConfig>): P
         if (typeof args.types !== 'object' || !Array.isArray(args.types)) continue;
 
         config.types = args.types;
+      } else if (key === 'shapeSizeAdjust') {
+        const shapeSizeAdjust = parseInt(`${args[key]}`, 10);
+        if (!isNaN(shapeSizeAdjust) && shapeSizeAdjust > 0 && shapeSizeAdjust <= 1) {
+          config.shapeSizeAdjust = shapeSizeAdjust;
+        } else {
+          Logger.warn('Field shapeSizeAdjust should be a number, greater than 0 and less than or equal 1');
+        }
+      } else if (key === 'startUnicode') {
+        const startUnicode = parseInt(`${args[key]}`, 10);
+        if (!isNaN(startUnicode) && startUnicode > 0) {
+          config.startUnicode = startUnicode;
+        } else {
+          Logger.warn('Field startUnicode should be a positive number');
+        }
       } else if (key === 'iconsTune') {
         // Cannot pass iconsOptions through cmd args. Skip.
       } else {
         if (typeof args[key] !== 'string') continue;
 
-        config[key] = args[key];
+        (config as any)[key] = args[key];
       }
     }
   }
