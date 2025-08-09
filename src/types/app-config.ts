@@ -27,6 +27,10 @@ export interface IconTune {
    * @default 'contain'
    */
   size?: number | 'cover' | 'contain';
+  /**
+   * Specify Unicode number for this symbol
+   */
+  code?: number;
 }
 
 export type IconsTune = { [name: string]: IconTune };

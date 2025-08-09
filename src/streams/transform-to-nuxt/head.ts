@@ -14,19 +14,15 @@ export const HEAD = `
     const fontFaceUrls = JSON.parse('{{fontFaceUrls}}');
     const fontSizes = [16, 18, 20, 22, 24, 28, 32]
     let activeAnimationButton; 
-    let prefix;    
     let current = 4;
     let btn;
     
     function renderExample() {
-      const iconDemo = document.getElementById('icon-demo');
       const code = document.getElementById('code-example');
-      const className = iconDemo.className.replace(' icon-5x', '');
       
-      code.dataset.source = '<i class="' + className + '"></i>';
       let html = '<span style="color: #D5B778">&#60;i </span>';
       html += '<span style="color: #BABABA">class=</span>';
-      html += '<span style="color: #6AAB73">&#34;' + className + '&#34;</span>';
+      html += '<span style="color: #6AAB73">&#34;' + window.IconFont.className + '&#34;</span>';
       html += '<span style="color: #D5B778">&#62;&#60;/i&#62;</span>';
       
       code.innerHTML = html;
@@ -35,12 +31,25 @@ export const HEAD = `
       const dialog = document.getElementById('icon-dialog');
       const header = document.getElementById('dialog-header');
       const iconDemo = document.getElementById('icon-demo');
+      const inputCodepoint = document.getElementById('input-codepoint');
+      const inputCodepointHex = document.getElementById('input-codepoint-hex');
+      const className = button.dataset.prefix + ' ' + button.dataset.class;
+      
+      window.IconFont = {
+        name: button.dataset.name,
+        prefix: button.dataset.prefix,
+        className: className,
+        html: '<i class="' + className + '"></i>',
+        codepoint: parseInt(button.dataset.codepoint).toString(10),
+        codepointHex: \`\\\\\${parseInt(button.dataset.codepoint).toString(16)}\`,
+      }    
       
       dialog.style.display = 'block';
-      prefix = button.dataset.prefix;
       header.innerText = button.dataset.name;
-      iconDemo.className = button.dataset.prefix + ' ' + button.dataset.class + ' icon-5x';
+      iconDemo.className = className + ' icon-5x';
       iconDemo.style.color = document.documentElement.classList.contains('dark') ? '#ffffff' : '#000000';
+      inputCodepoint.value = window.IconFont.codepoint;
+      inputCodepointHex.value = window.IconFont.codepointHex;
 
       renderExample();
       
@@ -60,6 +69,7 @@ export const HEAD = `
       
       dialog.addEventListener('transitionend', () => {  
         dialog.style.display = 'none';
+        window.IconFont = null
      
         setTimeout(() => {
           if (activeAnimationButton) {
@@ -78,7 +88,7 @@ export const HEAD = `
       
       if (activeAnimationButton) {
         activeAnimationButton.classList.remove('active');
-        iconDemo.classList.remove(prefix + '-' + activeAnimationButton.dataset.animation);
+        iconDemo.classList.remove(window.IconFont.prefix + '-' + activeAnimationButton.dataset.animation);
         activeAnimationButton = undefined;
       }
       
@@ -88,14 +98,13 @@ export const HEAD = `
       }
       
       button.classList.add('active');
-      iconDemo.classList.add(prefix + '-' + button.dataset.animation);
+      iconDemo.classList.add(window.IconFont.prefix + '-' + button.dataset.animation);
       activeAnimationButton = button;
       
       renderExample();
     }
-    function onCopy(button) {
-      const code = document.getElementById('code-example');
-      navigator.clipboard.writeText(code.dataset.source).then(() => {
+    function onCopy(button, text) {
+      navigator.clipboard.writeText(text).then(() => {
         const label = button.getAttribute('aria-label');
         button.setAttribute('aria-label', 'Copied ✔');
 

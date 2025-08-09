@@ -335,12 +335,44 @@ dialog .content .cell-2 code {
 dialog .content .cell-2 .color-picker {
   margin-top: 16px;
   text-align: end;
+   display: flex;
+  align-items: center;
+  justify-content: end;
+}
+dialog .content .cell-2 .color-picker label {
+   font-size: 14px;
 }
 dialog .content .cell-2 .color-picker input {
   margin-left: 10px;
   border: var(--border);
   border-radius: 6px;
   background: var(--bg-secondary);
+}
+dialog .content .cell-2 .codepoint {
+  margin-top: 10px;
+  text-align: end;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+dialog .content .cell-2 .codepoint label {
+  font-size: 14px;
+}
+dialog .content .cell-2 .codepoint > div {
+   margin-left: 10px;
+}
+dialog .content .cell-2 .codepoint input {
+  width: 80px;
+  height: 27px;
+  padding: 0 8px;
+  text-align: center;
+  border: var(--border);
+  border-radius: 6px;
+   background: var(--bg-secondary);
+  user-select: text;
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  cursor: copy;
 }
 
 dialog .content .cell-3 {

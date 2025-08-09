@@ -108,7 +108,8 @@ are the names of icon files without an extension. For example:
     "helicopter": {
       "x": 0.2,
       "y": -0.5,
-      "size": 1.5
+      "size": 1.5,
+      "code": 59906
     }
   }
 }
@@ -125,6 +126,7 @@ This means that the icon with the file name helicopter.svg will be shifted to th
 | `x`    | `number`                             | The x-axis displacement of the icon. In basis point (percent / 100)                                                                                                                                                                                                                                                                              |
 | `y`    | `number`                             | The y-axis displacement of the icon. In basis point (percent / 100)                                                                                                                                                                                                                                                                              |
 | `size` | `number` \| `'cover'` \| `'contain'` | Tune the icon size. <br>If a `number` is passed, the size will be multiplied by it. For example, the icon is 300x500, size = 1.2, then the result will be 360x600. <br>If `cover` is passed, the icon will fill the entire 512x512 square. <br>If `contain` is passed, the icon will be inscribed in a 512x512 square. This is default behavior. |
+| `code` | `number`                             | Specify Unicode number for this symbol                                                                                                                                                                                                                                                                                                           |
 
 
 ## References

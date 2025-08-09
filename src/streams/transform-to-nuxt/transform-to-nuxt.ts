@@ -20,7 +20,7 @@ const DIALOG = `
       <i id="icon-demo" class="icon icon-folder-key icon-5x"></i>
     </div>
     <div class="cell-2">
-      <div aria-label="Copy to clipboard" onclick="onCopy(this)">
+      <div aria-label="Copy to clipboard" onclick="onCopy(this, window.IconFont.html)">
          <div class="example">
           <code id="code-example"></code>
         </div>
@@ -29,6 +29,19 @@ const DIALOG = `
       <div class="color-picker">
         <label for="color-picker">Icon color picker</label>
         <input type="color" id="color-picker" value="#888888" oninput="onColorChange(event)">
+      </div>
+      <div class="codepoint">
+        <label for="input-codepoint">Unicode Dec</label>
+        <div aria-label="Copy to clipboard" onclick="onCopy(this, window.IconFont.codepoint)">
+          <input id="input-codepoint" type="text" readonly value="" />
+        </div>
+      </div>
+      
+      <div class="codepoint">
+        <label for="input-codepoint-hex">Unicode Hex</label>
+        <div aria-label="Copy to clipboard" onclick="onCopy(this, window.IconFont.codepointHex)">
+          <input id="input-codepoint-hex" type="text" readonly value="" />
+        </div>
       </div>
     </div>
     <div class="cell-3">
@@ -194,6 +207,7 @@ export class TransformToNuxt extends Transform {
   data-name="${chunk.metadata.name}" 
   data-prefix="${this._prefix}" 
   data-class="${this._prefix}-${chunk.metadata.name}" 
+  data-codepoint="${chunk.metadata.codepoint.toString(10)}"
   onclick="onChooseIcon(this)"
 >
   <span class="inner">

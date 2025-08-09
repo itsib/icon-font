@@ -9,11 +9,13 @@
   "fontUrlHash": "random",
   "iconsTune": {
     "medium": {
-      "size": "cover"
+      "size": "cover",
+      "code": 59901
     },
     "discord": {
       "x": 0.5,
-      "y": -0.5
+      "y": -0.5,
+      "code": 59906
     }
   },
   "shapeSizeAdjust": 1

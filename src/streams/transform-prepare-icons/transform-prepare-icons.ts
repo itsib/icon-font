@@ -24,6 +24,10 @@ export class TransformPrepareIcons extends Transform {
 
   _startUnicode: number;
 
+  _currentUnicode: number;
+
+  _bookedCodes: Set<number>;
+
   _iconsOptions: { [name: string]: IconTune };
 
   constructor(iconsOptions?: { [name: string]: IconTune }, shapeSizeAdjust = 0.9375, startUnicode = 0xea01) {
@@ -31,8 +35,22 @@ export class TransformPrepareIcons extends Transform {
 
     this._iconsOptions = iconsOptions || {};
     this._startUnicode = startUnicode
+    this._currentUnicode = startUnicode
     this._symbolBoxSize = 512
     this._shapeSize = Math.floor(this._symbolBoxSize * shapeSizeAdjust)
+    this._bookedCodes = new Set();
+
+    const keys = Object.keys(this._iconsOptions);
+    for (let i = 0; i < keys.length; i++) {
+      const option = this._iconsOptions[keys[i]];
+      if (option && option.code) {
+        if (this._bookedCodes.has(option.code)) {
+          throw new Error(`This unicode ${option.code} is already in use`);
+        }
+
+        this._bookedCodes.add(option.code)
+      }
+    }
   }
 
   private _sizeAndPos(pathData: SVGPathData): { x: number; y: number, width: number; height: number } {
@@ -257,16 +275,30 @@ export class TransformPrepareIcons extends Transform {
 
       const path = svgPathData.toAbs().aToC().normalizeST().round(100).encode();
 
+      let codepoint: number
+      if (tunes && tunes.code) {
+        codepoint = tunes.code;
+      } else {
+        while (this._bookedCodes.has(this._currentUnicode)) {
+          this._currentUnicode++
+        }
+        codepoint = this._currentUnicode;
+      }
+
+
+
       const meta: SymbolMetadata = {
         index: chunk.metadata.index,
         name: chunk.metadata.name,
-        codepoint: this._startUnicode + chunk.metadata.index,
+        codepoint,
         x: x,
         y: y,
         width: width,
         height: height,
         boxSize: this._symbolBoxSize,
       }
+
+      this._currentUnicode++
 
       callback(null, populateMetadata(Buffer.from(path), meta));
     }
