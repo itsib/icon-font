@@ -263,7 +263,11 @@ export class TransformPrepareIcons extends Transform {
       const tunes: IconTune | undefined = this._iconsOptions[chunk.metadata.name];
 
       for (let i = 0; i < paths.length; i++) {
-        parser.parse(paths[i], commands);
+        try {
+          parser.parse(paths[i], commands);
+        } catch (e) {
+          console.error(chunk.metadata.name, e);
+        }
       }
       parser.finish(commands);
 
