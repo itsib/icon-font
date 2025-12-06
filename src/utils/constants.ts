@@ -1,5 +1,5 @@
 export const FAVICON =
-`<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+`<svg version="2.0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <title>IconFont logo</title>
   <metadata>author: itsib, created: 12-12-2024</metadata>
   <path d="m143.39 29.631c-62.625 0-113.39 50.77-113.39 113.39v203.21c0 62.628 50.767 113.4 113.39 113.4h72.171c1.6711 0 3.0318-1.4085 3.0318-3.1035v-34.592c-3e-3 -15.83 18.117-31.013 29.309-42.208l123.74-122.86c18.63-18.67 45.905-31.038 72.027-27.402 8.1165 1.1459 16.328-4.6314 16.328-12.868v-73.568c0-62.628-50.767-113.39-113.39-113.39z" fill="#fff8f4" stroke-width=".94095" style="paint-order:fill markers stroke"/>
@@ -8,7 +8,7 @@ export const FAVICON =
 </svg>`;
 
 export const BRAND =
-`<svg viewBox="0 0 2300 512" xmlns="http://www.w3.org/2000/svg" image-rendering="optimizeQuality" clip-rule="evenodd" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+`<svg version="2.0" viewBox="0 0 2300 512" xmlns="http://www.w3.org/2000/svg" image-rendering="optimizeQuality" clip-rule="evenodd" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
   <title>IconFont brand</title>
   <metadata>author: itsib, created: 12-12-2024</metadata>
   <path d="m431.13 273.5c22.108-21.098 57.014-20.689 78.623 0.91917s22.017 56.515 0.91917 78.623l-132.39 131.82c-5.2091 5.2106-12.275 8.1388-19.642 8.1404h-40.285c-15.344 0-27.783-12.439-27.783-27.783v-40.257c9e-3 -7.3718 2.9473-14.438 8.1681-19.642z" fill="#0073e5" />
