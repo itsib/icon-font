@@ -15,7 +15,7 @@ export function createDemoCommand(): Command {
     .action(async (args: Omit<AppConfig, 'output'> & { config?: string, cwd?: string }) => {
       const { config: configFile, cwd, ...configArgs } = args;
 
-      const config = await loadConfig(cwd, configFile, configArgs);
+      const config = await loadConfig(cwd, configFile, { ...configArgs, output: './' });
 
       const server = createServer({ ...config, types: ['eot', 'woff', 'woff2', 'ttf', 'svg'] } as any);
 
