@@ -30,13 +30,16 @@ export class TransformPrepareIcons extends Transform {
 
   _iconsOptions: { [name: string]: IconTune };
 
-  constructor(iconsOptions?: { [name: string]: IconTune }, shapeSizeAdjust = 0.9375, startUnicode = 0xea01) {
+  _disableAutoalign: boolean
+
+  constructor(iconsOptions?: { [name: string]: IconTune }, shapeSizeAdjust = 0.9375, startUnicode = 0xea01, disableAutoalign = false) {
     super({ objectMode: true });
 
     this._iconsOptions = iconsOptions || {};
     this._startUnicode = startUnicode
     this._currentUnicode = startUnicode
-    this._symbolBoxSize = 512
+    this._symbolBoxSize = 2048
+    this._disableAutoalign = disableAutoalign
     this._shapeSize = Math.floor(this._symbolBoxSize * shapeSizeAdjust)
     this._bookedCodes = new Set();
 
@@ -274,7 +277,9 @@ export class TransformPrepareIcons extends Transform {
       let svgPathData = new SVGPathData(commands);
       svgPathData = this._adjustSize(svgPathData, tunes);
       svgPathData = svgPathData.scale(1, -1);
-      svgPathData = this._adjustAlign(svgPathData, tunes);
+      if (!this._disableAutoalign) {
+        svgPathData = this._adjustAlign(svgPathData, tunes);
+      }
       const { x, y, width, height } = this._sizeAndPos(svgPathData);
 
       const path = svgPathData.toAbs().aToC().normalizeST().round(100).encode();

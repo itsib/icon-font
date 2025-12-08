@@ -3,7 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { isAbsolute, join, resolve } from 'node:path';
 import { Logger } from './logger.ts';
 
-const ALLOWED_KEYS: (keyof AppConfig)[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl', 'fontUrlHash', 'iconsTune', 'shapeSizeAdjust'];
+const ALLOWED_KEYS: (keyof AppConfig)[] = ['input', 'output', 'name', 'prefix', 'types', 'port', 'fontUrl', 'fontUrlHash', 'iconsTune', 'shapeSizeAdjust', 'disableAutoalign', 'baselineOffset'];
 
 const FILENAMES = ['icon-font.json', '.iconfontrc'];
 
@@ -15,7 +15,9 @@ const DEFAULT: Required<Omit<AppConfig, 'input' | 'output' | 'iconsTune'>> = {
   fontUrl: './',
   fontUrlHash: false,
   shapeSizeAdjust: 0.9375,
-  startUnicode: 0xea01
+  startUnicode: 0xea01,
+  disableAutoalign: false,
+  baselineOffset: 1,
 }
 
 async function searchConfig(cwd: string): Promise<string | null> {
@@ -98,6 +100,14 @@ async function parseConfig(content: string | null, args?: Partial<AppConfig>): P
             config.shapeSizeAdjust = parsed[key];
           } else {
             Logger.warn('Field shapeSizeAdjust should be a number, greater than 0 and less than or equal 1');
+          }
+        } else if (key === 'disableAutoalign') {
+          config.disableAutoalign = !!parsed[key]
+        } else if (key === 'baselineOffset') {
+          if (typeof parsed[key] === 'number' && parsed[key] >= 0 && parsed[key] <= 2) {
+            config.baselineOffset = parsed[key];
+          } else {
+            Logger.warn('Field baselineOffset should be a number, greater than 0 and less than or equal 2');
           }
         } else {
           if (typeof parsed[key] !== 'string') {

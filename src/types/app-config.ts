@@ -95,6 +95,17 @@ export interface AppConfig {
    * @default 0xea01
    */
   startUnicode?: number;
+  /**
+   * Turn off auto-alignment of the icon in the center
+   */
+  disableAutoalign?: boolean;
+  /**
+   * Global glyphs baseline offset
+   * Should be number 0...2
+   *
+   * @default 1
+   */
+  baselineOffset?: number;
 }
 
 export interface ServerConfig extends Omit<AppConfig, 'output' | 'types' | 'fontUrl' | 'fontUrlHash'> {

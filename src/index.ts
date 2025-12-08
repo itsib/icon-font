@@ -15,12 +15,12 @@ export const read = (basePath: string, filenames?: string[]) => {
   return new StreamReadIconFiles(basePath, filenames)
 }
 
-export const prepare = (iconsTune?: IconsTune, shapeSizeAdjust?: number, startUnicode?: number) =>  {
-  return new TransformPrepareIcons(iconsTune, shapeSizeAdjust, startUnicode);
+export const prepare = (iconsTune?: IconsTune, shapeSizeAdjust?: number, startUnicode?: number, disableAutoalign?: boolean) =>  {
+  return new TransformPrepareIcons(iconsTune, shapeSizeAdjust, startUnicode, disableAutoalign);
 }
 
-export const toTtf = (name: string) => {
-  return new TransformToTtf(name);
+export const toTtf = (name: string, baselineOffset?: number) => {
+  return new TransformToTtf({ fontName: name, baselineOffset  });
 }
 
 export const ttfToWoff = () => {

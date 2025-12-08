@@ -18,15 +18,22 @@ import { tableIdentifier } from '../../utils/string-to-bytes.ts';
 import { BufferByte } from '../../entities/buffer-byte.ts';
 import { computeChecksum, unsignedLong } from '../../utils/compute-checksum.ts';
 
+export interface ConfigTtf {
+  fontName: string,
+  metadata?: string
+  baselineOffset?: number
+  boxSize?: number
+}
+
 export class TransformToTtf extends Transform {
 
   private readonly _fontName: string;
 
   private readonly _metadata?: string;
 
-  private _boxSize: number = 0;
+  private readonly _boxSize: number;
 
-  private _isInitialized = false;
+  private readonly _baselineOffset: number;
 
   private _glyphs: Glyph[] = [];
 
@@ -52,18 +59,13 @@ export class TransformToTtf extends Transform {
 
   private static _CHECKSUM_ADJUSTMENT = 0xB1B0AFBA;
 
-  constructor(fontName: string, metadata?: string) {
+  constructor(config: ConfigTtf) {
     super({ objectMode: true });
 
-    this._fontName = fontName;
-    this._metadata = metadata;
-  }
-
-  _init(chunk: BufferWithMeta<SymbolMetadata>) {
-    if (this._isInitialized) return;
-    this._isInitialized = true;
-
-    this._boxSize = chunk.metadata.boxSize;
+    this._fontName = config.fontName;
+    this._metadata = config.metadata;
+    this._boxSize = config.boxSize ?? 2048;
+    this._baselineOffset = config.baselineOffset ?? 1;
 
     this._glyphs.push(new Glyph({
       id: 0,
@@ -75,8 +77,6 @@ export class TransformToTtf extends Transform {
   }
 
   _transform(chunk: BufferWithMeta<SymbolMetadata>, _encoding: BufferEncoding, callback: TransformCallback) {
-    this._init(chunk);
-
     const glyph = new Glyph({
       id: this._glyphs.length,
       name: chunk.metadata.name,
@@ -103,6 +103,7 @@ export class TransformToTtf extends Transform {
       glyphTotalSize: this._glyphsTotalSize,
       glyphs: this._glyphs,
       glyphsByCodePoints: this._glyphsByCode,
+      baselineOffset: this._baselineOffset,
     });
 
     const headerSize = 12 + (16 * TransformToTtf._TABLES.length);

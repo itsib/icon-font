@@ -18,5 +18,6 @@
       "code": 59906
     }
   },
-  "shapeSizeAdjust": 1
+  "shapeSizeAdjust": 1,
+  "baselineOffset": 1
 }

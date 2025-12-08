@@ -226,6 +226,7 @@ export interface FontConstructorArgs {
   glyphTotalSize: number;
   glyphs: Glyph[];
   glyphsByCodePoints: { [codePoint: number]: Glyph };
+  baselineOffset: number;
 }
 
 export class Font {
@@ -306,12 +307,16 @@ export class Font {
     this.url = args.url ?? '';
     this.created = Math.floor(Date.now() / 1000) + 2082844800;
 
+    const baselineOffset = args.baselineOffset ?? 1
+    const ascent = Math.floor(args.glyphBoxSize / baselineOffset);
+    const descent = (args.glyphBoxSize - ascent);
+
     // Common font render params
     this.width = args.glyphBoxSize;
     this.height = args.glyphBoxSize;
     this.unitsPerEm = args.glyphBoxSize;
-    this.ascent = args.glyphBoxSize; // Math.floor(args.unitsPerEm / 1.3333333333333333);
-    this.descent = 0;
+    this.ascent = ascent;
+    this.descent = descent * -1;
     this.weight = 400;
     this.widthClass = 5; // Medium (normal)
 

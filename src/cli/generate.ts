@@ -34,7 +34,7 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode, config.disableAutoalign),
               toSvg('config.name'),
               createWriteStream(filename),
             )
@@ -45,8 +45,8 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
-              toTtf('config.name'),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode, config.disableAutoalign),
+              toTtf(config.name, config.baselineOffset),
               createWriteStream(filename),
             )
             Logger.created(filename);
@@ -57,8 +57,8 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
-              toTtf('config.name'),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode, config.disableAutoalign),
+              toTtf(config.name, config.baselineOffset),
               ttfToEot(),
               createWriteStream(filename),
             )
@@ -70,8 +70,8 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
-              toTtf('config.name'),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode, config.disableAutoalign),
+              toTtf(config.name, config.baselineOffset),
               ttfToWoff(),
               createWriteStream(filename),
             )
@@ -83,8 +83,8 @@ export function createGenerateCommand(): Command {
 
             await pipeline(
               read(config.input),
-              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
-              toTtf('config.name'),
+              prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode, config.disableAutoalign),
+              toTtf(config.name, config.baselineOffset),
               ttfToWoff2(),
               createWriteStream(filename),
             )
@@ -98,7 +98,7 @@ export function createGenerateCommand(): Command {
 
       await pipeline(
         read(config.input),
-        prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode),
+        prepare(config.iconsTune, config.shapeSizeAdjust, config.startUnicode, config.disableAutoalign),
         toCss(config.name, config.types, config.prefix, config.fontUrl, config.fontUrlHash),
         createWriteStream(filenameCss, 'utf8'),
       )
