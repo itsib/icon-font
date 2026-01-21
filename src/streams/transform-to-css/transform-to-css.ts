@@ -4,16 +4,18 @@ import { encodeCss } from '../../utils/coders.ts';
 import { fontFace } from '../../utils/font-face.ts';
 
 const STYLES = `
-.{{prefix}} {
-  font-family: "{{fontName}}";
-  font-weight: 400;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  display: var(--{{prefix}}-display, inline-block);
-  font-style: normal;
-  font-variant: normal;
-  line-height: var(--{{prefix}}-line-height, 1);
-  text-rendering: auto;
+@layer base {
+  .{{prefix}} {
+    font-family: "{{fontName}}";
+    font-weight: 400;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: var(--{{prefix}}-display, inline-block);
+    font-style: normal;
+    font-variant: normal;
+    line-height: var(--{{prefix}}-line-height, 1);
+    text-rendering: auto;
+  }
 }
 
 .{{prefix}}-1x {

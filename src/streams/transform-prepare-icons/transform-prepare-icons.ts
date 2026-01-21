@@ -18,7 +18,7 @@ export class TransformPrepareIcons extends Transform {
   _shapeSize: number;
   /**
    * The displayed area
-   * @default 512
+   * @default 2048
    */
   _symbolBoxSize: number;
 
