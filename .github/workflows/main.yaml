@@ -5,12 +5,16 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   env_var: ${{ vars.ENV_CONTEXT_VAR }}
 
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,9 +24,8 @@ jobs:
       - name: Setup .npmrc file
         uses: actions/setup-node@v4
         with:
-          always-auth: true
-          node-version: 20.17.0
-          registry-url: ${{ vars.REGISTRY_URL }}
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install dependency
         run: | 
           npm install -g npm@latest
@@ -35,7 +38,5 @@ jobs:
         run: |
           npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
