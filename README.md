@@ -12,6 +12,10 @@ Simple utilities for icon-font generation, automation and presentation. Includes
 
 ---
 
+> :question: Why do I even need to generate an icon font instead of using svg images or svg sprites? 
+> 
+> :bulb: SVG contours rarely fall exactly on a pixel grid. The browser smoothes (anti-aliases) each edge, so a small SVG image (which are icons) gives a noticeable "soap effect". Fonts have hinting for grid alignment at small sizes, but this does not happen when rendering SVG icons in the browser. Therefore, with small sizes, the contours "float".
+
 ## Features
 
 - Formatting of svg icons. The contour will be adjusted to the size of 512px and placed in the center.

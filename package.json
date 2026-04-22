@@ -35,9 +35,9 @@
     "./package.json": "./package.json",
     ".": {
       "types": "./lib/index.d.ts",
-      "import": "./lib/index.js",
+      "import": "./lib/index.mjs",
       "require": "./lib/index.cjs",
-      "default": "./lib/index.js"
+      "default": "./lib/index.mjs"
     }
   },
   "scripts": {
@@ -51,22 +51,20 @@
     "test": "./scripts/test.sh"
   },
   "devDependencies": {
-    "@types/node": "^22.15.30",
+    "@types/node": "^24.12.2",
     "@types/sax": "^1.2.7",
     "@types/ttf2eot": "^2.0.2",
     "@types/ttf2woff": "^2.0.4",
     "@types/wawoff2": "^1.0.2",
     "commander": "^14.0.0",
-    "prettier": "^3.3.1",
-    "sax": "^1.4.1",
-    "svg-pathdata": "^7.1.0",
+    "prettier": "^3.8.3",
+    "rolldown": "^1.0.0-rc.17",
+    "sax": "^1.6.0",
+    "svg-pathdata": "^9.0.0",
     "ttf2eot": "^3.1.0",
     "ttf2woff": "^3.0.0",
-    "typescript": "^5.8.3",
-    "vite": "^7.1.1",
+    "typescript": "~5.9.0",
+    "vite": "^8.0.9",
     "wawoff2": "^2.0.1"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4"
   }
 }

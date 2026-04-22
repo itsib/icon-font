@@ -12,7 +12,6 @@ permissions:
 env:
   env_var: ${{ vars.ENV_CONTEXT_VAR }}
 
-
 jobs:
   publish:
     runs-on: ubuntu-latest
